@@ -48,8 +48,33 @@ def csp_violations(html: str) -> list[str]:
 
 def page_responses(client, client_for, teacher):
     anon = [client.get(reverse("core:landing")), client.get(reverse("accounts:login"))]
-    logged_in = client_for(teacher).get(reverse("core:dashboard"))
-    return [*anon, logged_in]
+    teacher_client = client_for(teacher)
+    logged_in = teacher_client.get(reverse("core:dashboard"))
+    return [*anon, logged_in, *editor_responses(teacher_client, teacher)]
+
+
+def editor_responses(teacher_client, teacher):
+    from apps.assessments import editing, services
+
+    project = services.ensure_default_project(teacher)
+    document = editing.blank_document("Offline check", "en")
+    editing.add_question(
+        document,
+        {"id": "q1", "type": "open", "text": "Explain", "points": 1, "required": False},
+    )
+    test = services.create_assessment(project, document)
+    pages = [
+        reverse("assessments:create"),
+        reverse("assessments:settings", args=[test.pk]),
+        reverse("assessments:question_edit", args=[test.pk, "q1"]),
+        reverse("assessments:question_delete", args=[test.pk, "q1"]),
+        *(
+            reverse("assessments:question_new", args=[test.pk, qtype])
+            for qtype in editing.QUESTION_TYPES
+        ),
+        reverse("assessments:detail", args=[test.pk]),
+    ]
+    return [teacher_client.get(url) for url in pages]
 
 
 def test_pages_have_no_external_urls_or_inline_code(client, client_for, teacher):

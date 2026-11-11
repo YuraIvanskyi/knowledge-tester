@@ -1,0 +1,279 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Points must be a number, for example 1 or 1.5."
+msgstr "Бали мають бути числом, наприклад 1 або 1,5."
+
+msgid "The penalty must be a number between 0 and 1."
+msgstr "Штраф має бути числом від 0 до 1."
+
+msgid "The number of answers to choose must be a whole number."
+msgstr "Кількість відповідей, які треба вибрати, має бути цілим числом."
+
+msgid "The tolerance must be a number."
+msgstr "Допуск має бути числом."
+
+msgid "The time limit must be a whole number of minutes, or empty."
+msgstr "Обмеження часу має бути цілою кількістю хвилин або порожнім."
+
+msgid "The number of attempts must be a whole number, at least 1."
+msgstr "Кількість спроб має бути цілим числом, не менше 1."
+
+msgid "The pass mark must be a percentage between 0 and 100."
+msgstr "Прохідний бал має бути відсотком від 0 до 100."
+
+msgid "Give the test a title."
+msgstr "Вкажіть назву тесту."
+
+msgid "Test created. Add the first question."
+msgstr "Тест створено. Додайте перше запитання."
+
+msgid "Settings saved."
+msgstr "Налаштування збережено."
+
+msgid "Question saved."
+msgstr "Запитання збережено."
+
+msgid "Question deleted."
+msgstr "Запитання видалено."
+
+msgid "Question duplicated."
+msgstr "Запитання дубльовано."
+
+msgid "Test settings"
+msgstr "Налаштування тесту"
+
+msgid "Actions"
+msgstr "Дії"
+
+msgid "Edit"
+msgstr "Редагувати"
+
+msgid "Move question %(n)s up"
+msgstr "Перемістити запитання %(n)s вгору"
+
+msgid "Up"
+msgstr "Вгору"
+
+msgid "Move question %(n)s down"
+msgstr "Перемістити запитання %(n)s вниз"
+
+msgid "Down"
+msgstr "Вниз"
+
+msgid "Duplicate question %(n)s"
+msgstr "Дублювати запитання %(n)s"
+
+msgid "Duplicate"
+msgstr "Дублювати"
+
+msgid "Delete question %(n)s"
+msgstr "Видалити запитання %(n)s"
+
+msgid "Delete"
+msgstr "Видалити"
+
+msgid "No questions yet. Add the first one below."
+msgstr "Запитань ще немає. Додайте перше нижче."
+
+msgid "Add a question"
+msgstr "Додати запитання"
+
+msgid "Delete question"
+msgstr "Видалити запитання"
+
+msgid "Delete this question?"
+msgstr "Видалити це запитання?"
+
+msgid "Published revisions and finished sessions are not affected. The question is removed from the draft only."
+msgstr "Опубліковані версії та завершені сесії не зміняться. Запитання буде видалено лише з чернетки."
+
+msgid "New test"
+msgstr "Новий тест"
+
+msgid "Or a new project"
+msgstr "Або новий проєкт"
+
+msgid "Leave empty to use the project selected above."
+msgstr "Залиште порожнім, щоб використати проєкт, вибраний вище."
+
+msgid "New question"
+msgstr "Нове запитання"
+
+msgid "Edit question"
+msgstr "Редагування запитання"
+
+msgid "Back to the test"
+msgstr "Назад до тесту"
+
+msgid "Question text"
+msgstr "Текст запитання"
+
+msgid "Answer options"
+msgstr "Варіанти відповіді"
+
+msgid "Mark the one correct option."
+msgstr "Позначте один правильний варіант."
+
+msgid "Mark every correct option."
+msgstr "Позначте всі правильні варіанти."
+
+msgid "Mark the correct options. Students must choose exactly the number set below."
+msgstr "Позначте правильні варіанти. Учні мають вибрати рівно стільки, скільки вказано нижче."
+
+msgid "Clear the text of an option to remove it."
+msgstr "Щоб прибрати варіант, очистьте його текст."
+
+msgid "Option %(n)s is correct"
+msgstr "Варіант %(n)s правильний"
+
+msgid "Option %(n)s text"
+msgstr "Текст варіанта %(n)s"
+
+msgid "Add an option"
+msgstr "Додати варіант"
+
+msgid "One accepted answer per line."
+msgstr "Одна прийнятна відповідь у рядку."
+
+msgid "Answer is"
+msgstr "Відповідь є"
+
+msgid "Text"
+msgstr "Текстом"
+
+msgid "A number"
+msgstr "Числом"
+
+msgid "Tolerance (numbers only)"
+msgstr "Допуск (лише для чисел)"
+
+msgid "How far a number may be from an accepted answer and still count. Empty means exact."
+msgstr "На скільки число може відрізнятися від прийнятної відповіді й усе одно зараховуватися. Порожньо означає точний збіг."
+
+msgid "Capital letters matter"
+msgstr "Враховувати великі літери"
+
+msgid "Send answers that do not match to me for review"
+msgstr "Надсилати мені на перевірку відповіді, що не збігаються"
+
+msgid "Grading notes"
+msgstr "Критерії оцінювання"
+
+msgid "Shown to you while grading, never to students."
+msgstr "Показуються вам під час перевірки, учням — ніколи."
+
+msgid "Scoring"
+msgstr "Нарахування балів"
+
+msgid "Partial credit"
+msgstr "Часткові бали"
+
+msgid "All or nothing"
+msgstr "Усе або нічого"
+
+msgid "Per option"
+msgstr "За кожен варіант"
+
+msgid "Number of answers to choose"
+msgstr "Кількість відповідей для вибору"
+
+msgid "Penalty for a wrong answer (0 to 1)"
+msgstr "Штраф за хибну відповідь (від 0 до 1)"
+
+msgid "A fraction of the points taken off. Empty means no penalty."
+msgstr "Частка балів, яка віднімається. Порожньо означає без штрафу."
+
+msgid "Hint for the student (optional)"
+msgstr "Підказка для учня (необов'язково)"
+
+msgid "The student must answer this question"
+msgstr "Учень має відповісти на це запитання"
+
+msgid "Save and add another"
+msgstr "Зберегти й додати ще"
+
+msgid "Save question"
+msgstr "Зберегти запитання"
+
+msgid "Description"
+msgstr "Опис"
+
+msgid "Language of the test"
+msgstr "Мова тесту"
+
+msgid "Taking the test"
+msgstr "Проходження тесту"
+
+msgid "Time limit in minutes"
+msgstr "Обмеження часу, хвилин"
+
+msgid "Leave empty for no time limit."
+msgstr "Залиште порожнім, якщо обмеження часу немає."
+
+msgid "Attempts per student"
+msgstr "Спроб на учня"
+
+msgid "Shuffle the questions"
+msgstr "Перемішувати запитання"
+
+msgid "Shuffle the answer options"
+msgstr "Перемішувати варіанти відповіді"
+
+msgid "One question per page"
+msgstr "Одне запитання на сторінці"
+
+msgid "What the student sees at the end"
+msgstr "Що учень бачить наприкінці"
+
+msgid "Nothing, only that it was submitted"
+msgstr "Нічого, лише що роботу надіслано"
+
+msgid "Score and grade"
+msgstr "Бали та оцінку"
+
+msgid "Score, grade and correct answers"
+msgstr "Бали, оцінку та правильні відповіді"
+
+msgid "Grading"
+msgstr "Оцінювання"
+
+msgid "Give a grade"
+msgstr "Виставляти оцінку"
+
+msgid "Grade scale"
+msgstr "Шкала оцінок"
+
+msgid "Pass / fail"
+msgstr "Зараховано / не зараховано"
+
+msgid "12-point scale"
+msgstr "12-бальна шкала"
+
+msgid "5-point scale"
+msgstr "5-бальна шкала"
+
+msgid "Custom (set in the JSON)"
+msgstr "Власна (задається в JSON)"
+
+msgid "Pass mark, percent"
+msgstr "Прохідний бал, відсотків"
+
+msgid "What the student fills in before starting"
+msgstr "Що учень заповнює перед початком"
+
+msgid "Clear the label to remove a field."
+msgstr "Щоб прибрати поле, очистьте його назву."
+
+msgid "Field %(n)s: label"
+msgstr "Поле %(n)s: назва"
+
+msgid "Required"
+msgstr "Обов'язкове"
+
+msgid "Add a field"
+msgstr "Додати поле"
+
+msgid "Save settings"
+msgstr "Зберегти налаштування"

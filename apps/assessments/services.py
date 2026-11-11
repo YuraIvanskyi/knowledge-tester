@@ -45,6 +45,17 @@ def create_assessment(project: Project, document: dict) -> Assessment:
     )
 
 
+def save_draft(assessment: Assessment, document: dict) -> None:
+    """Store an edited draft. A published test keeps its revisions and is marked as changed."""
+    test = document["test"]
+    assessment.document = document
+    assessment.title = test.get("title", assessment.title)[:200]
+    assessment.description = test.get("description", "")
+    assessment.language = test.get("language", assessment.language)
+    assessment.has_unpublished_changes = True
+    assessment.save()
+
+
 def publish(assessment: Assessment, user) -> tuple[Revision | None, str | None, bool]:
     """Publish the draft. Returns (revision, error_text, created).
 

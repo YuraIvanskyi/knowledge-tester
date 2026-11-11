@@ -4,6 +4,16 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-11: Browser editor for tests
+
+- Teachers can now build a test without writing JSON: "New test" (title + project), test settings (time limit, attempts, shuffling, what the student sees, grading scale and pass mark, taker fields), and a question editor for all five types, with up/down, duplicate and delete (with a confirmation page). Plain server-rendered forms, no JavaScript, so it works on a phone and under the CSP. Code: `apps/assessments/editing.py` (pure functions), `editor_views.py`, `templates/assessments/editor/`.
+- Rule: every single question and the settings are validated by the importer before being stored, so an edit that would make the test invalid is refused with a plain message and the input is kept. Only the test as a whole may be incomplete (a new test has no questions and cannot be published until it has one).
+- Editing a published test keeps its revisions untouched and marks "unpublished changes"; republishing creates the next revision.
+- Option rows: clear the text to remove one, "Add an option" re-renders with one more row. Option and question ids are kept on edit.
+- 92 new Ukrainian strings (`locale/uk/parts/editor.po` merged into the catalog). 413 tests.
+- Not done yet: preview as taker (KT-206), test duplicate/delete/move between projects and project management (KT-201/204), question images (KT-207), "ready to publish" checklist on the editor (KT-205; the detail page already lists importer errors), custom grade thresholds in the UI.
+- Next: preview as taker, PDF sheets, then Phase 6 (people).
+
 ## 2026-11-11: Simplistic prototype (end-to-end)
 
 - Built in parallel by four workstreams (see [specs/prototype-contracts.md](specs/prototype-contracts.md)): exchange + assessments, grading + reports, delivery (sessions, QR, taker flow), core + accounts + UI kit + `serve` + test harness.

@@ -16,6 +16,58 @@ msgstr "Адміністратор"
 msgid "Teacher"
 msgstr "Вчитель"
 
+#: apps/assessments/editing.py:210
+msgid "Points must be a number, for example 1 or 1.5."
+msgstr "Бали мають бути числом, наприклад 1 або 1,5."
+
+#: apps/assessments/editing.py:234
+msgid "The penalty must be a number between 0 and 1."
+msgstr "Штраф має бути числом від 0 до 1."
+
+#: apps/assessments/editing.py:242
+msgid "The number of answers to choose must be a whole number."
+msgstr "Кількість відповідей, які треба вибрати, має бути цілим числом."
+
+#: apps/assessments/editing.py:254
+msgid "The tolerance must be a number."
+msgstr "Допуск має бути числом."
+
+#: apps/assessments/editing.py:412
+msgid "The time limit must be a whole number of minutes, or empty."
+msgstr "Обмеження часу має бути цілою кількістю хвилин або порожнім."
+
+#: apps/assessments/editing.py:417
+msgid "The number of attempts must be a whole number, at least 1."
+msgstr "Кількість спроб має бути цілим числом, не менше 1."
+
+#: apps/assessments/editing.py:421
+msgid "The pass mark must be a percentage between 0 and 100."
+msgstr "Прохідний бал має бути відсотком від 0 до 100."
+
+#: apps/assessments/editor_views.py:42
+msgid "Give the test a title."
+msgstr "Вкажіть назву тесту."
+
+#: apps/assessments/editor_views.py:54
+msgid "Test created. Add the first question."
+msgstr "Тест створено. Додайте перше запитання."
+
+#: apps/assessments/editor_views.py:78
+msgid "Settings saved."
+msgstr "Налаштування збережено."
+
+#: apps/assessments/editor_views.py:152
+msgid "Question saved."
+msgstr "Запитання збережено."
+
+#: apps/assessments/editor_views.py:178
+msgid "Question deleted."
+msgstr "Запитання видалено."
+
+#: apps/assessments/editor_views.py:206
+msgid "Question duplicated."
+msgstr "Запитання дубльовано."
+
 #: apps/assessments/models.py:34
 msgid "Draft"
 msgstr "Чернетка"
@@ -64,30 +116,30 @@ msgstr "Спочатку вставте JSON тесту або виберіть 
 msgid "Test created as a draft. Publish it to use it."
 msgstr "Тест створено як чернетку. Опублікуйте його, щоб користуватися ним."
 
-#: apps/assessments/views.py:156
+#: apps/assessments/views.py:157
 msgid "Cannot publish: the test has errors. See the list below."
 msgstr "Не вдалося опублікувати: у тесті є помилки. Перегляньте список нижче."
 
-#: apps/assessments/views.py:158
+#: apps/assessments/views.py:159
 msgid "Published as revision %(n)s."
 msgstr "Опубліковано як версію %(n)s."
 
-#: apps/assessments/views.py:162
+#: apps/assessments/views.py:163
 msgid "Nothing changed since revision %(n)s, so no new revision was created."
 msgstr "Від версії %(n)s змін немає, тому нову версію не створено."
 
-#: apps/assessments/views.py:174
+#: apps/assessments/views.py:175
 msgid "Cannot export: the test has errors."
 msgstr "Не вдалося експортувати: у тесті є помилки."
 
 #: apps/core/datadir.py:30
 msgid ""
-"The data folder %(path)s is inside '%(name)s'. Sync clients can corrupt the "
-"SQLite database. Move it outside (set KT_DATA_DIR, default %(default)s)."
+"The data folder %(path)s is inside '%(name)s'. Sync clients can corrupt the SQLite database. Move "
+"it outside (set KT_DATA_DIR, default %(default)s)."
 msgstr ""
-"Папка з даними %(path)s розташована всередині «%(name)s». Клієнти "
-"синхронізації можуть пошкодити базу даних SQLite. Перенесіть її за межі "
-"такої папки (задайте KT_DATA_DIR; типове значення — %(default)s)."
+"Папка з даними %(path)s розташована всередині «%(name)s». Клієнти синхронізації можуть пошкодити "
+"базу даних SQLite. Перенесіть її за межі такої папки (задайте KT_DATA_DIR; типове значення — "
+"%(default)s)."
 
 #: apps/core/management/commands/serve.py:52
 msgid "Collecting static files..."
@@ -108,8 +160,7 @@ msgstr "Відкрийте на цьому комп’ютері або на т�
 #: apps/core/management/commands/serve.py:70
 msgid "If phones cannot connect, run once as administrator (PowerShell):"
 msgstr ""
-"Якщо телефони не можуть підключитися, виконайте один раз від імені "
-"адміністратора (PowerShell):"
+"Якщо телефони не можуть підключитися, виконайте один раз від імені адміністратора (PowerShell):"
 
 #: apps/core/management/commands/serve.py:74
 msgid "Press Ctrl+C to stop."
@@ -134,8 +185,7 @@ msgstr "Код доступу (необов’язково)"
 #: apps/delivery/forms.py:11
 msgid "Takers must type this code to start. Leave empty for an open session."
 msgstr ""
-"Щоб розпочати, учні мають ввести цей код. Залиште поле порожнім, якщо сесія "
-"відкрита для всіх."
+"Щоб розпочати, учні мають ввести цей код. Залиште поле порожнім, якщо сесія відкрита для всіх."
 
 #: apps/delivery/models.py:44
 msgid "Auto-submitted"
@@ -194,9 +244,7 @@ msgid "Partly correct"
 msgstr "Частково правильно"
 
 #: apps/delivery/views.py:117
-msgid ""
-"Session closed. %(count)d unfinished attempt(s) were submitted "
-"automatically."
+msgid "Session closed. %(count)d unfinished attempt(s) were submitted automatically."
 msgstr "Сесію закрито. Незавершені спроби (%(count)d) надіслано автоматично."
 
 #: apps/reports/data.py:29
@@ -243,20 +291,17 @@ msgstr "Збережено."
 msgid "Max score"
 msgstr "Макс. бали"
 
-#: apps/reports/views.py:183
-msgid "Percent"
-msgstr "Відсоток"
-
 #: apps/reports/views.py:185
 msgid "Pending reviews"
 msgstr "Очікують перевірки"
 
-#: templates/assessments/detail.html:11 templates/assessments/list.html:29
+#: templates/assessments/detail.html:11 templates/assessments/list.html:32
 #: templates/core/dashboard.html:64
 msgid "unpublished changes"
 msgstr "неопубліковані зміни"
 
-#: templates/assessments/detail.html:14 templates/assessments/import.html:9
+#: templates/assessments/detail.html:14 templates/assessments/editor/create.html:9
+#: templates/assessments/import.html:9
 msgid "Back to tests"
 msgstr "Назад до тестів"
 
@@ -276,16 +321,21 @@ msgstr "Попередження"
 msgid "Publish"
 msgstr "Опублікувати"
 
-#: templates/assessments/detail.html:39
+#: templates/assessments/detail.html:39 templates/assessments/editor/settings.html:3
+#: templates/assessments/editor/settings.html:8
+msgid "Test settings"
+msgstr "Налаштування тесту"
+
+#: templates/assessments/detail.html:40
 msgid "Export JSON"
 msgstr "Експортувати JSON"
 
-#: templates/assessments/detail.html:44 templates/assessments/list.html:21
-#: templates/assessments/list.html:30 templates/reports/session.html:100
+#: templates/assessments/detail.html:44 templates/assessments/list.html:24
+#: templates/assessments/list.html:33 templates/reports/session.html:100
 msgid "Questions"
 msgstr "Запитання"
 
-#: templates/assessments/detail.html:46 templates/assessments/import.html:71
+#: templates/assessments/detail.html:47 templates/assessments/import.html:71
 #: templates/delivery/create.html:10 templates/delivery/session.html:11
 #: templates/delivery/take.html:10
 msgid "%(n)s question"
@@ -294,57 +344,404 @@ msgstr[0] "%(n)s запитання"
 msgstr[1] "%(n)s запитання"
 msgstr[2] "%(n)s запитань"
 
-#: templates/assessments/detail.html:47 templates/assessments/import.html:72
+#: templates/assessments/detail.html:48 templates/assessments/import.html:72
 msgid "%(n)s points"
 msgstr "Бали: %(n)s"
 
-#: templates/assessments/detail.html:48
+#: templates/assessments/detail.html:49
 msgid "min"
 msgstr "хв"
 
-#: templates/assessments/detail.html:54 templates/assessments/detail.html:63
+#: templates/assessments/detail.html:57 templates/assessments/detail.html:67
 #: templates/reports/session.html:105 templates/reports/session.html:114
 msgid "Question"
 msgstr "Запитання"
 
-#: templates/assessments/detail.html:55 templates/assessments/detail.html:64
+#: templates/assessments/detail.html:58 templates/assessments/detail.html:68
 msgid "Type"
 msgstr "Тип"
 
-#: templates/assessments/detail.html:56 templates/assessments/detail.html:65
+#: templates/assessments/detail.html:59 templates/assessments/detail.html:69
+#: templates/assessments/editor/question.html:83 templates/assessments/editor/settings.html:67
 #: templates/reports/attempt.html:81
 msgid "Points"
 msgstr "Бали"
 
+#: templates/assessments/detail.html:60 templates/assessments/detail.html:70
+msgid "Actions"
+msgstr "Дії"
+
+#: templates/assessments/detail.html:72
+msgid "Edit"
+msgstr "Редагувати"
+
 #: templates/assessments/detail.html:74
+msgid "Move question %(n)s up"
+msgstr "Перемістити запитання %(n)s вгору"
+
+#: templates/assessments/detail.html:74
+msgid "Up"
+msgstr "Вгору"
+
+#: templates/assessments/detail.html:77
+msgid "Move question %(n)s down"
+msgstr "Перемістити запитання %(n)s вниз"
+
+#: templates/assessments/detail.html:77
+msgid "Down"
+msgstr "Вниз"
+
+#: templates/assessments/detail.html:79
+msgid "Duplicate question %(n)s"
+msgstr "Дублювати запитання %(n)s"
+
+#: templates/assessments/detail.html:79
+msgid "Duplicate"
+msgstr "Дублювати"
+
+#: templates/assessments/detail.html:80
+msgid "Delete question %(n)s"
+msgstr "Видалити запитання %(n)s"
+
+#: templates/assessments/detail.html:80
+msgid "Delete"
+msgstr "Видалити"
+
+#: templates/assessments/detail.html:88
+msgid "No questions yet. Add the first one below."
+msgstr "Запитань ще немає. Додайте перше нижче."
+
+#: templates/assessments/detail.html:90
+msgid "Add a question"
+msgstr "Додати запитання"
+
+#: templates/assessments/detail.html:99
 msgid "Revisions"
 msgstr "Версії"
 
-#: apps/assessments/models.py:35 templates/assessments/detail.html:78
-#: templates/assessments/detail.html:84
+#: apps/assessments/models.py:35 templates/assessments/detail.html:103
+#: templates/assessments/detail.html:109
 msgid "Published"
 msgstr "Опубліковано"
 
-#: templates/assessments/detail.html:85 templates/delivery/create.html:24
+#: templates/assessments/detail.html:110 templates/delivery/create.html:24
 msgid "Open session"
 msgstr "Відкрити сесію"
 
-#: templates/assessments/detail.html:91
+#: templates/assessments/detail.html:116
 msgid "Not published yet. Publish the test to open a session for it."
 msgstr "Ще не опубліковано. Опублікуйте тест, щоб відкрити для нього сесію."
 
+#: templates/assessments/editor/confirm_delete.html:3
+#: templates/assessments/editor/confirm_delete.html:12
+msgid "Delete question"
+msgstr "Видалити запитання"
+
+#: templates/assessments/editor/confirm_delete.html:7
+msgid "Delete this question?"
+msgstr "Видалити це запитання?"
+
+#: templates/assessments/editor/confirm_delete.html:9
+msgid ""
+"Published revisions and finished sessions are not affected. The question is removed from the draft"
+" only."
+msgstr ""
+"Опубліковані версії та завершені сесії не зміняться. Запитання буде видалено лише з чернетки."
+
+#: templates/assessments/editor/confirm_delete.html:13
+#: templates/assessments/editor/question.html:116 templates/assessments/editor/settings.html:91
+#: templates/delivery/create.html:25
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: templates/assessments/editor/create.html:3 templates/assessments/editor/create.html:8
+#: templates/assessments/list.html:10
+msgid "New test"
+msgstr "Новий тест"
+
+#: templates/assessments/editor/create.html:15 templates/assessments/editor/settings.html:20
+#: templates/delivery/list.html:13 templates/delivery/list.html:24
+msgid "Title"
+msgstr "Назва"
+
+#: templates/assessments/editor/create.html:19 templates/assessments/import.html:79
+msgid "Project"
+msgstr "Проєкт"
+
+#: templates/assessments/editor/create.html:27
+msgid "Or a new project"
+msgstr "Або новий проєкт"
+
+#: templates/assessments/editor/create.html:29
+msgid "Leave empty to use the project selected above."
+msgstr "Залиште порожнім, щоб використати проєкт, вибраний вище."
+
+#: templates/assessments/editor/create.html:31 templates/assessments/import.html:89
+msgid "Create test"
+msgstr "Створити тест"
+
+#: templates/assessments/editor/question.html:3 templates/assessments/editor/question.html:9
+msgid "New question"
+msgstr "Нове запитання"
+
+#: templates/assessments/editor/question.html:3 templates/assessments/editor/question.html:9
+msgid "Edit question"
+msgstr "Редагування запитання"
+
+#: templates/assessments/editor/question.html:12 templates/assessments/editor/settings.html:9
+msgid "Back to the test"
+msgstr "Назад до тесту"
+
+#: templates/assessments/editor/question.html:23
+msgid "Question text"
+msgstr "Текст запитання"
+
+#: templates/assessments/editor/question.html:29
+msgid "Answer options"
+msgstr "Варіанти відповіді"
+
+#: templates/assessments/editor/question.html:31
+msgid "Mark the one correct option."
+msgstr "Позначте один правильний варіант."
+
+#: templates/assessments/editor/question.html:32
+msgid "Mark every correct option."
+msgstr "Позначте всі правильні варіанти."
+
+#: templates/assessments/editor/question.html:33
+msgid "Mark the correct options. Students must choose exactly the number set below."
+msgstr "Позначте правильні варіанти. Учні мають вибрати рівно стільки, скільки вказано нижче."
+
+#: templates/assessments/editor/question.html:34
+msgid "Clear the text of an option to remove it."
+msgstr "Щоб прибрати варіант, очистьте його текст."
+
+#: templates/assessments/editor/question.html:41 templates/assessments/editor/question.html:43
+msgid "Option %(n)s is correct"
+msgstr "Варіант %(n)s правильний"
+
+#: templates/assessments/editor/question.html:45
+msgid "Option %(n)s text"
+msgstr "Текст варіанта %(n)s"
+
+#: templates/assessments/editor/question.html:48
+msgid "Add an option"
+msgstr "Додати варіант"
+
+#: templates/assessments/editor/question.html:54 templates/reports/attempt.html:63
+msgid "Accepted answers"
+msgstr "Допустимі відповіді"
+
+#: templates/assessments/editor/question.html:56
+msgid "One accepted answer per line."
+msgstr "Одна прийнятна відповідь у рядку."
+
+#: templates/assessments/editor/question.html:59
+msgid "Answer is"
+msgstr "Відповідь є"
+
+#: templates/assessments/editor/question.html:61
+msgid "Text"
+msgstr "Текстом"
+
+#: templates/assessments/editor/question.html:62
+msgid "A number"
+msgstr "Числом"
+
+#: templates/assessments/editor/question.html:66
+msgid "Tolerance (numbers only)"
+msgstr "Допуск (лише для чисел)"
+
+#: templates/assessments/editor/question.html:68
+msgid "How far a number may be from an accepted answer and still count. Empty means exact."
+msgstr ""
+"На скільки число може відрізнятися від прийнятної відповіді й усе одно зараховуватися. Порожньо "
+"означає точний збіг."
+
+#: templates/assessments/editor/question.html:70
+msgid "Capital letters matter"
+msgstr "Враховувати великі літери"
+
+#: templates/assessments/editor/question.html:71
+msgid "Send answers that do not match to me for review"
+msgstr "Надсилати мені на перевірку відповіді, що не збігаються"
+
+#: templates/assessments/editor/question.html:76
+msgid "Grading notes"
+msgstr "Критерії оцінювання"
+
+#: templates/assessments/editor/question.html:78
+msgid "Shown to you while grading, never to students."
+msgstr "Показуються вам під час перевірки, учням — ніколи."
+
+#: templates/assessments/editor/question.html:89
+msgid "Scoring"
+msgstr "Нарахування балів"
+
+#: templates/assessments/editor/question.html:91
+msgid "Partial credit"
+msgstr "Часткові бали"
+
+#: templates/assessments/editor/question.html:92
+msgid "All or nothing"
+msgstr "Усе або нічого"
+
+#: templates/assessments/editor/question.html:93
+msgid "Per option"
+msgstr "За кожен варіант"
+
+#: templates/assessments/editor/question.html:98
+msgid "Number of answers to choose"
+msgstr "Кількість відповідей для вибору"
+
+#: templates/assessments/editor/question.html:103
+msgid "Penalty for a wrong answer (0 to 1)"
+msgstr "Штраф за хибну відповідь (від 0 до 1)"
+
+#: templates/assessments/editor/question.html:105
+msgid "A fraction of the points taken off. Empty means no penalty."
+msgstr "Частка балів, яка віднімається. Порожньо означає без штрафу."
+
+#: templates/assessments/editor/question.html:110
+msgid "Hint for the student (optional)"
+msgstr "Підказка для учня (необов'язково)"
+
+#: templates/assessments/editor/question.html:113
+msgid "The student must answer this question"
+msgstr "Учень має відповісти на це запитання"
+
+#: templates/assessments/editor/question.html:118
+msgid "Save and add another"
+msgstr "Зберегти й додати ще"
+
+#: templates/assessments/editor/question.html:119
+msgid "Save question"
+msgstr "Зберегти запитання"
+
+#: templates/assessments/editor/settings.html:24
+msgid "Description"
+msgstr "Опис"
+
+#: templates/assessments/editor/settings.html:28
+msgid "Language of the test"
+msgstr "Мова тесту"
+
+#: templates/assessments/editor/settings.html:37
+msgid "Taking the test"
+msgstr "Проходження тесту"
+
+#: templates/assessments/editor/settings.html:39
+msgid "Time limit in minutes"
+msgstr "Обмеження часу, хвилин"
+
+#: templates/assessments/editor/settings.html:41
+msgid "Leave empty for no time limit."
+msgstr "Залиште порожнім, якщо обмеження часу немає."
+
+#: templates/assessments/editor/settings.html:44
+msgid "Attempts per student"
+msgstr "Спроб на учня"
+
+#: templates/assessments/editor/settings.html:47
+msgid "Shuffle the questions"
+msgstr "Перемішувати запитання"
+
+#: templates/assessments/editor/settings.html:48
+msgid "Shuffle the answer options"
+msgstr "Перемішувати варіанти відповіді"
+
+#: templates/assessments/editor/settings.html:49
+msgid "One question per page"
+msgstr "Одне запитання на сторінці"
+
+#: templates/assessments/editor/settings.html:51
+msgid "What the student sees at the end"
+msgstr "Що учень бачить наприкінці"
+
+#: templates/assessments/editor/settings.html:54
+msgid "Nothing, only that it was submitted"
+msgstr "Нічого, лише що роботу надіслано"
+
+#: templates/assessments/editor/settings.html:54
+msgid "Score and grade"
+msgstr "Бали та оцінку"
+
+#: templates/assessments/editor/settings.html:54
+msgid "Score, grade and correct answers"
+msgstr "Бали, оцінку та правильні відповіді"
+
+#: templates/assessments/editor/settings.html:61
+msgid "Grading"
+msgstr "Оцінювання"
+
+#: templates/assessments/editor/settings.html:62
+msgid "Give a grade"
+msgstr "Виставляти оцінку"
+
+#: templates/assessments/editor/settings.html:64
+msgid "Grade scale"
+msgstr "Шкала оцінок"
+
+#: apps/reports/views.py:183 templates/assessments/editor/settings.html:67
+msgid "Percent"
+msgstr "Відсоток"
+
+#: templates/assessments/editor/settings.html:67
+msgid "Pass / fail"
+msgstr "Зараховано / не зараховано"
+
+#: templates/assessments/editor/settings.html:67
+msgid "12-point scale"
+msgstr "12-бальна шкала"
+
+#: templates/assessments/editor/settings.html:67
+msgid "5-point scale"
+msgstr "5-бальна шкала"
+
+#: templates/assessments/editor/settings.html:67
+msgid "Custom (set in the JSON)"
+msgstr "Власна (задається в JSON)"
+
+#: templates/assessments/editor/settings.html:72
+msgid "Pass mark, percent"
+msgstr "Прохідний бал, відсотків"
+
+#: templates/assessments/editor/settings.html:78
+msgid "What the student fills in before starting"
+msgstr "Що учень заповнює перед початком"
+
+#: templates/assessments/editor/settings.html:79
+msgid "Clear the label to remove a field."
+msgstr "Щоб прибрати поле, очистьте його назву."
+
+#: templates/assessments/editor/settings.html:83
+msgid "Field %(n)s: label"
+msgstr "Поле %(n)s: назва"
+
+#: templates/assessments/editor/settings.html:84
+msgid "Required"
+msgstr "Обов'язкове"
+
+#: templates/assessments/editor/settings.html:87
+msgid "Add a field"
+msgstr "Додати поле"
+
+#: templates/assessments/editor/settings.html:92
+msgid "Save settings"
+msgstr "Зберегти налаштування"
+
 #: templates/assessments/import.html:3 templates/assessments/import.html:8
-#: templates/assessments/list.html:9 templates/core/dashboard.html:10
+#: templates/assessments/list.html:11 templates/core/dashboard.html:10
 msgid "Import a test"
 msgstr "Імпортувати тест"
 
 #: templates/assessments/import.html:14
 msgid ""
-"Paste a Knowledge Tester test (JSON) or choose a file. To have an AI write "
-"it for you, use the prompt in docs/llm/create-test.prompt.md."
+"Paste a Knowledge Tester test (JSON) or choose a file. To have an AI write it for you, use the "
+"prompt in docs/llm/create-test.prompt.md."
 msgstr ""
-"Вставте тест Knowledge Tester (JSON) або виберіть файл. Щоб його написав "
-"штучний інтелект, скористайтеся запитом із docs/llm/create-test.prompt.md."
+"Вставте тест Knowledge Tester (JSON) або виберіть файл. Щоб його написав штучний інтелект, "
+"скористайтеся запитом із docs/llm/create-test.prompt.md."
 
 #: templates/assessments/import.html:16
 msgid "Test JSON"
@@ -397,53 +794,40 @@ msgid "Warnings"
 msgstr "Попередження"
 
 #: templates/assessments/import.html:60
-msgid ""
-"Copy for the AI (paste this back into your chat and ask for a corrected "
-"file)"
+msgid "Copy for the AI (paste this back into your chat and ask for a corrected file)"
 msgstr "Скопіюйте для ШІ (вставте це в чат і попросіть виправлений файл)"
 
 #: templates/assessments/import.html:68
 msgid "Preview"
 msgstr "Попередній перегляд"
 
-#: templates/assessments/import.html:79
-msgid "Project"
-msgstr "Проєкт"
-
 #: templates/assessments/import.html:85
 msgid "Or a new project (optional)"
 msgstr "Або новий проєкт (необов’язково)"
 
-#: templates/assessments/import.html:89
-msgid "Create test"
-msgstr "Створити тест"
-
-#: templates/assessments/list.html:3 templates/assessments/list.html:8
-#: templates/base.html:19
+#: templates/assessments/list.html:3 templates/assessments/list.html:8 templates/base.html:19
 msgid "Tests"
 msgstr "Тести"
 
-#: templates/assessments/list.html:19 templates/assessments/list.html:28
-#: templates/core/dashboard.html:59 templates/core/dashboard.html:63
-#: templates/delivery/list.html:14 templates/delivery/list.html:25
+#: templates/assessments/list.html:22 templates/assessments/list.html:31
+#: templates/core/dashboard.html:59 templates/core/dashboard.html:63 templates/delivery/list.html:14
+#: templates/delivery/list.html:25
 msgid "Test"
 msgstr "Тест"
 
-#: apps/reports/views.py:178 templates/assessments/list.html:20
-#: templates/assessments/list.html:29 templates/core/dashboard.html:59
-#: templates/core/dashboard.html:64 templates/delivery/list.html:16
-#: templates/delivery/list.html:27 templates/delivery/share.html:49
-#: templates/delivery/share.html:57 templates/reports/session.html:70
-#: templates/reports/session.html:83
+#: apps/reports/views.py:178 templates/assessments/list.html:23 templates/assessments/list.html:32
+#: templates/core/dashboard.html:59 templates/core/dashboard.html:64 templates/delivery/list.html:16
+#: templates/delivery/list.html:27 templates/delivery/share.html:49 templates/delivery/share.html:57
+#: templates/reports/session.html:70 templates/reports/session.html:83
 msgid "Status"
 msgstr "Статус"
 
-#: templates/assessments/list.html:22 templates/assessments/list.html:31
+#: templates/assessments/list.html:25 templates/assessments/list.html:34
 #: templates/core/dashboard.html:59 templates/core/dashboard.html:65
 msgid "Updated"
 msgstr "Оновлено"
 
-#: templates/assessments/list.html:37
+#: templates/assessments/list.html:40
 msgid "No tests in this project yet."
 msgstr "У цьому проєкті ще немає тестів."
 
@@ -455,8 +839,7 @@ msgstr "Перейти до вмісту"
 msgid "Main"
 msgstr "Основна навігація"
 
-#: templates/base.html:20 templates/delivery/list.html:3
-#: templates/delivery/list.html:7
+#: templates/base.html:20 templates/delivery/list.html:3 templates/delivery/list.html:7
 msgid "Sessions"
 msgstr "Сесії"
 
@@ -487,11 +870,10 @@ msgstr "Тестів ще немає"
 
 #: templates/core/dashboard.html:18
 msgid ""
-"Import a test from a JSON file to get started. Then publish it and open a "
-"session for your class."
+"Import a test from a JSON file to get started. Then publish it and open a session for your class."
 msgstr ""
-"Імпортуйте тест із файлу JSON, щоб розпочати. Потім опублікуйте його та "
-"відкрийте сесію для свого класу."
+"Імпортуйте тест із файлу JSON, щоб розпочати. Потім опублікуйте його та відкрийте сесію для свого "
+"класу."
 
 #: templates/core/dashboard.html:19
 msgid "Import your first test"
@@ -526,8 +908,8 @@ msgstr "Відкриті сесії"
 msgid "Session"
 msgstr "Сесія"
 
-#: templates/core/dashboard.html:37 templates/core/dashboard.html:42
-#: templates/delivery/list.html:15 templates/delivery/list.html:26
+#: templates/core/dashboard.html:37 templates/core/dashboard.html:42 templates/delivery/list.html:15
+#: templates/delivery/list.html:26
 msgid "Code"
 msgstr "Код"
 
@@ -586,13 +968,9 @@ msgstr "Ліміт часу: %(time_limit)s хв"
 msgid "No time limit"
 msgstr "Без обмеження часу"
 
-#: templates/delivery/create.html:25
-msgid "Cancel"
-msgstr "Скасувати"
-
-#: apps/delivery/models.py:43 apps/reports/views.py:180
-#: templates/delivery/done.html:3 templates/delivery/done.html:12
-#: templates/delivery/share.html:37 templates/reports/attempt.html:24
+#: apps/delivery/models.py:43 apps/reports/views.py:180 templates/delivery/done.html:3
+#: templates/delivery/done.html:12 templates/delivery/share.html:37
+#: templates/reports/attempt.html:24
 msgid "Submitted"
 msgstr "Надіслано"
 
@@ -616,9 +994,8 @@ msgstr "Ваші відповіді надіслано. Дякуємо!"
 msgid "Your result"
 msgstr "Ваш результат"
 
-#: apps/reports/views.py:184 templates/delivery/done.html:21
-#: templates/reports/attempt.html:32 templates/reports/session.html:73
-#: templates/reports/session.html:86
+#: apps/reports/views.py:184 templates/delivery/done.html:21 templates/reports/attempt.html:32
+#: templates/reports/session.html:73 templates/reports/session.html:86
 msgid "Grade"
 msgstr "Оцінка"
 
@@ -627,25 +1004,17 @@ msgid "provisional"
 msgstr "попередньо"
 
 #: templates/delivery/done.html:23
-msgid ""
-"%(n)s answer is waiting for your teacher to review, so this result is "
-"provisional."
-msgid_plural ""
-"%(n)s answers are waiting for your teacher to review, so this result is "
-"provisional."
-msgstr[0] ""
-"%(n)s відповідь очікує перевірки вчителем, тому цей результат попередній."
-msgstr[1] ""
-"%(n)s відповіді очікують перевірки вчителем, тому цей результат попередній."
-msgstr[2] ""
-"%(n)s відповідей очікують перевірки вчителем, тому цей результат попередній."
+msgid "%(n)s answer is waiting for your teacher to review, so this result is provisional."
+msgid_plural "%(n)s answers are waiting for your teacher to review, so this result is provisional."
+msgstr[0] "%(n)s відповідь очікує перевірки вчителем, тому цей результат попередній."
+msgstr[1] "%(n)s відповіді очікують перевірки вчителем, тому цей результат попередній."
+msgstr[2] "%(n)s відповідей очікують перевірки вчителем, тому цей результат попередній."
 
 #: templates/delivery/done.html:29
 msgid "Answers"
 msgstr "Відповіді"
 
-#: templates/delivery/done.html:34 templates/delivery/take.html:61
-#: templates/delivery/take.html:64
+#: templates/delivery/done.html:34 templates/delivery/take.html:61 templates/delivery/take.html:64
 msgid "Your answer"
 msgstr "Ваша відповідь"
 
@@ -666,18 +1035,10 @@ msgid "Take the test again"
 msgstr "Пройти тест ще раз"
 
 #: templates/delivery/enter_error.html:7
-msgid ""
-"No open session has the code \"%(entered)s\". Check the code and try again."
-msgstr ""
-"Відкритої сесії з кодом «%(entered)s» не знайдено. Перевірте код і спробуйте"
-" ще раз."
+msgid "No open session has the code \"%(entered)s\". Check the code and try again."
+msgstr "Відкритої сесії з кодом «%(entered)s» не знайдено. Перевірте код і спробуйте ще раз."
 
-#: templates/delivery/list.html:13 templates/delivery/list.html:24
-msgid "Title"
-msgstr "Назва"
-
-#: templates/delivery/list.html:17 templates/delivery/list.html:28
-#: templates/reports/session.html:53
+#: templates/delivery/list.html:17 templates/delivery/list.html:28 templates/reports/session.html:53
 msgid "Attempts"
 msgstr "Спроби"
 
@@ -689,13 +1050,11 @@ msgstr "Посилання"
 msgid "rev."
 msgstr "верс."
 
-#: apps/delivery/models.py:16 templates/delivery/list.html:27
-#: templates/delivery/share.html:9
+#: apps/delivery/models.py:16 templates/delivery/list.html:27 templates/delivery/share.html:9
 msgid "Open"
 msgstr "Відкрита"
 
-#: apps/delivery/models.py:17 templates/delivery/list.html:27
-#: templates/delivery/share.html:9
+#: apps/delivery/models.py:17 templates/delivery/list.html:27 templates/delivery/share.html:9
 msgid "Closed"
 msgstr "Закрита"
 
@@ -703,8 +1062,8 @@ msgstr "Закрита"
 msgid "Share"
 msgstr "Поділитися"
 
-#: templates/delivery/list.html:29 templates/delivery/share.html:72
-#: templates/reports/session.html:3 templates/reports/session.html:10
+#: templates/delivery/list.html:29 templates/delivery/share.html:72 templates/reports/session.html:3
+#: templates/reports/session.html:10
 msgid "Results"
 msgstr "Результати"
 
@@ -721,8 +1080,7 @@ msgid "This session is closed. It no longer accepts answers."
 msgstr "Цю сесію закрито. Вона більше не приймає відповідей."
 
 #: templates/delivery/session.html:18
-msgid ""
-"You have already submitted this test once. You can take it again below."
+msgid "You have already submitted this test once. You can take it again below."
 msgstr "Ви вже надсилали цей тест. Нижче можна пройти його ще раз."
 
 #: templates/delivery/session.html:28 templates/delivery/take.html:33
@@ -770,8 +1128,7 @@ msgstr "Лічильники в реальному часі"
 msgid "Joined"
 msgstr "Приєдналися"
 
-#: apps/delivery/models.py:42 apps/reports/views.py:65
-#: templates/delivery/share.html:36
+#: apps/delivery/models.py:42 apps/reports/views.py:65 templates/delivery/share.html:36
 msgid "In progress"
 msgstr "Виконується"
 
@@ -787,14 +1144,12 @@ msgstr "оновлюється автоматично кожні 5 секунд"
 msgid "Nobody has joined yet."
 msgstr "Ще ніхто не приєднався."
 
-#: apps/reports/views.py:164 templates/delivery/share.html:48
-#: templates/delivery/share.html:56 templates/reports/session.html:68
-#: templates/reports/session.html:81
+#: apps/reports/views.py:164 templates/delivery/share.html:48 templates/delivery/share.html:56
+#: templates/reports/session.html:68 templates/reports/session.html:81
 msgid "Name"
 msgstr "Ім’я"
 
-#: templates/delivery/share.html:50 templates/delivery/share.html:58
-#: templates/delivery/take.html:71
+#: templates/delivery/share.html:50 templates/delivery/share.html:58 templates/delivery/take.html:71
 msgid "Answered"
 msgstr "Дано відповідей"
 
@@ -807,11 +1162,8 @@ msgid "Close session"
 msgstr "Закрити сесію"
 
 #: templates/delivery/take.html:11
-msgid ""
-"Time limit: %(time_limit)s min. The clock starts when you begin answering."
-msgstr ""
-"Ліміт часу: %(time_limit)s хв. Відлік починається, коли ви розпочнете "
-"відповідати."
+msgid "Time limit: %(time_limit)s min. The clock starts when you begin answering."
+msgstr "Ліміт часу: %(time_limit)s хв. Відлік починається, коли ви розпочнете відповідати."
 
 #: templates/delivery/take.html:19
 msgid "Please answer these required questions before you submit:"
@@ -855,11 +1207,11 @@ msgstr "Пароль"
 
 #: templates/registration/login.html:25
 msgid ""
-"Students do not need an account. Enter the session code on the <a "
-"href=\"%(landing_url)s\">start page</a>."
+"Students do not need an account. Enter the session code on the <a href=\"%(landing_url)s\">start "
+"page</a>."
 msgstr ""
-"Учням не потрібен обліковий запис. Введіть код сесії на <a "
-"href=\"%(landing_url)s\">початковій сторінці</a>."
+"Учням не потрібен обліковий запис. Введіть код сесії на <a href=\"%(landing_url)s\">початковій "
+"сторінці</a>."
 
 #: templates/reports/attempt.html:11
 msgid "All results"
@@ -877,8 +1229,8 @@ msgstr "сесія"
 msgid "Attempt"
 msgstr "Спроба"
 
-#: apps/reports/views.py:181 templates/reports/attempt.html:31
-#: templates/reports/session.html:72 templates/reports/session.html:85
+#: apps/reports/views.py:181 templates/reports/attempt.html:31 templates/reports/session.html:72
+#: templates/reports/session.html:85
 msgid "Score"
 msgstr "Бали"
 
@@ -908,10 +1260,6 @@ msgstr "Відповідь"
 #: apps/reports/data.py:94 templates/reports/attempt.html:59
 msgid "No answer"
 msgstr "Немає відповіді"
-
-#: templates/reports/attempt.html:63
-msgid "Accepted answers"
-msgstr "Допустимі відповіді"
 
 #: templates/reports/attempt.html:66
 msgid "Rubric"
@@ -968,11 +1316,8 @@ msgid "Start reviewing"
 msgstr "Почати перевірку"
 
 #: templates/reports/session.html:34
-msgid ""
-"Grading is disabled for this test: answers are collected but not scored."
-msgstr ""
-"Для цього тесту оцінювання вимкнено: відповіді збираються, але не "
-"оцінюються."
+msgid "Grading is disabled for this test: answers are collected but not scored."
+msgstr "Для цього тесту оцінювання вимкнено: відповіді збираються, але не оцінюються."
 
 #: templates/reports/session.html:39
 msgid "Score distribution"
@@ -986,8 +1331,7 @@ msgstr "Показати"
 msgid "Apply"
 msgstr "Застосувати"
 
-#: apps/reports/views.py:179 templates/reports/session.html:69
-#: templates/reports/session.html:82
+#: apps/reports/views.py:179 templates/reports/session.html:69 templates/reports/session.html:82
 msgid "Started"
 msgstr "Розпочато"
 
@@ -1004,8 +1348,8 @@ msgstr "потребує перевірки"
 msgid "No attempts yet."
 msgstr "Спроб ще немає."
 
-#: apps/delivery/taker_views.py:359 apps/reports/data.py:90
-#: templates/reports/session.html:106 templates/reports/session.html:115
+#: apps/delivery/taker_views.py:359 apps/reports/data.py:90 templates/reports/session.html:106
+#: templates/reports/session.html:115
 msgid "Correct"
 msgstr "Правильно"
 

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Test settings" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <div class="page-head">
+    <h1>{% trans "Test settings" %}</h1>
+    <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Back to the test" %}</a>
+  </div>
+  <form method="post" class="stack" novalidate>
+    {% csrf_token %}
+    {% if errors %}
+    <div class="alert alert-bad" role="alert">
+      <ul class="issue-list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="id_title">{% trans "Title" %}</label>
+      <input type="text" id="id_title" name="title" value="{{ form.title }}" maxlength="200" required>
+    </div>
+    <div class="field">
+      <label for="id_description">{% trans "Description" %}</label>
+      <textarea id="id_description" name="description" class="short-text">{{ form.description }}</textarea>
+    </div>
+    <div class="field">
+      <label for="id_language">{% trans "Language of the test" %}</label>
+      <select id="id_language" name="language">
+        {% for code, name in languages %}
+        <option value="{{ code }}"{% if code == form.language %} selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <fieldset class="stack-sm">
+      <legend>{% trans "Taking the test" %}</legend>
+      <div class="field">
+        <label for="id_time_limit">{% trans "Time limit in minutes" %}</label>
+        <input type="number" id="id_time_limit" name="time_limit_minutes" value="{{ form.time_limit_minutes }}" min="1" inputmode="numeric">
+        <span class="help">{% trans "Leave empty for no time limit." %}</span>
+      </div>
+      <div class="field">
+        <label for="id_max_attempts">{% trans "Attempts per student" %}</label>
+        <input type="number" id="id_max_attempts" name="max_attempts" value="{{ form.max_attempts }}" min="1" inputmode="numeric">
+      </div>
+      <label class="choice"><input type="checkbox" name="shuffle_questions"{% if form.shuffle_questions %} checked{% endif %}> {% trans "Shuffle the questions" %}</label>
+      <label class="choice"><input type="checkbox" name="shuffle_options"{% if form.shuffle_options %} checked{% endif %}> {% trans "Shuffle the answer options" %}</label>
+      <label class="choice"><input type="checkbox" name="one_question_per_page"{% if form.one_question_per_page %} checked{% endif %}> {% trans "One question per page" %}</label>
+      <div class="field">
+        <label for="id_show_result">{% trans "What the student sees at the end" %}</label>
+        <select id="id_show_result" name="show_result">
+          {% for value in show_results %}
+          <option value="{{ value }}"{% if value == form.show_result %} selected{% endif %}>{% if value == "none" %}{% trans "Nothing, only that it was submitted" %}{% elif value == "score" %}{% trans "Score and grade" %}{% else %}{% trans "Score, grade and correct answers" %}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset class="stack-sm">
+      <legend>{% trans "Grading" %}</legend>
+      <label class="choice"><input type="checkbox" name="grading_enabled"{% if form.grading_enabled %} checked{% endif %}> {% trans "Give a grade" %}</label>
+      <div class="field">
+        <label for="id_scale">{% trans "Grade scale" %}</label>
+        <select id="id_scale" name="scale">
+          {% for value in scales %}
+          <option value="{{ value }}"{% if value == form.scale %} selected{% endif %}>{% if value == "percent" %}{% trans "Percent" %}{% elif value == "points" %}{% trans "Points" %}{% elif value == "pass_fail" %}{% trans "Pass / fail" %}{% elif value == "ua_12" %}{% trans "12-point scale" %}{% elif value == "five_point" %}{% trans "5-point scale" %}{% else %}{% trans "Custom (set in the JSON)" %}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="id_pass_percent">{% trans "Pass mark, percent" %}</label>
+        <input type="number" id="id_pass_percent" name="pass_percent" value="{{ form.pass_percent }}" min="0" max="100" step="any" inputmode="decimal">
+      </div>
+    </fieldset>
+
+    <fieldset class="stack-sm">
+      <legend>{% trans "What the student fills in before starting" %}</legend>
+      <p class="muted">{% trans "Clear the label to remove a field." %}</p>
+      {% for row in form.taker_fields %}
+      <div class="option-row">
+        <input type="hidden" name="tf_key" value="{{ row.key }}">
+        <input type="text" name="tf_label" value="{{ row.label }}" maxlength="100" aria-label="{% blocktrans with n=forloop.counter %}Field {{ n }}: label{% endblocktrans %}">
+        <label class="inline-check"><input type="checkbox" name="tf_required" value="{{ forloop.counter0 }}"{% if row.required %} checked{% endif %}> {% trans "Required" %}</label>
+      </div>
+      {% endfor %}
+      <button class="btn" type="submit" name="action" value="add_field" formnovalidate>{% trans "Add a field" %}</button>
+    </fieldset>
+
+    <div class="sticky-bar">
+      <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+      <button class="btn btn-primary" type="submit" name="action" value="save">{% trans "Save settings" %}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -6,7 +6,10 @@
 <div class="stack">
   <div class="page-head">
     <h1>{% trans "Tests" %}</h1>
-    <a class="btn btn-primary" href="{% url 'assessments:import' %}">{% trans "Import a test" %}</a>
+    <div class="row">
+      <a class="btn btn-primary" href="{% url 'assessments:create' %}">{% trans "New test" %}</a>
+      <a class="btn" href="{% url 'assessments:import' %}">{% trans "Import a test" %}</a>
+    </div>
   </div>
 
   {% for project, tests in rows %}

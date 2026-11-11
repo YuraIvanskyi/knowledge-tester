@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% if is_new %}{% trans "New question" %}{% else %}{% trans "Edit question" %}{% endif %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <div class="page-head">
+    <div>
+      <h1>{% if is_new %}{% trans "New question" %}{% else %}{% trans "Edit question" %}{% endif %} {{ number }}</h1>
+      <p class="muted">{{ type_label }} &middot; {{ assessment.title }}</p>
+    </div>
+    <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Back to the test" %}</a>
+  </div>
+  <form method="post" class="stack" novalidate>
+    {% csrf_token %}
+    {% if errors %}
+    <div class="alert alert-bad" role="alert">
+      <ul class="issue-list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="id_text">{% trans "Question text" %}</label>
+      <textarea id="id_text" name="text" required>{{ form.text }}</textarea>
+    </div>
+
+    {% if is_choice %}
+    <fieldset class="stack-sm">
+      <legend>{% trans "Answer options" %}</legend>
+      <p class="muted">
+        {% if type == "single_choice" %}{% trans "Mark the one correct option." %}
+        {% elif type == "multiple_choice" %}{% trans "Mark every correct option." %}
+        {% else %}{% trans "Mark the correct options. Students must choose exactly the number set below." %}{% endif %}
+        {% trans "Clear the text of an option to remove it." %}
+      </p>
+      {% for option in form.options %}
+      <div class="option-row">
+        <input type="hidden" name="opt_id" value="{{ option.id }}">
+        <input type="hidden" name="opt_weight" value="{{ option.weight }}">
+        {% if type == "single_choice" %}
+        <input type="radio" name="opt_correct" value="{{ forloop.counter0 }}"{% if option.correct %} checked{% endif %} aria-label="{% blocktrans with n=forloop.counter %}Option {{ n }} is correct{% endblocktrans %}">
+        {% else %}
+        <input type="checkbox" name="opt_correct" value="{{ forloop.counter0 }}"{% if option.correct %} checked{% endif %} aria-label="{% blocktrans with n=forloop.counter %}Option {{ n }} is correct{% endblocktrans %}">
+        {% endif %}
+        <input type="text" name="opt_text" value="{{ option.text }}" maxlength="1000" aria-label="{% blocktrans with n=forloop.counter %}Option {{ n }} text{% endblocktrans %}">
+      </div>
+      {% endfor %}
+      <button class="btn" type="submit" name="action" value="add_option" formnovalidate>{% trans "Add an option" %}</button>
+    </fieldset>
+    {% endif %}
+
+    {% if type == "short_answer" %}
+    <div class="field">
+      <label for="id_accept">{% trans "Accepted answers" %}</label>
+      <textarea id="id_accept" name="accept" class="short-text">{{ form.accept_text }}</textarea>
+      <span class="help">{% trans "One accepted answer per line." %}</span>
+    </div>
+    <div class="field">
+      <label for="id_mode">{% trans "Answer is" %}</label>
+      <select id="id_mode" name="mode">
+        <option value="text"{% if form.mode == "text" %} selected{% endif %}>{% trans "Text" %}</option>
+        <option value="numeric"{% if form.mode == "numeric" %} selected{% endif %}>{% trans "A number" %}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="id_tolerance">{% trans "Tolerance (numbers only)" %}</label>
+      <input type="text" id="id_tolerance" name="tolerance" value="{{ form.tolerance }}" inputmode="decimal">
+      <span class="help">{% trans "How far a number may be from an accepted answer and still count. Empty means exact." %}</span>
+    </div>
+    <label class="choice"><input type="checkbox" name="case_sensitive"{% if form.case_sensitive %} checked{% endif %}> {% trans "Capital letters matter" %}</label>
+    <label class="choice"><input type="checkbox" name="review_unmatched"{% if form.review_unmatched %} checked{% endif %}> {% trans "Send answers that do not match to me for review" %}</label>
+    {% endif %}
+
+    {% if type == "open" %}
+    <div class="field">
+      <label for="id_rubric">{% trans "Grading notes" %}</label>
+      <textarea id="id_rubric" name="rubric" class="short-text">{{ form.rubric }}</textarea>
+      <span class="help">{% trans "Shown to you while grading, never to students." %}</span>
+    </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="id_points">{% trans "Points" %}</label>
+      <input type="text" id="id_points" name="points" value="{{ form.points }}" inputmode="decimal" required>
+    </div>
+
+    {% if type == "multiple_choice" %}
+    <div class="field">
+      <label for="id_scoring">{% trans "Scoring" %}</label>
+      <select id="id_scoring" name="scoring">
+        <option value="partial"{% if form.scoring == "partial" %} selected{% endif %}>{% trans "Partial credit" %}</option>
+        <option value="all_or_nothing"{% if form.scoring == "all_or_nothing" %} selected{% endif %}>{% trans "All or nothing" %}</option>
+        <option value="per_option"{% if form.scoring == "per_option" %} selected{% endif %}>{% trans "Per option" %}</option>
+      </select>
+    </div>
+    {% elif type == "choose_n" %}
+    <div class="field">
+      <label for="id_n">{% trans "Number of answers to choose" %}</label>
+      <input type="number" id="id_n" name="n" value="{{ form.n }}" min="1" inputmode="numeric">
+    </div>
+    {% elif type == "single_choice" %}
+    <div class="field">
+      <label for="id_penalty">{% trans "Penalty for a wrong answer (0 to 1)" %}</label>
+      <input type="text" id="id_penalty" name="penalty" value="{{ form.penalty }}" inputmode="decimal">
+      <span class="help">{% trans "A fraction of the points taken off. Empty means no penalty." %}</span>
+    </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="id_hint">{% trans "Hint for the student (optional)" %}</label>
+      <input type="text" id="id_hint" name="hint" value="{{ form.hint }}">
+    </div>
+    <label class="choice"><input type="checkbox" name="required"{% if form.required %} checked{% endif %}> {% trans "The student must answer this question" %}</label>
+
+    <div class="sticky-bar">
+      <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+      <div class="row">
+        {% if is_new %}<button class="btn" type="submit" name="action" value="save_add">{% trans "Save and add another" %}</button>{% endif %}
+        <button class="btn btn-primary" type="submit" name="action" value="save">{% trans "Save question" %}</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

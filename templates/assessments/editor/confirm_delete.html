@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Delete question" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Delete this question?" %}</h1>
+  <p><strong>{{ number }}.</strong> {{ question.text }}</p>
+  <p class="muted">{% trans "Published revisions and finished sessions are not affected. The question is removed from the draft only." %}</p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% trans "Delete question" %}</button>
+    <a class="btn" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

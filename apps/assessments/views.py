@@ -35,14 +35,14 @@ def _owned_assessment(request, pk):
 def _question_rows(document: dict) -> list[dict]:
     rows = []
     for number, q in enumerate(document.get("test", {}).get("questions", []), start=1):
-        text = q["text"]
+        text = q.get("text", "")
         rows.append(
             {
                 "number": number,
                 "id": q["id"],
                 "type": q["type"],
                 "type_label": TYPE_LABELS.get(q["type"], q["type"]),
-                "points": q["points"],
+                "points": q.get("points", 1),
                 "text": text if len(text) <= 120 else text[:117] + "...",
             }
         )
@@ -140,7 +140,8 @@ def detail(request, pk):
         "assessment": assessment,
         "report": result.report,
         "valid": result.ok,
-        "questions": _question_rows(result.document) if result.ok else [],
+        "questions": _question_rows(assessment.document),
+        "question_types": list(TYPE_LABELS.items()),
         "summary": _summary(result.document) if result.ok else None,
         "revisions": assessment.revisions.all(),
     }
