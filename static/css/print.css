@@ -1,0 +1,95 @@
+/* Print stylesheet (loaded with media="print"): a lean A4 sheet straight from the browser. */
+
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
+:root {
+  --bg: #fff;
+  --surface: #fff;
+  --text: #000;
+  --muted: #333;
+  --border: #888;
+  --accent: #000;
+  --ok: #000;
+  --warn: #000;
+  --bad: #000;
+}
+
+html,
+body {
+  background: #fff;
+  color: #000;
+  font-size: 10pt;
+  line-height: 1.35;
+  min-height: 0;
+}
+
+.topbar,
+.skip-link,
+.messages,
+.no-print,
+.btn,
+button,
+form,
+nav {
+  display: none !important;
+}
+
+.container {
+  max-width: none;
+  padding: 0;
+}
+
+h1 {
+  font-size: 14pt;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+.sheet-head {
+  break-after: avoid;
+}
+.result {
+  font-size: 11pt;
+}
+.stats,
+.taker {
+  display: flex;
+  flex-wrap: wrap;
+}
+.stats > div {
+  border: 0;
+  padding: 0 4mm 0 0;
+}
+
+.q {
+  break-inside: avoid;
+  padding: 2.5mm 0;
+}
+.q-points {
+  font-weight: 700;
+}
+/* Markers must not rely on colour on paper: the label text is always printed */
+.status-ok,
+.status-warn,
+.status-bad {
+  color: #000;
+}
+
+.table {
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  padding: 1mm 2mm;
+  border: 1px solid #888;
+}
+
+progress {
+  accent-color: #000;
+}

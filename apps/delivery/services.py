@@ -1,0 +1,254 @@
+"""Delivery logic that is independent of HTTP: codes, shuffling, answers, finalising."""
+
+from __future__ import annotations
+
+import logging
+import random
+import secrets
+from datetime import timedelta
+
+from django.db import IntegrityError, transaction
+from django.utils import timezone
+
+from .models import CODE_ALPHABET, CODE_LENGTH, Answer, Attempt, Sitting
+
+logger = logging.getLogger(__name__)
+
+CHOICE_TYPES = ("single_choice", "multiple_choice", "choose_n")
+TEXT_TYPES = ("short_answer", "open")
+# A submit that arrives slightly after the deadline (network latency, client clock) still counts.
+SUBMIT_GRACE = timedelta(seconds=20)
+MAX_TEXT_LENGTH = 10_000
+
+
+# --- session codes -----------------------------------------------------------------------------
+
+
+def normalize_code(raw: str) -> str:
+    return "".join((raw or "").split()).upper()
+
+
+def generate_code() -> str:
+    return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
+
+
+def create_sitting(*, revision, user, title: str, access_code: str = "") -> Sitting:
+    """Create a sitting with a unique code (retries on the rare collision)."""
+    for _ in range(20):
+        try:
+            with transaction.atomic():
+                return Sitting.objects.create(
+                    revision=revision,
+                    code=generate_code(),
+                    title=title,
+                    access_code=access_code,
+                    created_by=user,
+                )
+        except IntegrityError:
+            continue
+    raise RuntimeError("Could not generate a unique session code")
+
+
+def can_manage(user, sitting: Sitting) -> bool:
+    return user.is_authenticated and (user.is_admin_role or sitting.created_by_id == user.pk)
+
+
+# --- test document helpers ---------------------------------------------------------------------
+
+
+def question_map(test: dict) -> dict[str, dict]:
+    return {q["id"]: q for q in test.get("questions", [])}
+
+
+def time_limit_minutes(test: dict) -> int | None:
+    return (test.get("settings") or {}).get("time_limit_minutes") or None
+
+
+def taker_fields(test: dict) -> list[dict]:
+    fields = test.get("taker_fields")
+    if fields is None:
+        fields = [{"key": "name", "label": "Full name", "required": True}]
+    return fields
+
+
+def normalize_name(value: str) -> str:
+    return " ".join((value or "").split()).casefold()
+
+
+def taker_display(attempt: Attempt, fields: list[dict]) -> str:
+    """A short label for a taker in tables: the name, else the first filled field."""
+    values = attempt.taker or {}
+    if values.get("name"):
+        return values["name"]
+    for field in fields:
+        if values.get(field["key"]):
+            return values[field["key"]]
+    return "-"
+
+
+def shuffled_orders(test: dict, seed: str) -> tuple[list[str], dict[str, list[str]]]:
+    """Question order and per-question option order, generated once per attempt (seeded)."""
+    rng = random.Random(seed)
+    settings = test.get("settings") or {}
+    questions = test.get("questions", [])
+    order = [q["id"] for q in questions]
+    if settings.get("shuffle_questions"):
+        rng.shuffle(order)
+    option_orders: dict[str, list[str]] = {}
+    for q in questions:
+        if q["type"] in CHOICE_TYPES:
+            ids = [o["id"] for o in q.get("options", [])]
+            if settings.get("shuffle_options"):
+                rng.shuffle(ids)
+            option_orders[q["id"]] = ids
+    return order, option_orders
+
+
+def start_attempt(sitting: Sitting, taker: dict) -> Attempt:
+    test = sitting.revision.test
+    attempt = Attempt(sitting=sitting, taker=taker)
+    attempt.question_order, attempt.option_orders = shuffled_orders(test, str(attempt.token))
+    attempt.save()
+    minutes = time_limit_minutes(test)
+    if minutes:
+        attempt.deadline_at = attempt.started_at + timedelta(minutes=minutes)
+        attempt.save(update_fields=["deadline_at"])
+    return attempt
+
+
+def attempts_used(sitting: Sitting, name: str) -> int:
+    """Attempts already made in this session by the same normalised name (soft limit)."""
+    key = normalize_name(name)
+    if not key:
+        return 0
+    rows = sitting.attempts.exclude(status=Attempt.Status.VOIDED).values_list("taker", flat=True)
+    return sum(1 for taker in rows if normalize_name((taker or {}).get("name", "")) == key)
+
+
+# --- answers -----------------------------------------------------------------------------------
+
+
+def clean_value(question: dict, raw):
+    """Coerce a posted value to the stored shape; None means 'no answer'."""
+    if question["type"] in CHOICE_TYPES:
+        if isinstance(raw, str):
+            raw = [raw]
+        valid = {o["id"] for o in question.get("options", [])}
+        picked = [v for v in (raw or []) if isinstance(v, str) and v in valid]
+        picked = list(dict.fromkeys(picked))
+        if question["type"] == "single_choice":
+            picked = picked[:1]
+        elif question["type"] == "choose_n" and isinstance(question.get("n"), int):
+            picked = picked[: question["n"]]  # server-side cap: never trust the client
+        return picked or None
+    if isinstance(raw, list):
+        raw = raw[0] if raw else ""
+    text = str(raw or "").strip()[:MAX_TEXT_LENGTH]
+    return text or None
+
+
+def save_answers(attempt: Attempt, test: dict, values: dict[str, object]) -> None:
+    """Upsert answers for the given question ids; an empty value removes the row."""
+    questions = question_map(test)
+    for qid, raw in values.items():
+        question = questions.get(qid)
+        if question is None:
+            continue
+        value = clean_value(question, raw)
+        if value is None:
+            Answer.objects.filter(attempt=attempt, question_key=qid).delete()
+        else:
+            Answer.objects.update_or_create(
+                attempt=attempt, question_key=qid, defaults={"value": value}
+            )
+
+
+def answered_ids(attempt: Attempt) -> set[str]:
+    return set(attempt.answers.exclude(value__isnull=True).values_list("question_key", flat=True))
+
+
+# --- finalising --------------------------------------------------------------------------------
+
+
+def grade(attempt: Attempt) -> None:
+    """Call the grading service (late import: it is owned by another workstream)."""
+    from apps.grading.service import grade_attempt
+
+    try:
+        grade_attempt(attempt)
+    except Exception:
+        logger.exception("Grading failed for attempt %s", attempt.pk)
+
+
+def finalize(attempt: Attempt, status: str = Attempt.Status.SUBMITTED) -> bool:
+    """Finish an in-progress attempt exactly once and grade it. Returns True if it changed."""
+    now = timezone.now()
+    changed = Attempt.objects.filter(pk=attempt.pk, status=Attempt.Status.IN_PROGRESS).update(
+        status=status, submitted_at=now
+    )
+    attempt.refresh_from_db()
+    if changed:
+        grade(attempt)
+        attempt.refresh_from_db()
+    return bool(changed)
+
+
+def is_past_deadline(attempt: Attempt, grace: timedelta = timedelta(0)) -> bool:
+    return bool(attempt.deadline_at and timezone.now() > attempt.deadline_at + grace)
+
+
+def enforce_deadline(attempt: Attempt) -> bool:
+    """Auto-submit an overdue attempt. Returns True when the attempt is finished."""
+    if attempt.status == Attempt.Status.IN_PROGRESS and is_past_deadline(attempt):
+        finalize(attempt, Attempt.Status.AUTO_SUBMITTED)
+    return attempt.is_finished
+
+
+def close_sitting(sitting: Sitting) -> int:
+    """Close a session and finalise all of its in-progress attempts. Returns how many."""
+    if sitting.status != Sitting.Status.CLOSED:
+        sitting.status = Sitting.Status.CLOSED
+        sitting.closed_at = timezone.now()
+        sitting.save(update_fields=["status", "closed_at"])
+    count = 0
+    for attempt in sitting.attempts.filter(status=Attempt.Status.IN_PROGRESS):
+        if finalize(attempt, Attempt.Status.AUTO_SUBMITTED):
+            count += 1
+    return count
+
+
+# --- teacher live stats ------------------------------------------------------------------------
+
+
+def session_stats(sitting: Sitting) -> dict:
+    from django.db.models import Count, Q
+
+    test = sitting.revision.test
+    fields = taker_fields(test)
+    total = len(test.get("questions", []))
+    attempts = sitting.attempts.exclude(status=Attempt.Status.VOIDED).annotate(
+        answered=Count("answers", filter=Q(answers__value__isnull=False))
+    )
+    takers = []
+    in_progress = submitted = 0
+    for attempt in attempts:
+        if attempt.status == Attempt.Status.IN_PROGRESS:
+            in_progress += 1
+        else:
+            submitted += 1
+        takers.append(
+            {
+                "name": taker_display(attempt, fields),
+                "status": attempt.status,
+                "status_label": str(attempt.get_status_display()),
+                "answered": attempt.answered,
+            }
+        )
+    return {
+        "joined": len(takers),
+        "in_progress": in_progress,
+        "submitted": submitted,
+        "total_questions": total,
+        "status": sitting.status,
+        "takers": takers,
+    }

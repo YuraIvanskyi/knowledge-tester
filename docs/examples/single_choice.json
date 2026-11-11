@@ -1,0 +1,27 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Single choice example",
+    "questions": [
+      {
+        "type": "single_choice",
+        "text": "Which planet is closest to the Sun?",
+        "points": 1,
+        "penalty": 0.25,
+        "options": [
+          {
+            "text": "Mercury",
+            "correct": true
+          },
+          {
+            "text": "Venus"
+          },
+          {
+            "text": "Earth"
+          }
+        ]
+      }
+    ]
+  }
+}

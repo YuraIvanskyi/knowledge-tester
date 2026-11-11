@@ -1,0 +1,101 @@
+// Debounced autosave of changed answers, answered counter, and choose_n selection cap.
+// The form works without this file: submit posts every answer.
+(function () {
+  "use strict";
+  var form = document.getElementById("take-form");
+  if (!form || !window.fetch) return;
+  var url = form.getAttribute("data-save-url");
+  var token = form.querySelector("input[name=csrfmiddlewaretoken]");
+  var counter = document.getElementById("answered-count");
+  var pending = {};
+  var timer = null;
+  var DELAY = 800;
+
+  function questionId(name) {
+    return name.indexOf("q_") === 0 ? name.slice(2) : null;
+  }
+
+  function currentValue(name, isChoice) {
+    var fields = form.querySelectorAll('[name="' + name + '"]');
+    if (isChoice) {
+      var picked = [];
+      fields.forEach(function (f) {
+        if (f.checked) picked.push(f.value);
+      });
+      return picked;
+    }
+    return fields.length ? fields[0].value : "";
+  }
+
+  function updateCount() {
+    if (!counter) return;
+    var done = 0;
+    form.querySelectorAll("fieldset.question").forEach(function (fs) {
+      var inputs = fs.querySelectorAll("input, textarea");
+      for (var i = 0; i < inputs.length; i++) {
+        var f = inputs[i];
+        var isBox = f.type === "radio" || f.type === "checkbox";
+        if (isBox ? f.checked : f.value.trim() !== "") {
+          done++;
+          break;
+        }
+      }
+    });
+    counter.textContent = String(done);
+  }
+
+  function flush() {
+    timer = null;
+    var batch = pending;
+    pending = {};
+    if (!Object.keys(batch).length) return;
+    fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": token ? token.value : "",
+      },
+      body: JSON.stringify({ answers: batch }),
+    })
+      .then(function (r) {
+        if (r.status === 409) {
+          return r.json().then(function (d) {
+            window.location.href = d.url;
+          });
+        }
+      })
+      .catch(function () {
+        // Network hiccup: keep the values and retry shortly.
+        Object.keys(batch).forEach(function (k) {
+          if (!(k in pending)) pending[k] = batch[k];
+        });
+        timer = setTimeout(flush, 5000);
+      });
+  }
+
+  function onChange(ev) {
+    var t = ev.target;
+    var qid = t.name ? questionId(t.name) : null;
+    if (!qid) return;
+    if (t.type === "checkbox" && t.hasAttribute("data-max") && t.checked) {
+      var max = parseInt(t.getAttribute("data-max"), 10);
+      var count = form.querySelectorAll('[name="' + t.name + '"]:checked').length;
+      if (count > max) {
+        t.checked = false;
+        return;
+      }
+    }
+    var isChoice = t.type === "radio" || t.type === "checkbox";
+    pending[qid] = currentValue(t.name, isChoice);
+    updateCount();
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(flush, DELAY);
+  }
+
+  form.addEventListener("change", onChange);
+  form.addEventListener("input", function (ev) {
+    if (ev.target.type === "text" || ev.target.tagName === "TEXTAREA") onChange(ev);
+  });
+  window.addEventListener("online", flush);
+})();

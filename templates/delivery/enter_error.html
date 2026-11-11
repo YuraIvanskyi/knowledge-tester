@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Enter session code" %}</h1>
+  <p class="alert alert-bad" role="alert">{% blocktrans %}No open session has the code "{{ entered }}". Check the code and try again.{% endblocktrans %}</p>
+  <form method="post" action="{% url 'taker:enter' %}" class="stack">
+    {% csrf_token %}
+    <div class="field">
+      <label for="code" class="visually-hidden">{% trans "Session code" %}</label>
+      <input type="text" id="code" name="code" class="enter-code" maxlength="12" required autofocus
+             autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+             value="{{ entered }}" placeholder="K7QX2M">
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Join" %}</button>
+  </form>
+</div>
+{% endblock %}

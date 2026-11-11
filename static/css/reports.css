@@ -1,0 +1,134 @@
+/* Results pages (screen). Uses the tokens from base.css. */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.stats > div {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.stats dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.stats dd {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Score distribution: server-rendered <progress> bars, no inline styles */
+
+.dist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dist li {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.dist-count {
+  text-align: right;
+}
+.bar {
+  width: 100%;
+  height: 0.9rem;
+  accent-color: var(--accent);
+}
+
+/* Attempt sheet */
+
+.sheet-head h1 {
+  margin-bottom: 0;
+}
+.taker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+}
+.taker dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.taker dd {
+  margin: 0;
+  font-weight: 600;
+}
+.result {
+  font-size: var(--fs-lg);
+  margin: 0;
+}
+
+.questions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.q {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+}
+.q-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+.q-text {
+  flex: 1 1 18rem;
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.q-points {
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.q-body {
+  margin-top: var(--space-2);
+}
+.q-label {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.plain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.answer-text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.review {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+}
+.review-fields {
+  align-items: flex-end;
+}
+.review-fields .field {
+  margin-bottom: 0;
+}
+.review-fields input[type="number"] {
+  width: 8rem;
+}
+.review-fields .grow {
+  min-width: 12rem;
+}

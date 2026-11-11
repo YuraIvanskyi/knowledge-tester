@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ assessment.title }} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <div>
+      <h1>{{ assessment.title }}</h1>
+      <p class="muted">
+        {{ assessment.project.title }} &middot; {{ assessment.get_status_display }}{% if assessment.has_unpublished_changes and assessment.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}
+      </p>
+    </div>
+    <a href="{% url 'assessments:list' %}">{% trans "Back to tests" %}</a>
+  </div>
+
+  {% if assessment.description %}<p>{{ assessment.description }}</p>{% endif %}
+
+  {% if not valid %}
+  <p class="alert alert-bad"><strong class="status-bad">{% trans "This test has errors and cannot be published." %}</strong></p>
+  {% endif %}
+
+  {% if report.errors or report.warnings %}
+  <ul class="issue-list">
+    {% for issue in report.errors %}
+    <li><strong class="status-bad">{% trans "Error" %}</strong> <span class="issue-path">{{ issue.path }}</span>: {{ issue.message }}</li>
+    {% endfor %}
+    {% for issue in report.warnings %}
+    <li><strong class="status-warn">{% trans "Warning" %}</strong> <span class="issue-path">{{ issue.path }}</span>: {{ issue.message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="row">
+    <form method="post" action="{% url 'assessments:publish' assessment.pk %}">
+      {% csrf_token %}
+      <button class="btn btn-primary" type="submit"{% if not valid %} disabled{% endif %}>{% trans "Publish" %}</button>
+    </form>
+    <a class="btn" href="{% url 'assessments:export' assessment.pk %}">{% trans "Export JSON" %}</a>
+  </div>
+
+  {% if summary %}
+  <section class="stack-sm">
+    <h2>{% trans "Questions" %}</h2>
+    <p class="muted">
+      {% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
+      {{ summary.points }} {% trans "points" %}
+      {% if summary.settings.time_limit_minutes %}&middot; {{ summary.settings.time_limit_minutes }} {% trans "min" %}{% endif %}
+    </p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>{% trans "Question" %}</th>
+          <th>{% trans "Type" %}</th>
+          <th class="num">{% trans "Points" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for q in questions %}
+        <tr>
+          <td data-label="#" class="num">{{ q.number }}</td>
+          <td data-label="{% trans 'Question' %}">{{ q.text }}</td>
+          <td data-label="{% trans 'Type' %}">{{ q.type_label }}</td>
+          <td data-label="{% trans 'Points' %}" class="num">{{ q.points }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <section class="stack-sm">
+    <h2>{% trans "Revisions" %}</h2>
+    {% if revisions %}
+    <table class="table">
+      <thead>
+        <tr><th class="num">#</th><th>{% trans "Published" %}</th><th></th></tr>
+      </thead>
+      <tbody>
+      {% for revision in revisions %}
+        <tr>
+          <td data-label="#" class="num">{{ revision.number }}</td>
+          <td data-label="{% trans 'Published' %}">{{ revision.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+          <td><a class="btn" href="{% url 'delivery:create' revision.pk %}">{% trans "Open session" %}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">{% trans "Not published yet. Publish the test to open a session for it." %}</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

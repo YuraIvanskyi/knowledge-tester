@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ sitting.title|default:test.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="taker stack" lang="{{ test.language|default:'en' }}">
+  <h1>{{ sitting.title|default:test.title }}</h1>
+  {% if test.description %}<p>{{ test.description }}</p>{% endif %}
+  <ul class="facts">
+    <li>{% blocktrans count n=question_count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</li>
+    <li>{% if time_limit %}{% blocktrans %}Time limit: {{ time_limit }} min{% endblocktrans %}{% else %}{% trans "No time limit" %}{% endif %}</li>
+  </ul>
+
+  {% if closed %}
+    <p class="alert alert-warn" role="status">{% trans "This session is closed. It no longer accepts answers." %}</p>
+  {% else %}
+    {% if previous %}<p class="alert alert-warn">{% trans "You have already submitted this test once. You can take it again below." %}</p>{% endif %}
+    {% if errors %}
+      <div class="alert alert-bad" role="alert">
+        <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+    <form method="post" action="{% url 'taker:session' sitting.code %}" class="stack">
+      {% csrf_token %}
+      {% for f in fields %}
+        <div class="field">
+          <label for="tf_{{ f.key }}">{{ f.label }}{% if not f.required %} <span class="muted">({% trans "optional" %})</span>{% endif %}</label>
+          <input type="text" id="tf_{{ f.key }}" name="tf_{{ f.key }}" maxlength="200" autocomplete="off"
+                 {% if f.required %}required{% endif %} value="{{ f.value }}">
+        </div>
+      {% endfor %}
+      {% if sitting.access_code %}
+        <div class="field">
+          <label for="access_code">{% trans "Access code" %}</label>
+          <input type="text" id="access_code" name="access_code" maxlength="32" required autocomplete="off">
+          <span class="help">{% trans "Ask your teacher for the access code." %}</span>
+        </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary btn-block">{% trans "Start" %}</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

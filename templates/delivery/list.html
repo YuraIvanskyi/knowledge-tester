@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Sessions" %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{% trans "Sessions" %}</h1>
+</div>
+{% if sittings %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Title" %}</th>
+        <th scope="col">{% trans "Test" %}</th>
+        <th scope="col">{% trans "Code" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col" class="num">{% trans "Attempts" %}</th>
+        <th scope="col">{% trans "Links" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sittings %}
+        <tr>
+          <td data-label="{% trans 'Title' %}"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.code }}</a></td>
+          <td data-label="{% trans 'Test' %}">{{ s.revision.assessment.title }} <span class="muted">({% trans "rev." %} {{ s.revision.number }})</span></td>
+          <td data-label="{% trans 'Code' %}" class="mono">{{ s.code }}</td>
+          <td data-label="{% trans 'Status' %}">{% if s.status == "open" %}<span class="status-ok">{% trans "Open" %}</span>{% else %}<span class="muted">{% trans "Closed" %}</span>{% endif %}</td>
+          <td data-label="{% trans 'Attempts' %}" class="num">{{ s.attempt_count }}</td>
+          <td><a href="{% url 'delivery:share' s.pk %}">{% trans "Share" %}</a> &middot; <a href="{% url 'reports:session' s.pk %}">{% trans "Results" %}</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">
+    <p>{% trans "No sessions yet. Open a session from a published test." %}</p>
+    <a class="btn btn-primary" href="{% url 'assessments:list' %}">{% trans "Go to tests" %}</a>
+  </div>
+{% endif %}
+{% endblock %}

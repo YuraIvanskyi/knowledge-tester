@@ -1,0 +1,22 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Capitals",
+    "questions": [
+      {
+        "type": "single_choice",
+        "text": "What is the capital of Ukraine?",
+        "options": [
+          {
+            "text": "Kyiv",
+            "correct": true
+          },
+          {
+            "text": "Lviv"
+          }
+        ]
+      }
+    ]
+  }
+}

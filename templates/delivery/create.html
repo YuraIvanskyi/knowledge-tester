@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Open a session" %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Open a session" %}</h1>
+  <p>{{ test.title }} <span class="muted">({% trans "revision" %} {{ revision.number }})</span></p>
+  <ul class="facts">
+    <li>{% blocktrans count n=question_count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</li>
+    <li>{% if time_limit %}{% blocktrans %}Time limit: {{ time_limit }} min{% endblocktrans %}{% else %}{% trans "No time limit" %}{% endif %}</li>
+  </ul>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="field">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
+        {{ field.errors }}
+      </div>
+    {% endfor %}
+    <div class="row">
+      <button type="submit" class="btn btn-primary">{% trans "Open session" %}</button>
+      <a class="btn" href="{% url 'assessments:detail' revision.assessment_id %}">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

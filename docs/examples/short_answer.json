@@ -1,0 +1,20 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Short answer example",
+    "questions": [
+      {
+        "type": "short_answer",
+        "text": "Name the capital of France.",
+        "points": 1,
+        "mode": "text",
+        "accept": [
+          "Paris"
+        ],
+        "case_sensitive": false,
+        "review_unmatched": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,131 @@
+/* Delivery: taker flow and the teacher share screen. Uses tokens from base.css. */
+
+[hidden] {
+  display: none !important;
+}
+
+.taker {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+.facts {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--muted);
+}
+
+/* Questions */
+.question {
+  background: var(--surface);
+  margin: 0 0 var(--space-4);
+  min-width: 0;
+}
+.question legend {
+  padding: 0 var(--space-2);
+  font-size: var(--fs-lg);
+  overflow-wrap: anywhere;
+}
+.qnum {
+  color: var(--muted);
+}
+.req {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+}
+.hint {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+}
+.choice span {
+  overflow-wrap: anywhere;
+}
+
+#take-form .questions {
+  padding-bottom: var(--space-4);
+}
+.taker .sticky-bar {
+  margin: 0 calc(-1 * var(--space-4));
+}
+.timer,
+.progress {
+  font-variant-numeric: tabular-nums;
+}
+
+.score .big-code {
+  letter-spacing: 0.02em;
+}
+.review-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+.review-item h3 {
+  font-size: var(--fs-base);
+}
+.review-item p {
+  margin-bottom: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+/* Share screen */
+.presentation {
+  display: grid;
+  gap: var(--space-4);
+  align-items: center;
+}
+.qr {
+  width: min(100%, 60vmin);
+  max-width: 34rem;
+  background: #ffffff;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.big-url {
+  font-size: clamp(1.25rem, 5vw, 2.25rem);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+.join-info p {
+  margin: 0;
+}
+@media (min-width: 900px) {
+  .presentation {
+    grid-template-columns: auto 1fr;
+    gap: var(--space-5);
+  }
+}
+
+.counters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+}
+.counters div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+.counters dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.counters dd {
+  margin: 0;
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

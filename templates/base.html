@@ -1,20 +1,36 @@
-{% load static %}<!doctype html>
-<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+{% load static i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>{% block title %}Knowledge Tester{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   {% block head %}{% endblock %}
 </head>
 <body>
+  <a class="skip-link" href="#main">{% trans "Skip to content" %}</a>
   <header class="topbar">
-    <a class="brand" href="/">Knowledge Tester</a>
-    {% block nav %}{% endblock %}
+    <div class="topbar-inner">
+      <a class="brand" href="{% url 'core:landing' %}">Knowledge Tester</a>
+      {% block nav %}{% if user.is_authenticated %}
+      {% url 'assessments:list' as tests_url %}{% url 'delivery:list' as sessions_url %}{% url 'assessments:import' as import_url %}
+      <nav class="nav" aria-label="{% trans 'Main' %}">
+        {% if tests_url %}<a href="{{ tests_url }}"{% if request.resolver_match.app_name == 'assessments' and request.resolver_match.url_name != 'import' %} aria-current="page"{% endif %}>{% trans "Tests" %}</a>{% endif %}
+        {% if sessions_url %}<a href="{{ sessions_url }}"{% if request.resolver_match.app_name == 'delivery' or request.resolver_match.app_name == 'reports' %} aria-current="page"{% endif %}>{% trans "Sessions" %}</a>{% endif %}
+        {% if import_url %}<a href="{{ import_url }}"{% if request.resolver_match.url_name == 'import' %} aria-current="page"{% endif %}>{% trans "Import" %}</a>{% endif %}
+        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}
+          <button type="submit">{% trans "Log out" %} ({{ user.get_username }})</button>
+        </form>
+      </nav>
+      {% endif %}{% endblock %}
+    </div>
   </header>
-  <main class="container">
+  <main id="main" class="container">
     {% if messages %}
-      <ul class="messages">{% for m in messages %}<li class="msg-{{ m.level_tag }}">{{ m }}</li>{% endfor %}</ul>
+      <ul class="messages" role="status">
+        {% for m in messages %}<li class="alert {% if m.level_tag == 'success' %}alert-ok{% elif m.level_tag == 'warning' %}alert-warn{% elif m.level_tag == 'error' %}alert-bad{% endif %}">{{ m }}</li>{% endfor %}
+      </ul>
     {% endif %}
     {% block content %}{% endblock %}
   </main>

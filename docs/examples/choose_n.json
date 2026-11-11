@@ -1,0 +1,35 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Choose N example",
+    "questions": [
+      {
+        "type": "choose_n",
+        "text": "Choose the 3 primary colours of light.",
+        "points": 3,
+        "n": 3,
+        "options": [
+          {
+            "text": "Red",
+            "correct": true
+          },
+          {
+            "text": "Green",
+            "correct": true
+          },
+          {
+            "text": "Blue",
+            "correct": true
+          },
+          {
+            "text": "Yellow"
+          },
+          {
+            "text": "Orange"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Log in" %} - Knowledge Tester{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Teacher log in" %}</h1>
+  <form method="post" class="stack" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-bad" role="alert">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+    {% endif %}
+    <div class="field">
+      <label for="{{ form.username.id_for_label }}">{% trans "Username" %}</label>
+      <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" autocomplete="username" autocapitalize="none" autofocus required>
+      {{ form.username.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+      <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" autocomplete="current-password" required>
+      {{ form.password.errors }}
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Log in" %}</button>
+  </form>
+  <p class="muted">{% trans "Students do not need an account. Enter the session code on the" %} <a href="{% url 'core:landing' %}">{% trans "start page" %}</a>.</p>
+</div>
+{% endblock %}

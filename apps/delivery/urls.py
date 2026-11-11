@@ -1,4 +1,13 @@
+from django.urls import path
+
+from . import views
 
 app_name = "delivery"
 
-urlpatterns: list = []
+urlpatterns = [
+    path("", views.session_list, name="list"),
+    path("new/<int:revision_pk>/", views.session_create, name="create"),
+    path("<int:pk>/", views.session_share, name="share"),
+    path("<int:pk>/stats/", views.session_stats, name="stats"),
+    path("<int:pk>/close/", views.session_close, name="close"),
+]

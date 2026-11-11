@@ -1,2 +1,73 @@
 {% extends "base.html" %}
-{% block content %}<h1>Dashboard</h1><p>Dashboard placeholder.</p>{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Dashboard" %} - Knowledge Tester{% endblock %}
+{% block content %}
+{% url 'assessments:list' as tests_url %}{% url 'assessments:import' as import_url %}{% url 'delivery:list' as sessions_url %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Dashboard" %}</h1>
+    <div class="row">
+      {% if import_url %}<a class="btn btn-primary" href="{{ import_url }}">{% trans "Import a test" %}</a>{% endif %}
+      {% if sessions_url %}<a class="btn" href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
+    </div>
+  </div>
+
+  {% if not test_count %}
+  <div class="empty">
+    <h2>{% trans "No tests yet" %}</h2>
+    <p>{% trans "Import a test from a JSON file to get started. Then publish it and open a session for your class." %}</p>
+    {% if import_url %}<a class="btn btn-primary" href="{{ import_url }}">{% trans "Import your first test" %}</a>{% endif %}
+  </div>
+  {% else %}
+  <p class="muted">
+    {% blocktrans count n=test_count %}{{ n }} test{% plural %}{{ n }} tests{% endblocktrans %}
+    &middot;
+    {% blocktrans count n=open_count %}{{ n }} open session{% plural %}{{ n }} open sessions{% endblocktrans %}
+    &middot;
+    {% blocktrans count n=session_count %}{{ n }} session in total{% plural %}{{ n }} sessions in total{% endblocktrans %}
+  </p>
+
+  <section class="stack-sm">
+    <div class="row row-between">
+      <h2>{% trans "Open sessions" %}</h2>
+      {% if sessions_url %}<a href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
+    </div>
+    {% if open_sessions %}
+    <table class="table">
+      <thead><tr><th>{% trans "Session" %}</th><th>{% trans "Code" %}</th><th class="num">{% trans "Takers" %}</th></tr></thead>
+      <tbody>
+      {% for s in open_sessions %}
+        <tr>
+          <td data-label="{% trans 'Session' %}"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.revision.assessment.title }}</a></td>
+          <td data-label="{% trans 'Code' %}" class="mono">{{ s.code }}</td>
+          <td data-label="{% trans 'Takers' %}" class="num">{{ s.attempt_count }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">{% trans "No open sessions. Open a session from a published test." %}</p>
+    {% endif %}
+  </section>
+
+  <section class="stack-sm">
+    <div class="row row-between">
+      <h2>{% trans "Recent tests" %}</h2>
+      {% if tests_url %}<a href="{{ tests_url }}">{% trans "All tests" %}</a>{% endif %}
+    </div>
+    <table class="table">
+      <thead><tr><th>{% trans "Test" %}</th><th>{% trans "Status" %}</th><th>{% trans "Updated" %}</th></tr></thead>
+      <tbody>
+      {% for t in recent_tests %}
+        <tr>
+          <td data-label="{% trans 'Test' %}"><a href="{% url 'assessments:detail' t.pk %}">{{ t.title }}</a></td>
+          <td data-label="{% trans 'Status' %}">{{ t.get_status_display }}{% if t.has_unpublished_changes and t.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}</td>
+          <td data-label="{% trans 'Updated' %}">{{ t.updated_at|date:"SHORT_DATE_FORMAT" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

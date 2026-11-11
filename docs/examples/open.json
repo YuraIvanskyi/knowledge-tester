@@ -1,0 +1,15 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Open question example",
+    "questions": [
+      {
+        "type": "open",
+        "text": "Describe the water cycle in your own words.",
+        "points": 4,
+        "rubric": "1 point each: evaporation, condensation, precipitation, collection."
+      }
+    ]
+  }
+}

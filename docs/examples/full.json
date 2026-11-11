@@ -1,0 +1,132 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Fractions: basics",
+    "description": "Quick check after lesson 4.",
+    "language": "en",
+    "settings": {
+      "time_limit_minutes": 15,
+      "shuffle_questions": false,
+      "shuffle_options": true,
+      "one_question_per_page": false,
+      "show_result": "score",
+      "max_attempts": 1
+    },
+    "taker_fields": [
+      {
+        "key": "name",
+        "label": "Full name",
+        "required": true
+      },
+      {
+        "key": "class",
+        "label": "Class",
+        "required": false
+      }
+    ],
+    "grading": {
+      "enabled": true,
+      "scale": "ua_12"
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single_choice",
+        "text": "Which fraction equals 0.5?",
+        "points": 1,
+        "options": [
+          {
+            "id": "a",
+            "text": "1/2",
+            "correct": true
+          },
+          {
+            "id": "b",
+            "text": "1/3"
+          },
+          {
+            "id": "c",
+            "text": "2/3"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "multiple_choice",
+        "text": "Select every fraction greater than 1/2.",
+        "points": 2,
+        "scoring": "partial",
+        "options": [
+          {
+            "id": "a",
+            "text": "3/4",
+            "correct": true
+          },
+          {
+            "id": "b",
+            "text": "2/3",
+            "correct": true
+          },
+          {
+            "id": "c",
+            "text": "1/4"
+          },
+          {
+            "id": "d",
+            "text": "2/5"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "type": "choose_n",
+        "text": "Choose the 2 fractions equal to 1/2.",
+        "points": 2,
+        "n": 2,
+        "options": [
+          {
+            "id": "a",
+            "text": "2/4",
+            "correct": true
+          },
+          {
+            "id": "b",
+            "text": "3/6",
+            "correct": true
+          },
+          {
+            "id": "c",
+            "text": "2/3"
+          },
+          {
+            "id": "d",
+            "text": "3/4"
+          },
+          {
+            "id": "e",
+            "text": "1/3"
+          }
+        ]
+      },
+      {
+        "id": "q4",
+        "type": "short_answer",
+        "text": "Write 3/4 as a decimal number.",
+        "points": 1,
+        "mode": "numeric",
+        "accept": [
+          "0.75"
+        ],
+        "tolerance": 0
+      },
+      {
+        "id": "q5",
+        "type": "open",
+        "text": "Explain how to compare two fractions with different denominators.",
+        "points": 3,
+        "rubric": "1 point: common denominator. 1 point: correct comparison. 1 point: clear example."
+      }
+    ]
+  }
+}

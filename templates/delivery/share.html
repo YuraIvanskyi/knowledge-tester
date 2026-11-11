@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ sitting.title|default:sitting.code }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}
+<div class="share stack" id="share" data-stats-url="{% url 'delivery:stats' sitting.pk %}">
+  <div class="page-head">
+    <h1>{{ sitting.title|default:sitting.code }}</h1>
+    <span id="session-status" class="{% if is_open %}status-ok{% else %}muted{% endif %}">{% if is_open %}{% trans "Open" %}{% else %}{% trans "Closed" %}{% endif %}</span>
+  </div>
+
+  {% if is_open %}
+    <section class="presentation" aria-label="{% trans 'Join this session' %}">
+      <div class="qr" role="img" aria-label="{% trans 'QR code with the session link' %}">{{ qr_svg }}</div>
+      <div class="stack-sm join-info">
+        <p class="muted">{% trans "Scan the QR code or open" %}</p>
+        <p class="big-url mono"><a href="{{ url }}">{{ url }}</a></p>
+        <p class="muted">{% trans "or enter the session code on the start page:" %}</p>
+        <p class="big-code">{{ sitting.code }}</p>
+        {% if sitting.access_code %}<p>{% trans "Access code" %}: <span class="mono">{{ sitting.access_code }}</span></p>{% endif %}
+      </div>
+    </section>
+    {% if addresses %}
+      <p class="row">
+        <span class="muted">{% trans "Network address:" %}</span>
+        {% for ip in addresses %}
+          {% if ip == chosen_ip %}<strong class="mono">{{ ip }}</strong>{% else %}<a class="mono" href="?ip={{ ip }}">{{ ip }}</a>{% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+  {% endif %}
+
+  <section aria-label="{% trans 'Live counters' %}">
+    <dl class="counters">
+      <div><dt>{% trans "Joined" %}</dt><dd id="c-joined">{{ stats.joined }}</dd></div>
+      <div><dt>{% trans "In progress" %}</dt><dd id="c-progress">{{ stats.in_progress }}</dd></div>
+      <div><dt>{% trans "Submitted" %}</dt><dd id="c-submitted">{{ stats.submitted }}</dd></div>
+    </dl>
+    <p><a href="{% url 'delivery:share' sitting.pk %}">{% trans "Refresh" %}</a> <span class="muted">({% trans "updates itself every 5 seconds" %})</span></p>
+  </section>
+
+  <section aria-label="{% trans 'Takers' %}">
+    <h2>{% trans "Takers" %}</h2>
+    <p id="no-takers" class="muted"{% if stats.takers %} hidden{% endif %}>{% trans "Nobody has joined yet." %}</p>
+    <table class="table" id="takers-table"{% if not stats.takers %} hidden{% endif %}>
+      <thead>
+        <tr>
+          <th scope="col">{% trans "Name" %}</th>
+          <th scope="col">{% trans "Status" %}</th>
+          <th scope="col" class="num">{% trans "Answered" %}</th>
+        </tr>
+      </thead>
+      <tbody id="takers-body" data-total="{{ stats.total_questions }}" data-of="{% trans 'of' %}">
+        {% for t in stats.takers %}
+          <tr>
+            <td data-label="{% trans 'Name' %}">{{ t.name }}</td>
+            <td data-label="{% trans 'Status' %}">{{ t.status_label }}</td>
+            <td data-label="{% trans 'Answered' %}" class="num">{{ t.answered }} {% trans "of" %} {{ stats.total_questions }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="row">
+    {% if is_open %}
+      <form method="post" action="{% url 'delivery:close' sitting.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Close session" %}</button>
+      </form>
+    {% endif %}
+    <a class="btn{% if not is_open %} btn-primary{% endif %}" href="{% url 'reports:session' sitting.pk %}">{% trans "Results" %}</a>
+    <a class="btn btn-link" href="{% url 'delivery:list' %}">{% trans "All sessions" %}</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/share.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static i18n report_extras %}
+{% block title %}{% trans "Results" %}: {{ sitting.title|default:test.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/reports.css' %}">{% endblock %}
+{% block content %}
+{% url 'delivery:share' sitting.pk as share_url %}
+<div class="stack">
+  <div class="page-head">
+    <div>
+      <h1>{% trans "Results" %}</h1>
+      <p class="muted">{{ sitting.title|default:test.title }} &middot; {% trans "revision" %} {{ sitting.revision.number }} &middot; <span class="mono">{{ sitting.code }}</span></p>
+    </div>
+    <div class="row">
+      <a class="btn" href="{% url 'reports:csv' sitting.pk %}">{% trans "Download CSV" %}</a>
+      {% if share_url %}<a class="btn" href="{{ share_url }}">{% trans "Session page" %}</a>{% endif %}
+    </div>
+  </div>
+
+  <section class="stack" aria-labelledby="summary-h">
+    <h2 id="summary-h">{% trans "Summary" %}</h2>
+    <dl class="stats">
+      <div><dt>{% trans "Takers" %}</dt><dd>{{ summary.takers }}</dd></div>
+      {% if grading_enabled %}
+      <div><dt>{% trans "Average" %}</dt><dd>{% if summary.average_percent is not None %}{{ summary.average_score|num }} / {{ summary.max_score|num }} ({{ summary.average_percent }} %){% else %}&ndash;{% endif %}</dd></div>
+      <div><dt>{% trans "Median" %}</dt><dd>{% if summary.median_percent is not None %}{{ summary.median_percent }} %{% else %}&ndash;{% endif %}</dd></div>
+      <div><dt>{% trans "Waiting for review" %}</dt><dd>{{ summary.pending_answers }}</dd></div>
+      {% endif %}
+    </dl>
+    {% if summary.pending_answers and first_pending %}
+      <p class="alert alert-warn">{% blocktrans count n=summary.pending_answers %}{{ n }} answer waits for review{% plural %}{{ n }} answers wait for review{% endblocktrans %}
+        ({% blocktrans count n=summary.pending_attempts %}{{ n }} attempt{% plural %}{{ n }} attempts{% endblocktrans %}).
+        <a href="{% url 'reports:attempt' first_pending.pk %}">{% trans "Start reviewing" %}</a></p>
+    {% endif %}
+    {% if not grading_enabled %}<p class="muted">{% trans "Grading is disabled for this test: answers are collected but not scored." %}</p>{% endif %}
+  </section>
+
+  {% if grading_enabled and summary.takers %}
+  <section class="stack" aria-labelledby="dist-h">
+    <h2 id="dist-h">{% trans "Score distribution" %}</h2>
+    <ul class="dist">
+      {% for b in summary.distribution %}
+      <li>
+        <span class="dist-label">{{ b.label }}</span>
+        <progress class="bar" value="{{ b.count }}" max="{{ summary.distribution_max }}" aria-label="{{ b.label }}">{{ b.count }}</progress>
+        <span class="dist-count">{{ b.count }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <section class="stack" aria-labelledby="attempts-h">
+    <h2 id="attempts-h">{% trans "Attempts" %}</h2>
+    <form method="get" class="row no-print">
+      <input type="hidden" name="sort" value="{{ sort }}">
+      <div class="field grow">
+        <label for="status">{% trans "Show" %}</label>
+        <select id="status" name="status">
+          {% for value, label in status_filters %}<option value="{{ value }}"{% if value == status %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <button class="btn" type="submit">{% trans "Apply" %}</button>
+    </form>
+    {% if rows %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"><a href="?sort={{ next_sort.name }}&amp;status={{ status }}">{% trans "Name" %}</a></th>
+          <th scope="col"><a href="?sort={{ next_sort.time }}&amp;status={{ status }}">{% trans "Started" %}</a></th>
+          <th scope="col">{% trans "Status" %}</th>
+          {% if grading_enabled %}
+          <th scope="col" class="num"><a href="?sort={{ next_sort.score }}&amp;status={{ status }}">{% trans "Score" %}</a></th>
+          <th scope="col">{% trans "Grade" %}</th>
+          {% endif %}
+          <th scope="col"><span class="visually-hidden">{% trans "Open" %}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td data-label="{% trans 'Name' %}">{{ r.name }}</td>
+          <td data-label="{% trans 'Started' %}">{{ r.attempt.started_at|date:"d.m.Y H:i" }}</td>
+          <td data-label="{% trans 'Status' %}">{{ r.attempt.get_status_display }}{% if r.attempt.pending_reviews %} <span class="status-warn">({% trans "needs review" %})</span>{% endif %}</td>
+          {% if grading_enabled %}
+          <td class="num" data-label="{% trans 'Score' %}">{% if r.attempt.score is not None %}{{ r.attempt.score|num }} / {{ r.attempt.max_score|num }}{% if r.attempt.percent is not None %} ({{ r.attempt.percent }} %){% endif %}{% if r.attempt.pending_reviews %} <span class="muted">{% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
+          <td data-label="{% trans 'Grade' %}">{{ r.attempt.grade|default:"&ndash;" }}</td>
+          {% endif %}
+          <td><a href="{% url 'reports:attempt' r.attempt.pk %}">{% trans "Open" %}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted">{% trans "No attempts yet." %}</p>
+    {% endif %}
+  </section>
+
+  {% if grading_enabled and summary.takers %}
+  <section class="stack" aria-labelledby="items-h">
+    <h2 id="items-h">{% trans "Questions" %}</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">{% trans "Question" %}</th>
+          <th scope="col" class="num">{% trans "Correct" %}</th>
+          <th scope="col">{% trans "Most chosen wrong option" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in items %}
+        <tr>
+          <td data-label="#">{{ i.number }}</td>
+          <td data-label="{% trans 'Question' %}">{{ i.text|truncatechars:90 }}</td>
+          <td class="num" data-label="{% trans 'Correct' %}">{% if i.percent is not None %}{{ i.percent }} %{% else %}&ndash;{% endif %}</td>
+          <td data-label="{% trans 'Most chosen wrong option' %}">{% if i.top_wrong %}{{ i.top_wrong.text }} ({{ i.top_wrong.count }}){% else %}&ndash;{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

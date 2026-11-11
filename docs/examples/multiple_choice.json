@@ -1,0 +1,31 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Multiple choice example",
+    "questions": [
+      {
+        "type": "multiple_choice",
+        "text": "Select all prime numbers.",
+        "points": 2,
+        "scoring": "partial",
+        "options": [
+          {
+            "text": "2",
+            "correct": true
+          },
+          {
+            "text": "3",
+            "correct": true
+          },
+          {
+            "text": "4"
+          },
+          {
+            "text": "9"
+          }
+        ]
+      }
+    ]
+  }
+}

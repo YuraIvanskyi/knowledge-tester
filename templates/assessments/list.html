@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Tests" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Tests" %}</h1>
+    <a class="btn btn-primary" href="{% url 'assessments:import' %}">{% trans "Import a test" %}</a>
+  </div>
+
+  {% for project, tests in rows %}
+  <section class="stack-sm">
+    <h2>{{ project.title }}{% if project.owner_id != request.user.pk %} <span class="muted">({{ project.owner }})</span>{% endif %}</h2>
+    {% if tests %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{% trans "Test" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th class="num">{% trans "Questions" %}</th>
+          <th>{% trans "Updated" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for t in tests %}
+        <tr>
+          <td data-label="{% trans 'Test' %}"><a href="{% url 'assessments:detail' t.pk %}">{{ t.title }}</a></td>
+          <td data-label="{% trans 'Status' %}">{{ t.get_status_display }}{% if t.has_unpublished_changes and t.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}</td>
+          <td data-label="{% trans 'Questions' %}" class="num">{{ t.document.test.questions|length }}</td>
+          <td data-label="{% trans 'Updated' %}">{{ t.updated_at|date:"SHORT_DATE_FORMAT" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">{% trans "No tests in this project yet." %}</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

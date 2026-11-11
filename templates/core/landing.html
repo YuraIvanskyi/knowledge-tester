@@ -1,2 +1,20 @@
 {% extends "base.html" %}
-{% block content %}<h1>Knowledge Tester</h1><p>Landing placeholder.</p>{% endblock %}
+{% load i18n %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Enter session code" %}</h1>
+  <p class="muted">{% trans "Your teacher shows a short code, or a QR code to scan." %}</p>
+  {% url 'taker:enter' as enter_url %}
+  <form method="post" action="{{ enter_url|default:'/s/enter/' }}" class="stack">
+    {% csrf_token %}
+    <div class="field">
+      <label for="code" class="visually-hidden">{% trans "Session code" %}</label>
+      <input type="text" id="code" name="code" class="enter-code" maxlength="12" required autofocus
+             autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+             placeholder="K7QX2M">
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Join" %}</button>
+  </form>
+  <p><a href="{% url 'accounts:login' %}">{% trans "Teacher log in" %}</a></p>
+</div>
+{% endblock %}

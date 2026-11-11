@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ sitting.title|default:test.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="taker" lang="{{ test.language|default:'en' }}">
+  <h1>{{ sitting.title|default:test.title }}</h1>
+  {% if missing %}
+    <div class="alert alert-bad" role="alert" id="missing">
+      <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
+      <ul>{% for q in missing %}<li><a href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+  <form method="post" action="{% url 'taker:submit' sitting.code %}" id="take-form"
+        data-save-url="{% url 'taker:save' sitting.code %}" data-total="{{ total }}">
+    {% csrf_token %}
+    <input type="hidden" name="form_sent" value="1">
+    <div class="questions">
+      {% for q in questions %}
+        <fieldset class="question" id="q-{{ q.id }}">
+          <legend><span class="qnum">{{ q.number }}.</span> {{ q.text }}{% if q.required %} <span class="req">({% trans "required" %})</span>{% endif %}</legend>
+          {% if q.hint %}<p class="muted hint">{{ q.hint }}</p>{% endif %}
+          {% if q.type == "choose_n" %}<p class="muted hint">{% blocktrans with n=q.n %}Choose exactly {{ n }}.{% endblocktrans %}</p>{% elif q.type == "multiple_choice" %}<p class="muted hint">{% trans "Select all that apply." %}</p>{% endif %}
+          {% if q.is_choice %}
+            {% for o in q.options %}
+              <label class="choice">
+                <input type="{% if q.multi %}checkbox{% else %}radio{% endif %}" name="q_{{ q.id }}" value="{{ o.id }}"{% if q.type == "choose_n" %} data-max="{{ q.n }}"{% endif %}{% if o.checked %} checked{% endif %}>
+                <span>{{ o.text }}</span>
+              </label>
+            {% endfor %}
+          {% elif q.type == "short_answer" %}
+            <label class="visually-hidden" for="in-{{ q.id }}">{% trans "Your answer" %}</label>
+            <input type="text" id="in-{{ q.id }}" name="q_{{ q.id }}" value="{{ q.value|default:'' }}" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="500">
+          {% else %}
+            <label class="visually-hidden" for="in-{{ q.id }}">{% trans "Your answer" %}</label>
+            <textarea id="in-{{ q.id }}" name="q_{{ q.id }}" rows="6">{{ q.value|default:'' }}</textarea>
+          {% endif %}
+        </fieldset>
+      {% endfor %}
+    </div>
+    <div class="sticky-bar">
+      <span class="progress">{% trans "Answered" %} <span id="answered-count">{{ answered }}</span> / {{ total }}</span>
+      {% if seconds_left is not None %}
+        <span class="timer" role="timer">{% trans "Time left" %} <span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/autosave.js' %}" defer></script>
+{% if seconds_left is not None %}<script src="{% static 'js/timer.js' %}" defer></script>{% endif %}
+{% endblock %}

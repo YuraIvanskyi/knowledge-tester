@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Submitted" %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="taker stack" lang="{{ test.language|default:'en' }}">
+  {% if voided %}
+    <h1>{% trans "Attempt cancelled" %}</h1>
+    <p class="alert alert-warn">{% trans "Your teacher cancelled this attempt." %}</p>
+  {% else %}
+    <h1>{% trans "Submitted" %}</h1>
+    <p class="alert alert-ok" role="status">
+      {% if auto %}{% trans "Your answers were submitted automatically." %}{% else %}{% trans "Your answers were submitted. Thank you." %}{% endif %}
+    </p>
+    {% if show_score %}
+      <section class="stack-sm" aria-labelledby="result-h">
+        <h2 id="result-h">{% trans "Your result" %}</h2>
+        <p class="score"><span class="big-code">{{ attempt.score|floatformat:"-2" }} / {{ attempt.max_score|floatformat:"-2" }}</span>
+          {% if attempt.percent is not None %}<span class="muted">({{ attempt.percent|floatformat:"-1" }}%)</span>{% endif %}</p>
+        {% if attempt.grade %}<p>{% trans "Grade" %}: <strong>{{ attempt.grade }}</strong>{% if attempt.pending_reviews %} <span class="muted">({% trans "provisional" %})</span>{% endif %}</p>{% endif %}
+        {% if attempt.pending_reviews %}
+          <p class="alert alert-warn">{% blocktrans count n=attempt.pending_reviews %}{{ n }} answer is waiting for your teacher to review, so this result is provisional.{% plural %}{{ n }} answers are waiting for your teacher to review, so this result is provisional.{% endblocktrans %}</p>
+        {% endif %}
+      </section>
+    {% endif %}
+    {% if review %}
+      <section class="stack" aria-labelledby="review-h">
+        <h2 id="review-h">{% trans "Answers" %}</h2>
+        {% for r in review %}
+          <article class="review-item">
+            <h3>{{ r.number }}. {{ r.text }}</h3>
+            <p><span class="{{ r.css }}">{{ r.verdict }}</span>{% if r.points is not None %} <span class="muted">({{ r.points|floatformat:"-2" }} / {{ r.max_points }})</span>{% endif %}</p>
+            <p><span class="muted">{% trans "Your answer" %}:</span>
+              {% if r.given %}{{ r.given|join:", " }}{% else %}<em>{% trans "none" %}</em>{% endif %}</p>
+            {% if r.correct %}<p><span class="muted">{% trans "Correct answer" %}:</span> {{ r.correct|join:", " }}</p>{% endif %}
+            {% if r.open %}<p class="muted">{% trans "Reviewed by your teacher." %}</p>{% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+    {% if can_retry %}<p><a href="{% url 'taker:session' sitting.code %}">{% trans "Take the test again" %}</a></p>{% endif %}
+  {% endif %}
+</div>
+{% endblock %}

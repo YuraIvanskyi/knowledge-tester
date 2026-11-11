@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Import a test" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Import a test" %}</h1>
+    <a href="{% url 'assessments:list' %}">{% trans "Back to tests" %}</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="stack-sm">
+    {% csrf_token %}
+    <p class="muted">{% trans "Paste a Knowledge Tester test (JSON) or choose a file. To have an AI write it for you, use the prompt in docs/llm/create-test.prompt.md." %}</p>
+    <div class="field">
+      <label for="id_document">{% trans "Test JSON" %}</label>
+      <textarea id="id_document" name="document" class="json-input" spellcheck="false" autocomplete="off">{{ text }}</textarea>
+    </div>
+    <div class="field">
+      <label for="id_file">{% trans "Or upload a .json file" %}</label>
+      <input type="file" id="id_file" name="file" accept=".json,application/json,text/plain">
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" type="submit" name="action" value="check">{% trans "Check the test" %}</button>
+      <button class="btn" type="submit" name="action" value="sample" formnovalidate>{% trans "Load sample test" %}</button>
+    </div>
+  </form>
+
+  {% if result %}
+  <section class="stack-sm" aria-labelledby="report-title">
+    <h2 id="report-title">{% trans "Check result" %}</h2>
+    {% if result.ok %}
+      <p class="alert alert-ok"><strong class="status-ok">{% trans "Valid." %}</strong>
+        {% blocktrans count n=result.report.warnings|length %}{{ n }} warning.{% plural %}{{ n }} warnings.{% endblocktrans %}</p>
+    {% else %}
+      <p class="alert alert-bad"><strong class="status-bad">{% trans "Cannot import." %}</strong>
+        {% blocktrans count n=result.report.errors|length %}{{ n }} error must be fixed.{% plural %}{{ n }} errors must be fixed.{% endblocktrans %}</p>
+    {% endif %}
+
+    {% if result.report.errors %}
+    <h3>{% trans "Errors" %}</h3>
+    <ul class="issue-list">
+      {% for issue in result.report.errors %}
+      <li><strong class="status-bad">{% trans "Error" %}</strong> <span class="issue-path">{{ issue.path }}</span>: {{ issue.message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if result.report.warnings %}
+    <h3>{% trans "Warnings" %}</h3>
+    <ul class="issue-list">
+      {% for issue in result.report.warnings %}
+      <li><strong class="status-warn">{% trans "Warning" %}</strong> <span class="issue-path">{{ issue.path }}</span>: {{ issue.message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if report_text %}
+    <div class="field">
+      <label for="id_report_text">{% trans "Copy for the AI (paste this back into your chat and ask for a corrected file)" %}</label>
+      <textarea id="id_report_text" class="json-input short" readonly>{{ report_text }}</textarea>
+    </div>
+    {% endif %}
+  </section>
+
+  {% if result.ok %}
+  <section class="stack-sm" aria-labelledby="preview-title">
+    <h2 id="preview-title">{% trans "Preview" %}</h2>
+    <p><strong>{{ summary.title }}</strong>{% if summary.description %}<br><span class="muted">{{ summary.description }}</span>{% endif %}</p>
+    <p class="muted">
+      {% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
+      {{ summary.points }} {% trans "points" %}
+      {% for label, n in summary.types %}&middot; {{ label }}: {{ n }} {% endfor %}
+    </p>
+    <form method="post" class="stack-sm">
+      {% csrf_token %}
+      <textarea name="document" class="hidden-field" hidden>{{ text }}</textarea>
+      <div class="field">
+        <label for="id_project">{% trans "Project" %}</label>
+        <select id="id_project" name="project">
+          {% for p in projects %}<option value="{{ p.pk }}"{% if p.pk == default_project.pk %} selected{% endif %}>{{ p.title }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="id_new_project">{% trans "Or a new project (optional)" %}</label>
+        <input type="text" id="id_new_project" name="new_project" maxlength="200">
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="submit" name="action" value="create">{% trans "Create test" %}</button>
+      </div>
+    </form>
+  </section>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

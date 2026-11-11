@@ -1,0 +1,483 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TestDocument",
+  "$defs": {
+    "Grading": {
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "scale": {
+          "default": "percent",
+          "enum": [
+            "percent",
+            "points",
+            "pass_fail",
+            "ua_12",
+            "five_point",
+            "custom"
+          ],
+          "title": "Scale",
+          "type": "string"
+        },
+        "pass_percent": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Pass Percent",
+          "type": "number"
+        },
+        "thresholds": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Threshold"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thresholds"
+        }
+      },
+      "title": "Grading",
+      "type": "object"
+    },
+    "Option": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "text": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "correct": {
+          "default": false,
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weight"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Option",
+      "type": "object"
+    },
+    "Question": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "type": {
+          "enum": [
+            "single_choice",
+            "multiple_choice",
+            "choose_n",
+            "short_answer",
+            "open"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "points": {
+          "default": 1,
+          "minimum": 0,
+          "title": "Points",
+          "type": "number"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hint"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Option"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        },
+        "scoring": {
+          "anyOf": [
+            {
+              "enum": [
+                "partial",
+                "all_or_nothing",
+                "per_option"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scoring"
+        },
+        "penalty": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Penalty"
+        },
+        "n": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "N"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "numeric"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode"
+        },
+        "accept": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accept"
+        },
+        "case_sensitive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Sensitive"
+        },
+        "tolerance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tolerance"
+        },
+        "review_unmatched": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Unmatched"
+        },
+        "rubric": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rubric"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "Settings": {
+      "properties": {
+        "time_limit_minutes": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Limit Minutes"
+        },
+        "shuffle_questions": {
+          "default": false,
+          "title": "Shuffle Questions",
+          "type": "boolean"
+        },
+        "shuffle_options": {
+          "default": false,
+          "title": "Shuffle Options",
+          "type": "boolean"
+        },
+        "one_question_per_page": {
+          "default": false,
+          "title": "One Question Per Page",
+          "type": "boolean"
+        },
+        "show_result": {
+          "default": "score",
+          "enum": [
+            "none",
+            "score",
+            "full"
+          ],
+          "title": "Show Result",
+          "type": "string"
+        },
+        "max_attempts": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        }
+      },
+      "title": "Settings",
+      "type": "object"
+    },
+    "TakerField": {
+      "properties": {
+        "key": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "TakerField",
+      "type": "object"
+    },
+    "TestBody": {
+      "properties": {
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "language": {
+          "default": "en",
+          "maxLength": 8,
+          "minLength": 2,
+          "title": "Language",
+          "type": "string"
+        },
+        "settings": {
+          "$ref": "#/$defs/Settings"
+        },
+        "taker_fields": {
+          "items": {
+            "$ref": "#/$defs/TakerField"
+          },
+          "title": "Taker Fields",
+          "type": "array"
+        },
+        "grading": {
+          "$ref": "#/$defs/Grading"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "questions"
+      ],
+      "title": "TestBody",
+      "type": "object"
+    },
+    "Threshold": {
+      "properties": {
+        "min_percent": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Min Percent",
+          "type": "number"
+        },
+        "label": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "min_percent",
+        "label"
+      ],
+      "title": "Threshold",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "format": {
+      "const": "knowledge-tester/test",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "test": {
+      "$ref": "#/$defs/TestBody"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "test"
+  ],
+  "type": "object"
+}
