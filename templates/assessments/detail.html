@@ -36,6 +36,7 @@
       {% csrf_token %}
       <button class="btn btn-primary" type="submit"{% if not valid %} disabled{% endif %}>{% trans "Publish" %}</button>
     </form>
+    {% if valid %}<a class="btn" href="{% url 'assessments:preview' assessment.pk %}">{% trans "Preview" %}</a>{% endif %}
     <a class="btn" href="{% url 'assessments:settings' assessment.pk %}">{% trans "Test settings" %}</a>
     <a class="btn" href="{% url 'assessments:export' assessment.pk %}">{% trans "Export JSON" %}</a>
   </div>

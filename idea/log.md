@@ -11,8 +11,9 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 - Editing a published test keeps its revisions untouched and marks "unpublished changes"; republishing creates the next revision.
 - Option rows: clear the text to remove one, "Add an option" re-renders with one more row. Option and question ids are kept on edit.
 - 92 new Ukrainian strings (`locale/uk/parts/editor.po` merged into the catalog). 413 tests.
-- Not done yet: preview as taker (KT-206), test duplicate/delete/move between projects and project management (KT-201/204), question images (KT-207), "ready to publish" checklist on the editor (KT-205; the detail page already lists importer errors), custom grade thresholds in the UI.
-- Next: preview as taker, PDF sheets, then Phase 6 (people).
+- Preview as taker (KT-206): "Preview" on the test page renders the draft with the real taker template (`delivery.taker_views.render_preview`), so shuffling, hints, the choose-N cap and time-limit notice match what students see. Nothing is stored (no sitting/attempt); posting only re-renders with the answers kept, and `autosave.js` sends nothing in preview mode (`data-preview`). Correct answers and rubrics are never in the page.
+- Not done yet: test duplicate/delete/move between projects and project management (KT-201/204), question images (KT-207), "ready to publish" checklist on the editor (KT-205; the detail page already lists importer errors), custom grade thresholds in the UI.
+- Next: PDF sheets, then Phase 6 (people).
 
 ## 2026-11-11: Simplistic prototype (end-to-end)
 

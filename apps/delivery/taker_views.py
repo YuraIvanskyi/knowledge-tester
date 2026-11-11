@@ -123,7 +123,7 @@ def _parse_token(raw) -> uuid.UUID | None:
         return None
 
 
-def _render_unstarted(request, sitting, test, errors=None, data=None, token=None):
+def _render_unstarted(request, sitting, test, errors=None, data=None, token=None, preview=None):
     """The test itself as the landing page: identity fields on top, questions below.
     The attempt is created on the first autosave or on submit, using this page's token."""
     data = data if data is not None else {}
@@ -152,8 +152,20 @@ def _render_unstarted(request, sitting, test, errors=None, data=None, token=None
         "seconds_left": None,
         "time_limit": services.time_limit_minutes(test),  # clock starts with the attempt
         "missing": [],
+        "preview": preview,
     }
     return render(request, "delivery/take.html", context)
+
+
+def render_preview(request, test: dict, preview: dict):
+    """The test page exactly as a taker sees it, for a teacher. Nothing is stored.
+
+    `preview` = {"url": where the form posts back to, "back_url": link back to the editor}.
+    Posting only re-renders the page with the answers kept.
+    """
+    posted = request.POST if request.method == "POST" else None
+    token = _parse_token(posted.get("attempt_token")) if posted is not None else None
+    return _render_unstarted(request, None, test, data=posted, token=token, preview=preview)
 
 
 # --- entering and starting ---------------------------------------------------------------------

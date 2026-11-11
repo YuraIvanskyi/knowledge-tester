@@ -73,6 +73,7 @@ def editor_responses(teacher_client, teacher):
             for qtype in editing.QUESTION_TYPES
         ),
         reverse("assessments:detail", args=[test.pk]),
+        reverse("assessments:preview", args=[test.pk]),
     ]
     return [teacher_client.get(url) for url in pages]
 

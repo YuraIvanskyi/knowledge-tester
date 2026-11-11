@@ -7,9 +7,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
+
+from apps.delivery.taker_views import render_preview
+from apps.exchange.importer import import_document
 
 from . import editing, services
 from .models import Project
@@ -205,3 +209,19 @@ def question_duplicate(request, pk, question_id):
     services.save_draft(assessment, document)
     messages.success(request, _("Question duplicated."))
     return redirect("assessments:detail", pk=assessment.pk)
+
+
+@login_required
+def preview(request, pk):
+    """Show the draft as a taker would see it. Nothing is saved."""
+    assessment = _owned_assessment(request, pk)
+    result = import_document(assessment.document)
+    back_url = reverse("assessments:detail", args=[assessment.pk])
+    if not result.ok:
+        messages.error(request, _("Fix the errors in the test before previewing it."))
+        return redirect(back_url)
+    return render_preview(
+        request,
+        result.document["test"],
+        {"url": reverse("assessments:preview", args=[assessment.pk]), "back_url": back_url},
+    )

@@ -5,6 +5,8 @@
   var form = document.getElementById("take-form");
   if (!form || !window.fetch) return;
   var url = form.getAttribute("data-save-url");
+  // Teacher preview: keep the counter and the choose_n cap, but never send anything.
+  var preview = form.hasAttribute("data-preview");
   var token = form.querySelector("input[name=csrfmiddlewaretoken]");
   var counter = document.getElementById("answered-count");
   var pending = {};
@@ -60,7 +62,7 @@
     timer = null;
     var batch = pending;
     pending = {};
-    if (!Object.keys(batch).length) return;
+    if (preview || !Object.keys(batch).length) return;
     fetch(url, {
       method: "POST",
       credentials: "same-origin",

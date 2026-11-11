@@ -5,6 +5,9 @@
 {% block nav %}{% endblock %}
 {% block content %}
 <div class="taker" lang="{{ test.language|default:'en' }}">
+  {% if preview %}
+  <p class="alert alert-warn" role="note"><strong>{% trans "Preview." %}</strong> {% trans "This is how students see the test. Nothing is saved or graded." %} <a href="{{ preview.back_url }}">{% trans "Back to the test" %}</a></p>
+  {% endif %}
   <h1>{{ sitting.title|default:test.title }}</h1>
   {% if unstarted and test.description %}<p>{{ test.description }}</p>{% endif %}
   {% if unstarted %}<p class="muted">{% blocktrans count n=total %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</p>{% endif %}
@@ -20,8 +23,8 @@
       <ul>{% for q in missing %}<li><a href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
     </div>
   {% endif %}
-  <form method="post" action="{% url 'taker:submit' sitting.code %}" id="take-form"
-        data-save-url="{% url 'taker:save' sitting.code %}" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}>
+  <form method="post" id="take-form" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}
+        {% if preview %}action="{{ preview.url }}" data-preview="1"{% else %}action="{% url 'taker:submit' sitting.code %}" data-save-url="{% url 'taker:save' sitting.code %}"{% endif %}>
     {% csrf_token %}
     <input type="hidden" name="form_sent" value="1">
     {% if unstarted %}

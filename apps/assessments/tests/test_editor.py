@@ -412,3 +412,78 @@ def test_editor_pages_are_in_ukrainian_by_default(client_t, blank, settings):
         "Налаштування тесту"
         in client_t.get(reverse("assessments:settings", args=[blank.pk])).content.decode()
     )
+
+
+# --- preview as taker -----------------------------------------------------------------------
+
+
+@pytest.fixture
+def previewable(client_t, blank):
+    add(client_t, blank, "single_choice", **choice_post(("Kyiv", True), ("Lviv", False)))
+    add(client_t, blank, "short_answer", text="Capital?", points="1", accept="Kyiv", mode="text")
+    add(client_t, blank, "open", text="Why?", points="1", rubric="SECRET RUBRIC")
+    blank.refresh_from_db()
+    return blank
+
+
+def test_preview_shows_the_taker_page_without_answers(client_t, previewable):
+    from apps.delivery.models import Attempt
+
+    url = reverse("assessments:preview", args=[previewable.pk])
+    response = client_t.get(url)
+    html = response.content.decode()
+    assert response.status_code == 200
+    assert "Preview." in html and "Nothing is saved" in html
+    assert "Which?" in html and "Kyiv" in html and "Capital?" in html
+    assert "SECRET RUBRIC" not in html
+    assert 'data-preview="1"' in html and "data-save-url" not in html
+    assert f'action="{url}"' in html
+    assert not Attempt.objects.exists()
+
+
+def test_preview_post_only_rerenders_and_keeps_answers(client_t, previewable):
+    from apps.delivery.models import Attempt, Sitting
+
+    url = reverse("assessments:preview", args=[previewable.pk])
+    first = client_t.get(url)
+    token = first.context["token"]
+    q1 = first.context["questions"][0]
+    pick = q1["options"][0]["id"]
+    response = client_t.post(
+        url,
+        {
+            "form_sent": "1",
+            "unstarted": "1",
+            "attempt_token": str(token),
+            "q_q1": pick,
+            "q_q2": "Kyiv",
+        },
+    )
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert 'value="Kyiv"' in html and "checked" in html
+    assert response.context["token"] == token
+    assert not Attempt.objects.exists() and not Sitting.objects.exists()
+
+
+def test_preview_needs_a_valid_test_and_ownership(client, client_t, blank, other):
+    response = client_t.get(reverse("assessments:preview", args=[blank.pk]))
+    assert response.status_code == 302 and response["Location"].endswith(
+        reverse("assessments:detail", args=[blank.pk])
+    )
+    client_t.logout()
+    assert client_t.get(reverse("assessments:preview", args=[blank.pk])).status_code == 302
+    client_t.force_login(other)
+    assert client_t.get(reverse("assessments:preview", args=[blank.pk])).status_code == 404
+
+
+def test_detail_links_to_preview_only_when_valid(client_t, blank, previewable):
+    url = reverse("assessments:preview", args=[previewable.pk])
+    assert (
+        url in client_t.get(reverse("assessments:detail", args=[previewable.pk])).content.decode()
+    )
+    empty = services.create_assessment(blank.project, editing.blank_document("Empty", "en"))
+    assert (
+        reverse("assessments:preview", args=[empty.pk])
+        not in client_t.get(reverse("assessments:detail", args=[empty.pk])).content.decode()
+    )

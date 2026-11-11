@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Preview."
+msgstr "Попередній перегляд."
+
+msgid "Preview"
+msgstr "Попередній перегляд"
+
+msgid "This is how students see the test. Nothing is saved or graded."
+msgstr "Так учні бачать тест. Нічого не зберігається й не оцінюється."
+
+msgid "Fix the errors in the test before previewing it."
+msgstr "Виправте помилки в тесті, перш ніж переглядати його."
