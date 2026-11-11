@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-10 · **Current phase:** 0 (Foundation) · **Next milestone:** M1, first classroom run (end of Phase 4)
+**Last updated:** 2026-11-11 · **Current phase:** 0 (Foundation) · **Next milestone:** M1, first classroom run (end of Phase 4)
 
 **Legend:** `[ ]` open · `[~]` in progress · `[x]` done · `[!]` blocked · Size **S** ≤ ½ day · **M** 1–2 days · **L** 3+ days · *(should)* / *(could)* = priority below Must
 
@@ -12,7 +12,7 @@ This board is the single source of truth for status. The task content lives in [
 
 | Phase | Goal | Status | Done |
 |---|---|---|---|
-| 0. Foundation | A running skeleton that a phone can reach over the LAN | Ready | 0 / 9 |
+| 0. Foundation | A running skeleton that a phone can reach over the LAN | In progress | 1 / 9 |
 | 1. Domain core and exchange format | Test data model and JSON import/export | Backlog | 0 / 8 |
 | 2. Authoring UI | Build and edit tests in the browser | Backlog | 0 / 7 |
 | 3. Delivery | Sessions, links and QR, taking tests on phones | Backlog | 0 / 10 |
@@ -22,7 +22,7 @@ This board is the single source of truth for status. The task content lives in [
 | 7. Local LLM assistant | Imports and drafting with a local LLM | Backlog | 0 / 9 |
 | 8. Ukrainian | Full Ukrainian localization | Backlog | 0 / 4 |
 | 9. Hardening and packaging | Backups, launcher, security, docs | Backlog | 0 / 9 |
-| **Total** | | | **0 / 78** |
+| **Total** | | | **1 / 78** |
 
 ## Milestones
 
@@ -43,7 +43,6 @@ _Nothing yet._
 
 ## Ready (listed in suggested order)
 
-- [ ] [KT-001](issues/KT-001-repo-tooling-bootstrap.md) Repository and tooling bootstrap · S
 - [ ] [KT-002](issues/KT-002-django-skeleton.md) Django project skeleton and app layout · M
 - [ ] [KT-004](issues/KT-004-data-dir-sqlite.md) Data folder and SQLite configuration · S
 - [ ] [KT-003](issues/KT-003-user-model-auth.md) Custom User model, roles and auth (before the first migrate) · M
@@ -174,3 +173,4 @@ _New ideas go here first, then into the plan once they're accepted._
 ## Done
 
 - [x] KT-000 Planning groundwork: plan, board, ADRs, issue system · 2026-11-10
+- [x] KT-001 Repository and tooling bootstrap · 2026-11-11

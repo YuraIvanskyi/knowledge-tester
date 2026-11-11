@@ -1,0 +1,36 @@
+[project]
+name = "knowledge-tester"
+version = "0.1.0"
+description = "Local, offline-first classroom testing: build tests, share them over the LAN, autograde, print PDF sheets."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.0,<6.1",
+]
+
+[project.optional-dependencies]
+# Installed with `uv sync --extra <name>` when the feature is used (plan §6.2).
+xlsx = []        # phase 5-6: openpyxl
+docs = []        # phase 7: python-docx, pypdf
+mdns = []        # phase 9: zeroconf
+translate = []   # phase 8: django-rosetta
+
+[dependency-groups]
+dev = [
+    "ruff",
+]
+
+[tool.uv]
+# This is an application, not a distributable package.
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations", "staticfiles"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "DJ", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"

@@ -3,12 +3,12 @@ id: KT-001
 title: Bootstrap repository and tooling
 phase: 0
 type: chore
-status: ready
+status: done
 priority: must
 size: S
 depends_on: []
 created: 2026-11-10
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # KT-001: Bootstrap repository and tooling
@@ -28,14 +28,15 @@ The folder already holds an empty git repository (branch `main`, no commits) wit
 **Out of scope:** the Django project itself (KT-002) and pre-commit hooks, which are optional and can come later.
 
 ## Acceptance criteria
-- [ ] `uv sync` creates the environment, with Django installed, outside the OneDrive folder
-- [ ] `uv run ruff check .` and `uv run ruff format --check .` pass
-- [ ] `git status` doesn't show ignored artifacts after a sync and a test run
-- [ ] A stub `README.md` at the repository root links to `idea/plan.md` (the full README comes in KT-009)
-- [ ] First commit made, after the user approves
+- [x] `uv sync` creates the environment, with Django installed, outside the OneDrive folder
+- [x] `uv run ruff check .` and `uv run ruff format --check .` pass
+- [x] `git status` doesn't show ignored artifacts after a sync and a test run
+- [x] A stub `README.md` at the repository root links to `idea/plan.md` (the full README comes in KT-009)
+- [x] First commit made, after the user approves
 
 ## Notes
 - Pin exact versions through `uv.lock` and commit the lock file.
 
 ## Log
 - 2026-11-10: created from the plan.
+- 2026-11-11: implemented. `uv` was not installed; installed with `python -m pip install --user uv` (Scripts dir not on PATH, so use `python -m uv`). venv at `%LOCALAPPDATA%\KnowledgeTester\venv` via `UV_PROJECT_ENVIRONMENT` (set per session; `setx` documented in README). Django 6.0.10, ruff 0.17.4 locked. First commit approved and made.
