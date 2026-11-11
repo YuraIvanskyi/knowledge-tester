@@ -1,0 +1,149 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Дроби: основи",
+    "description": "Коротка перевірка після теми «Звичайні дроби» (5–6 клас): правильні й неправильні дроби, скорочення, порівняння, додавання та віднімання.",
+    "language": "uk",
+    "settings": {
+      "time_limit_minutes": 20,
+      "shuffle_questions": false,
+      "shuffle_options": true,
+      "one_question_per_page": false,
+      "show_result": "score",
+      "max_attempts": 1
+    },
+    "taker_fields": [
+      { "key": "name", "label": "Прізвище та ім'я", "required": true },
+      { "key": "class", "label": "Клас", "required": false }
+    ],
+    "grading": {
+      "enabled": true,
+      "scale": "ua_12"
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single_choice",
+        "text": "Який із поданих дробів є правильним?",
+        "points": 1,
+        "hint": "У правильного дробу чисельник менший за знаменник.",
+        "options": [
+          { "id": "a", "text": "3/5", "correct": true },
+          { "id": "b", "text": "5/3" },
+          { "id": "c", "text": "7/7" },
+          { "id": "d", "text": "9/4" }
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "single_choice",
+        "text": "Скоротіть дріб 6/8.",
+        "points": 1,
+        "options": [
+          { "id": "a", "text": "3/4", "correct": true },
+          { "id": "b", "text": "2/3" },
+          { "id": "c", "text": "6/4" },
+          { "id": "d", "text": "1/2" }
+        ]
+      },
+      {
+        "id": "q3",
+        "type": "single_choice",
+        "text": "Обчисліть: 1/2 + 1/4.",
+        "points": 1,
+        "options": [
+          { "id": "a", "text": "3/4", "correct": true },
+          { "id": "b", "text": "2/6" },
+          { "id": "c", "text": "2/4" },
+          { "id": "d", "text": "1/6" }
+        ]
+      },
+      {
+        "id": "q4",
+        "type": "multiple_choice",
+        "text": "Позначте всі дроби, які більші за 1/2.",
+        "points": 2,
+        "scoring": "partial",
+        "options": [
+          { "id": "a", "text": "3/4", "correct": true },
+          { "id": "b", "text": "2/3", "correct": true },
+          { "id": "c", "text": "1/4" },
+          { "id": "d", "text": "2/5" },
+          { "id": "e", "text": "5/6", "correct": true }
+        ]
+      },
+      {
+        "id": "q5",
+        "type": "multiple_choice",
+        "text": "Які з поданих дробів є неправильними?",
+        "points": 2,
+        "scoring": "all_or_nothing",
+        "hint": "Неправильний дріб: чисельник дорівнює знаменнику або більший за нього.",
+        "options": [
+          { "id": "a", "text": "7/4", "correct": true },
+          { "id": "b", "text": "5/5", "correct": true },
+          { "id": "c", "text": "3/8" },
+          { "id": "d", "text": "9/2", "correct": true },
+          { "id": "e", "text": "2/9" }
+        ]
+      },
+      {
+        "id": "q6",
+        "type": "choose_n",
+        "text": "Оберіть два дроби, що дорівнюють 2/3.",
+        "points": 2,
+        "n": 2,
+        "options": [
+          { "id": "a", "text": "4/6", "correct": true },
+          { "id": "b", "text": "6/9", "correct": true },
+          { "id": "c", "text": "3/4" },
+          { "id": "d", "text": "2/6" },
+          { "id": "e", "text": "5/6" }
+        ]
+      },
+      {
+        "id": "q7",
+        "type": "short_answer",
+        "text": "Запишіть дріб 3/4 у вигляді десяткового дробу.",
+        "points": 1,
+        "mode": "numeric",
+        "accept": ["0,75"],
+        "tolerance": 0,
+        "hint": "Можна писати і крапку, і кому."
+      },
+      {
+        "id": "q8",
+        "type": "short_answer",
+        "text": "Знайдіть 1/3 від числа 24.",
+        "points": 1,
+        "mode": "numeric",
+        "accept": ["8"]
+      },
+      {
+        "id": "q9",
+        "type": "short_answer",
+        "text": "Як називається число, яке стоїть під рискою дробу?",
+        "points": 1,
+        "mode": "text",
+        "accept": ["знаменник"]
+      },
+      {
+        "id": "q10",
+        "type": "short_answer",
+        "text": "Обчисліть: 7/8 − 3/8. Результат запишіть скороченим дробом (через /).",
+        "points": 1,
+        "mode": "text",
+        "accept": ["1/2"],
+        "review_unmatched": true
+      },
+      {
+        "id": "q11",
+        "type": "open",
+        "text": "Поясніть, як порівняти дроби 2/3 і 3/5. Запишіть хід міркувань.",
+        "points": 3,
+        "rubric": "1 бал: зведення до спільного знаменника (10/15 і 9/15) або інший правильний спосіб. 1 бал: правильне порівняння (2/3 більший). 1 бал: зрозуміле пояснення."
+      }
+    ]
+  }
+}

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+from django.utils.translation import gettext as _
 
 from apps.core.datadir import sync_warning
 from apps.core.lan import lan_ipv4_addresses
@@ -48,27 +49,29 @@ class Command(BaseCommand):
         data_dir = Path(settings.DATA_DIR)
 
         if static_root_is_empty(Path(settings.STATIC_ROOT)):
-            self.stdout.write("Collecting static files...")
+            self.stdout.write(_("Collecting static files..."))
             call_command("collectstatic", interactive=False, verbosity=0)
 
         self.stdout.write(self.style.SUCCESS("Knowledge Tester"))
-        self.stdout.write(f"Data folder: {data_dir}")
+        self.stdout.write(_("Data folder: %(path)s") % {"path": data_dir})
         warning = sync_warning(data_dir)
         if warning:
-            self.stdout.write(self.style.WARNING("WARNING: " + warning))
+            self.stdout.write(self.style.WARNING(_("WARNING: %(text)s") % {"text": warning}))
 
         urls = self._urls(host, port)
-        self.stdout.write("Open on this computer or on phones in the same network:")
+        self.stdout.write(_("Open on this computer or on phones in the same network:"))
         for url in urls:
             self.stdout.write(f"  {url}")
         if not options["no_qr"]:
             self._print_qr(urls[0])
         if os.name == "nt":
             self.stdout.write(
-                "\nIf phones cannot connect, run once as administrator (PowerShell):\n  "
+                "\n"
+                + _("If phones cannot connect, run once as administrator (PowerShell):")
+                + "\n  "
                 + FIREWALL_COMMAND.format(port=port)
             )
-        self.stdout.write("\nPress Ctrl+C to stop.\n")
+        self.stdout.write("\n" + _("Press Ctrl+C to stop.") + "\n")
         self.stdout.flush()
 
         from waitress import serve
@@ -78,7 +81,7 @@ class Command(BaseCommand):
         try:
             serve(application, host=host, port=port, threads=options["threads"], _quiet=True)
         except KeyboardInterrupt:
-            self.stdout.write("Stopped.")
+            self.stdout.write(_("Stopped."))
 
     @staticmethod
     def _urls(host: str, port: int) -> list[str]:
@@ -90,7 +93,7 @@ class Command(BaseCommand):
     def _print_qr(self, url: str) -> None:
         import segno
 
-        self.stdout.write(f"\nScan to open {url}\n")
+        self.stdout.write("\n" + _("Scan to open %(url)s") % {"url": url} + "\n")
         # Terminal output is block characters; make sure the console can encode them.
         try:
             segno.make(url, error="m").terminal(out=sys.stdout, compact=True)

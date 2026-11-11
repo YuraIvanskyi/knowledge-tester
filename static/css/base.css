@@ -566,3 +566,33 @@ legend {
     scroll-behavior: auto !important;
   }
 }
+
+/* Footer and language switcher */
+
+.site-footer {
+  max-width: 60rem;
+  margin: var(--space-6) auto 0;
+  padding: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.lang-switch {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-4);
+  margin: 0;
+}
+.lang-switch button {
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.lang-switch button[aria-current="true"] {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: none;
+}

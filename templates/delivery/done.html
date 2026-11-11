@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static report_extras %}
 {% block title %}{% trans "Submitted" %}{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
 {% block nav %}{% endblock %}
@@ -18,7 +18,7 @@
         <h2 id="result-h">{% trans "Your result" %}</h2>
         <p class="score"><span class="big-code">{{ attempt.score|floatformat:"-2" }} / {{ attempt.max_score|floatformat:"-2" }}</span>
           {% if attempt.percent is not None %}<span class="muted">({{ attempt.percent|floatformat:"-1" }}%)</span>{% endif %}</p>
-        {% if attempt.grade %}<p>{% trans "Grade" %}: <strong>{{ attempt.grade }}</strong>{% if attempt.pending_reviews %} <span class="muted">({% trans "provisional" %})</span>{% endif %}</p>{% endif %}
+        {% if attempt.grade %}<p>{% trans "Grade" %}: <strong>{{ attempt.grade|grade_text }}</strong>{% if attempt.pending_reviews %} <span class="muted">({% trans "provisional" %})</span>{% endif %}</p>{% endif %}
         {% if attempt.pending_reviews %}
           <p class="alert alert-warn">{% blocktrans count n=attempt.pending_reviews %}{{ n }} answer is waiting for your teacher to review, so this result is provisional.{% plural %}{{ n }} answers are waiting for your teacher to review, so this result is provisional.{% endblocktrans %}</p>
         {% endif %}

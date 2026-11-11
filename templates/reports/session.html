@@ -21,7 +21,7 @@
     <dl class="stats">
       <div><dt>{% trans "Takers" %}</dt><dd>{{ summary.takers }}</dd></div>
       {% if grading_enabled %}
-      <div><dt>{% trans "Average" %}</dt><dd>{% if summary.average_percent is not None %}{{ summary.average_score|num }} / {{ summary.max_score|num }} ({{ summary.average_percent }} %){% else %}&ndash;{% endif %}</dd></div>
+      <div><dt>{% trans "Average" %}</dt><dd>{% if summary.average_percent is not None %}{{ summary.average_score|numd }} / {{ summary.max_score|numd }} ({{ summary.average_percent }} %){% else %}&ndash;{% endif %}</dd></div>
       <div><dt>{% trans "Median" %}</dt><dd>{% if summary.median_percent is not None %}{{ summary.median_percent }} %{% else %}&ndash;{% endif %}</dd></div>
       <div><dt>{% trans "Waiting for review" %}</dt><dd>{{ summary.pending_answers }}</dd></div>
       {% endif %}
@@ -72,7 +72,7 @@
           <th scope="col" class="num"><a href="?sort={{ next_sort.score }}&amp;status={{ status }}">{% trans "Score" %}</a></th>
           <th scope="col">{% trans "Grade" %}</th>
           {% endif %}
-          <th scope="col"><span class="visually-hidden">{% trans "Open" %}</span></th>
+          <th scope="col"><span class="visually-hidden">{% trans "Open" context "action" %}</span></th>
         </tr>
       </thead>
       <tbody>
@@ -82,10 +82,10 @@
           <td data-label="{% trans 'Started' %}">{{ r.attempt.started_at|date:"d.m.Y H:i" }}</td>
           <td data-label="{% trans 'Status' %}">{{ r.attempt.get_status_display }}{% if r.attempt.pending_reviews %} <span class="status-warn">({% trans "needs review" %})</span>{% endif %}</td>
           {% if grading_enabled %}
-          <td class="num" data-label="{% trans 'Score' %}">{% if r.attempt.score is not None %}{{ r.attempt.score|num }} / {{ r.attempt.max_score|num }}{% if r.attempt.percent is not None %} ({{ r.attempt.percent }} %){% endif %}{% if r.attempt.pending_reviews %} <span class="muted">{% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
-          <td data-label="{% trans 'Grade' %}">{{ r.attempt.grade|default:"&ndash;" }}</td>
+          <td class="num" data-label="{% trans 'Score' %}">{% if r.attempt.score is not None %}{{ r.attempt.score|numd }} / {{ r.attempt.max_score|numd }}{% if r.attempt.percent is not None %} ({{ r.attempt.percent }} %){% endif %}{% if r.attempt.pending_reviews %} <span class="muted">{% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
+          <td data-label="{% trans 'Grade' %}">{% if r.attempt.grade %}{{ r.attempt.grade|grade_text }}{% else %}&ndash;{% endif %}</td>
           {% endif %}
-          <td><a href="{% url 'reports:attempt' r.attempt.pk %}">{% trans "Open" %}</a></td>
+          <td><a href="{% url 'reports:attempt' r.attempt.pk %}">{% trans "Open" context "action" %}</a></td>
         </tr>
         {% endfor %}
       </tbody>

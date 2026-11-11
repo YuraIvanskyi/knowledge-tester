@@ -44,7 +44,7 @@
     <h2>{% trans "Questions" %}</h2>
     <p class="muted">
       {% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
-      {{ summary.points }} {% trans "points" %}
+      {% blocktrans with n=summary.points %}{{ n }} points{% endblocktrans %}
       {% if summary.settings.time_limit_minutes %}&middot; {{ summary.settings.time_limit_minutes }} {% trans "min" %}{% endif %}
     </p>
     <table class="table">

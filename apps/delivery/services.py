@@ -9,6 +9,7 @@ from datetime import timedelta
 
 from django.db import IntegrityError, transaction
 from django.utils import timezone
+from django.utils.translation import gettext
 
 from .models import CODE_ALPHABET, CODE_LENGTH, Answer, Attempt, Sitting
 
@@ -67,7 +68,7 @@ def time_limit_minutes(test: dict) -> int | None:
 def taker_fields(test: dict) -> list[dict]:
     fields = test.get("taker_fields")
     if fields is None:
-        fields = [{"key": "name", "label": "Full name", "required": True}]
+        fields = [{"key": "name", "label": gettext("Full name"), "required": True}]
     return fields
 
 

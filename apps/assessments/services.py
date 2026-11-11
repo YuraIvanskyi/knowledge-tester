@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from django.db import transaction
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
 from apps.exchange.importer import import_document
 from apps.exchange.serializer import content_hash
 
 from .models import Assessment, Project, Revision
 
-DEFAULT_PROJECT_TITLE = "My tests"
+DEFAULT_PROJECT_TITLE = gettext_noop("My tests")
 
 
 def visible_projects(user):

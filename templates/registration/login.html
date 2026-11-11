@@ -22,6 +22,6 @@
     <input type="hidden" name="next" value="{{ next }}">
     <button type="submit" class="btn btn-primary btn-block">{% trans "Log in" %}</button>
   </form>
-  <p class="muted">{% trans "Students do not need an account. Enter the session code on the" %} <a href="{% url 'core:landing' %}">{% trans "start page" %}</a>.</p>
+  <p class="muted">{% url 'core:landing' as landing_url %}{% blocktrans trimmed %}Students do not need an account. Enter the session code on the <a href="{{ landing_url }}">start page</a>.{% endblocktrans %}</p>
 </div>
 {% endblock %}

@@ -1,0 +1,156 @@
+{
+  "format": "knowledge-tester/test",
+  "version": 1,
+  "test": {
+    "title": "Українська мова: орфографія та частини мови",
+    "description": "Перевірна робота: апостроф, м'який знак, написання складних слів і основні частини мови (5–7 клас). Питання з'являються по одному, у випадковому порядку.",
+    "language": "uk",
+    "settings": {
+      "time_limit_minutes": 25,
+      "shuffle_questions": true,
+      "shuffle_options": true,
+      "one_question_per_page": true,
+      "show_result": "full",
+      "max_attempts": 1
+    },
+    "taker_fields": [
+      { "key": "name", "label": "Прізвище та ім'я", "required": true },
+      { "key": "class", "label": "Клас", "required": true }
+    ],
+    "grading": {
+      "enabled": true,
+      "scale": "five_point"
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "type": "single_choice",
+        "text": "Яке слово написано правильно?",
+        "points": 1,
+        "options": [
+          { "id": "a", "text": "м'ята", "correct": true },
+          { "id": "b", "text": "мьята" },
+          { "id": "c", "text": "мята" },
+          { "id": "d", "text": "м-ята" }
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "single_choice",
+        "text": "Як правильно писати ввічливе слово-прохання?",
+        "points": 1,
+        "options": [
+          { "id": "a", "text": "будь ласка", "correct": true },
+          { "id": "b", "text": "будьласка" },
+          { "id": "c", "text": "будь-ласка" },
+          { "id": "d", "text": "буть ласка" }
+        ]
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "text": "Позначте слова, у яких на місці пропуску треба писати апостроф.",
+        "points": 2,
+        "scoring": "partial",
+        "hint": "Апостроф пишемо після б, п, в, м, ф, р перед я, ю, є, ї, але не після іншого приголосного (як у слові «різдвяний»).",
+        "options": [
+          { "id": "a", "text": "сім_я", "correct": true },
+          { "id": "b", "text": "комп_ютер", "correct": true },
+          { "id": "c", "text": "бур_ян", "correct": true },
+          { "id": "d", "text": "п_ятниця", "correct": true },
+          { "id": "e", "text": "різдв_яний" },
+          { "id": "f", "text": "д_ядько" }
+        ]
+      },
+      {
+        "id": "q4",
+        "type": "choose_n",
+        "text": "Оберіть два слова, які є дієсловами.",
+        "points": 2,
+        "n": 2,
+        "options": [
+          { "id": "a", "text": "читати", "correct": true },
+          { "id": "b", "text": "книжка" },
+          { "id": "c", "text": "малює", "correct": true },
+          { "id": "d", "text": "швидкий" },
+          { "id": "e", "text": "осінь" }
+        ]
+      },
+      {
+        "id": "q5",
+        "type": "single_choice",
+        "text": "Яка частина мови відповідає на питання «що робити?»",
+        "points": 1,
+        "penalty": 0.25,
+        "options": [
+          { "id": "a", "text": "іменник" },
+          { "id": "b", "text": "прикметник" },
+          { "id": "c", "text": "дієслово", "correct": true },
+          { "id": "d", "text": "числівник" }
+        ]
+      },
+      {
+        "id": "q6",
+        "type": "single_choice",
+        "text": "Яка частина мови називає ознаку предмета і відповідає на питання «який?»",
+        "points": 1,
+        "penalty": 0.25,
+        "options": [
+          { "id": "a", "text": "прикметник", "correct": true },
+          { "id": "b", "text": "іменник" },
+          { "id": "c", "text": "прислівник" },
+          { "id": "d", "text": "займенник" }
+        ]
+      },
+      {
+        "id": "q7",
+        "type": "multiple_choice",
+        "text": "Позначте всі іменники. За кожен правильний вибір нараховується 0,5 бала, за помилковий віднімається 0,5 бала.",
+        "points": 1.5,
+        "scoring": "per_option",
+        "options": [
+          { "id": "a", "text": "дівчинка", "correct": true, "weight": 0.5 },
+          { "id": "b", "text": "зошит", "correct": true, "weight": 0.5 },
+          { "id": "c", "text": "радість", "correct": true, "weight": 0.5 },
+          { "id": "d", "text": "біжить", "weight": -0.5 },
+          { "id": "e", "text": "веселий", "weight": -0.5 },
+          { "id": "f", "text": "швидко", "weight": -0.5 }
+        ]
+      },
+      {
+        "id": "q8",
+        "type": "short_answer",
+        "text": "Запишіть слово, яким називають круглий предмет для гри у футбол чи волейбол. Це слово пишеться з апострофом.",
+        "points": 1,
+        "mode": "text",
+        "accept": ["м'яч", "мʼяч", "м’яч"],
+        "hint": "Одне слово, у якому три літери."
+      },
+      {
+        "id": "q9",
+        "type": "short_answer",
+        "text": "Утворіть форму множини від слова «стілець».",
+        "points": 1,
+        "mode": "text",
+        "accept": ["стільці"],
+        "review_unmatched": true
+      },
+      {
+        "id": "q10",
+        "type": "short_answer",
+        "text": "Запишіть назву столиці України. Зверніть увагу на велику літеру.",
+        "points": 1,
+        "mode": "text",
+        "accept": ["Київ"],
+        "case_sensitive": true
+      },
+      {
+        "id": "q11",
+        "type": "open",
+        "text": "Складіть по одному реченню зі словами «м'ясо» і «пір'я» та поясніть, чому в цих словах пишемо апостроф.",
+        "points": 3,
+        "rubric": "1 бал: правильне речення зі словом «м'ясо». 1 бал: правильне речення зі словом «пір'я». 1 бал: пояснення правила (апостроф після губного й р перед я, ю, є, ї)."
+      }
+    ]
+  }
+}

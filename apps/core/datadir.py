@@ -1,6 +1,8 @@
-"""Data folder checks (plan §19.3). Pure helpers, no Django imports."""
+"""Data folder checks (plan §19.3). Pure helpers (Django is only used for translation)."""
 
 from pathlib import Path
+
+from django.utils.translation import gettext as _
 
 # Folder names used by cloud sync clients. Matched case-insensitively against path parts.
 _SYNC_MARKERS = ("onedrive", "dropbox", "google drive", "googledrive", "my drive")
@@ -25,7 +27,7 @@ def sync_warning(path: str | Path) -> str | None:
     name = synced_folder_name(path)
     if name is None:
         return None
-    return (
-        f"The data folder {path} is inside '{name}'. Sync clients can corrupt the SQLite "
-        "database. Move it outside (set KT_DATA_DIR, default %LOCALAPPDATA%\\KnowledgeTester)."
-    )
+    return _(
+        "The data folder %(path)s is inside '%(name)s'. Sync clients can corrupt the SQLite "
+        "database. Move it outside (set KT_DATA_DIR, default %(default)s)."
+    ) % {"path": path, "name": name, "default": "%LOCALAPPDATA%\\KnowledgeTester"}

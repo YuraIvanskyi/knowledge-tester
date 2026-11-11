@@ -28,8 +28,8 @@
     {% if grading_enabled %}
       {% if attempt.score is not None %}
       <p class="result">
-        <strong>{% trans "Score" %}:</strong> {{ attempt.score|num }} / {{ attempt.max_score|num }}{% if attempt.percent is not None %} ({{ attempt.percent }} %){% endif %}
-        {% if attempt.grade %}&nbsp; <strong>{% trans "Grade" %}:</strong> {{ attempt.grade }}{% endif %}
+        <strong>{% trans "Score" %}:</strong> {{ attempt.score|numd }} / {{ attempt.max_score|numd }}{% if attempt.percent is not None %} ({{ attempt.percent }} %){% endif %}
+        {% if attempt.grade %}&nbsp; <strong>{% trans "Grade" %}:</strong> {{ attempt.grade|grade_text }}{% endif %}
         {% if provisional %}<span class="status-warn">&nbsp; {% trans "Provisional" %}: {% blocktrans count n=attempt.pending_reviews %}{{ n }} answer still needs review{% plural %}{{ n }} answers still need review{% endblocktrans %}</span>{% endif %}
       </p>
       {% else %}
@@ -46,7 +46,7 @@
       <div class="q-head">
         <p class="q-text"><span class="q-num">{{ row.number }}.</span> {{ row.question.text }}</p>
         <p class="q-points {{ row.css_class }}">
-          {% if grading_enabled and row.max_points %}{{ row.points|num }} / {{ row.max_points|num }} &middot; {% endif %}{{ row.marker_label }}
+          {% if grading_enabled and row.max_points %}{{ row.points|numd }} / {{ row.max_points|numd }} &middot; {% endif %}{{ row.marker_label }}
         </p>
       </div>
       <div class="q-body">
@@ -78,7 +78,7 @@
           <input type="hidden" name="question_key" value="{{ row.question.id }}">
           <div class="row review-fields">
             <div class="field">
-              <label for="p-{{ row.question.id }}">{% trans "Points" %} (0&ndash;{% localize off %}{{ row.max_points|num }}{% endlocalize %})</label>
+              <label for="p-{{ row.question.id }}">{% trans "Points" %} (0&ndash;{{ row.max_points|numd }})</label>
               {% localize off %}<input id="p-{{ row.question.id }}" type="number" name="points" inputmode="decimal" min="0" max="{{ row.max_points|num }}" step="0.5" required value="{% if row.answer.manual_score is not None %}{{ row.answer.manual_score|num }}{% endif %}">{% endlocalize %}
             </div>
             <div class="field grow">

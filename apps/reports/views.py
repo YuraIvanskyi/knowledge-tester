@@ -161,7 +161,7 @@ def session_csv(request, sitting_pk: int):
     sitting = _sitting_or_404(request.user, sitting_pk)
     test = sitting.revision.test
     questions = test.get("questions", [])
-    fields = test.get("taker_fields") or [{"key": "name", "label": "Name"}]
+    fields = test.get("taker_fields") or [{"key": "name", "label": _("Name")}]
     attempts = list(sitting.attempts.all())
 
     points: dict[tuple[int, str], Decimal | None] = {}
@@ -175,14 +175,14 @@ def session_csv(request, sitting_pk: int):
     writer.writerow(
         [f.get("label") or f["key"] for f in fields]
         + [
-            "Status",
-            "Started",
-            "Submitted",
-            "Score",
-            "Max score",
-            "Percent",
-            "Grade",
-            "Pending reviews",
+            _("Status"),
+            _("Started"),
+            _("Submitted"),
+            _("Score"),
+            _("Max score"),
+            _("Percent"),
+            _("Grade"),
+            _("Pending reviews"),
         ]
         + [f"{n}. {q['id']}" for n, q in enumerate(questions, start=1)]
     )

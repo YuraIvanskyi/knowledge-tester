@@ -69,7 +69,7 @@
     <p><strong>{{ summary.title }}</strong>{% if summary.description %}<br><span class="muted">{{ summary.description }}</span>{% endif %}</p>
     <p class="muted">
       {% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
-      {{ summary.points }} {% trans "points" %}
+      {% blocktrans with n=summary.points %}{{ n }} points{% endblocktrans %}
       {% for label, n in summary.types %}&middot; {{ label }}: {{ n }} {% endfor %}
     </p>
     <form method="post" class="stack-sm">

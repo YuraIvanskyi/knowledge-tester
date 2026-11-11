@@ -62,6 +62,7 @@ MIDDLEWARE = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "apps.core.middleware.DefaultLanguageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -111,9 +112,12 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "core:dashboard"
 LOGOUT_REDIRECT_URL = "core:landing"
 
-LANGUAGE_CODE = "en"
+# Ukrainian is the default UI language; users switch via the footer buttons (cookie).
+LANGUAGE_CODE = "uk"
 LANGUAGES = [("en", "English"), ("uk", "Українська")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365
+LANGUAGE_COOKIE_SAMESITE = "Lax"
 USE_I18N = True
 USE_TZ = True
 TIME_ZONE = "UTC"

@@ -8,6 +8,7 @@ Every question and option in a stored document has an `id` (assigned by the impo
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Project(models.Model):
@@ -30,9 +31,9 @@ class Assessment(models.Model):
     """A test ("Test" in the UI)."""
 
     class Status(models.TextChoices):
-        DRAFT = "draft", "Draft"
-        PUBLISHED = "published", "Published"
-        ARCHIVED = "archived", "Archived"
+        DRAFT = "draft", _("Draft")
+        PUBLISHED = "published", _("Published")
+        ARCHIVED = "archived", _("Archived")
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="assessments")
     title = models.CharField(max_length=200)

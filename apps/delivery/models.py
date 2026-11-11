@@ -2,6 +2,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Unambiguous alphabet (no 0/O, 1/I/L), plan §12.1
 CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
@@ -12,8 +13,8 @@ class Sitting(models.Model):
     """A session: one opening of a published revision for takers."""
 
     class Status(models.TextChoices):
-        OPEN = "open", "Open"
-        CLOSED = "closed", "Closed"
+        OPEN = "open", _("Open")
+        CLOSED = "closed", _("Closed")
 
     revision = models.ForeignKey(
         "assessments.Revision", on_delete=models.PROTECT, related_name="sittings"
@@ -38,10 +39,10 @@ class Sitting(models.Model):
 
 class Attempt(models.Model):
     class Status(models.TextChoices):
-        IN_PROGRESS = "in_progress", "In progress"
-        SUBMITTED = "submitted", "Submitted"
-        AUTO_SUBMITTED = "auto_submitted", "Auto-submitted"
-        VOIDED = "voided", "Voided"
+        IN_PROGRESS = "in_progress", _("In progress")
+        SUBMITTED = "submitted", _("Submitted")
+        AUTO_SUBMITTED = "auto_submitted", _("Auto-submitted")
+        VOIDED = "voided", _("Voided")
 
     sitting = models.ForeignKey(Sitting, on_delete=models.CASCADE, related_name="attempts")
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -73,10 +74,10 @@ class Attempt(models.Model):
 
 class Answer(models.Model):
     class Status(models.TextChoices):
-        UNANSWERED = "unanswered", "Unanswered"
-        GRADED = "graded", "Graded"
-        NEEDS_REVIEW = "needs_review", "Needs review"
-        REVIEWED = "reviewed", "Reviewed"
+        UNANSWERED = "unanswered", _("Unanswered")
+        GRADED = "graded", _("Graded")
+        NEEDS_REVIEW = "needs_review", _("Needs review")
+        REVIEWED = "reviewed", _("Reviewed")
 
     attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE, related_name="answers")
     question_key = models.CharField(max_length=64)

@@ -1,11 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
     class Role(models.TextChoices):
-        ADMIN = "admin", "Admin"
-        TEACHER = "teacher", "Teacher"
+        ADMIN = "admin", _("Admin")
+        TEACHER = "teacher", _("Teacher")
 
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.TEACHER)
     display_name = models.CharField(max_length=150, blank=True)

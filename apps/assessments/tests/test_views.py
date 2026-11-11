@@ -234,5 +234,6 @@ def test_seed_demo_is_idempotent():
     teacher = get_user_model().objects.get(username="teacher")
     assert teacher.check_password("teacher")
     assert get_user_model().objects.get(username="admin").is_superuser
-    assert Assessment.objects.filter(project__owner=teacher).count() == 1
-    assert Revision.objects.count() == 1
+    # the English example plus the four Ukrainian ones (see test_demo_content.py)
+    assert Assessment.objects.filter(project__owner=teacher).count() == 5
+    assert Revision.objects.count() == 5
