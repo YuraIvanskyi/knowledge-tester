@@ -1,0 +1,23 @@
+{% load static %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Knowledge Tester{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Knowledge Tester</a>
+    {% block nav %}{% endblock %}
+  </header>
+  <main class="container">
+    {% if messages %}
+      <ul class="messages">{% for m in messages %}<li class="msg-{{ m.level_tag }}">{{ m }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

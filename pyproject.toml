@@ -6,6 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "django>=6.0,<6.1",
+    "waitress",
+    "whitenoise",
+    "ifaddr",
+    "segno",
+    "pydantic>=2",
 ]
 
 [project.optional-dependencies]
@@ -18,6 +23,9 @@ translate = []   # phase 8: django-rosetta
 [dependency-groups]
 dev = [
     "ruff",
+    "pytest",
+    "pytest-django",
+    "pytest-cov",
 ]
 
 [tool.uv]
@@ -34,3 +42,9 @@ select = ["E", "F", "I", "UP", "B", "DJ", "SIM"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.dev"
+python_files = ["test_*.py"]
+testpaths = ["apps", "tests"]
+addopts = "-q"
