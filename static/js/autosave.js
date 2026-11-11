@@ -8,6 +8,8 @@
   var token = form.querySelector("input[name=csrfmiddlewaretoken]");
   var counter = document.getElementById("answered-count");
   var pending = {};
+  // Test page opened before an attempt exists: the first save also sends the taker details.
+  var unstarted = form.hasAttribute("data-unstarted");
   var timer = null;
   var DELAY = 800;
 
@@ -44,6 +46,16 @@
     counter.textContent = String(done);
   }
 
+  function details() {
+    var body = { unstarted: true };
+    var t = form.querySelector("input[name=attempt_token]");
+    if (t) body.attempt_token = t.value;
+    form.querySelectorAll('input[name^="tf_"], input[name="access_code"]').forEach(function (f) {
+      body[f.name] = f.value;
+    });
+    return body;
+  }
+
   function flush() {
     timer = null;
     var batch = pending;
@@ -56,7 +68,9 @@
         "Content-Type": "application/json",
         "X-CSRFToken": token ? token.value : "",
       },
-      body: JSON.stringify({ answers: batch }),
+      body: JSON.stringify(
+        Object.assign({ answers: batch }, unstarted ? details() : {})
+      ),
     })
       .then(function (r) {
         if (r.status === 409) {
@@ -64,6 +78,19 @@
             window.location.href = d.url;
           });
         }
+        return r.json().then(function (d) {
+          if (d.started === false) {
+            // Details (name, access code) not valid yet: keep answers, retry when they change.
+            Object.keys(batch).forEach(function (k) {
+              if (!(k in pending)) pending[k] = batch[k];
+            });
+          } else if (d.started) {
+            unstarted = false;
+            if (d.left !== null && d.left !== undefined && window.ktStartTimer) {
+              window.ktStartTimer(d.left);
+            }
+          }
+        });
       })
       .catch(function () {
         // Network hiccup: keep the values and retry shortly.
@@ -77,7 +104,14 @@
   function onChange(ev) {
     var t = ev.target;
     var qid = t.name ? questionId(t.name) : null;
-    if (!qid) return;
+    if (!qid) {
+      var isDetail = t.name && (t.name.indexOf("tf_") === 0 || t.name === "access_code");
+      if (isDetail && unstarted && Object.keys(pending).length) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(flush, DELAY);
+      }
+      return;
+    }
     if (t.type === "checkbox" && t.hasAttribute("data-max") && t.checked) {
       var max = parseInt(t.getAttribute("data-max"), 10);
       var count = form.querySelectorAll('[name="' + t.name + '"]:checked').length;

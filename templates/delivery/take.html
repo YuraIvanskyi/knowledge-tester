@@ -6,6 +6,14 @@
 {% block content %}
 <div class="taker" lang="{{ test.language|default:'en' }}">
   <h1>{{ sitting.title|default:test.title }}</h1>
+  {% if unstarted and test.description %}<p>{{ test.description }}</p>{% endif %}
+  {% if unstarted %}<p class="muted">{% blocktrans count n=total %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</p>{% endif %}
+  {% if unstarted and time_limit %}<p class="muted">{% blocktrans %}Time limit: {{ time_limit }} min. The clock starts when you begin answering.{% endblocktrans %}</p>{% endif %}
+  {% if errors %}
+    <div class="alert alert-bad" role="alert">
+      <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+  {% endif %}
   {% if missing %}
     <div class="alert alert-bad" role="alert" id="missing">
       <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
@@ -13,9 +21,29 @@
     </div>
   {% endif %}
   <form method="post" action="{% url 'taker:submit' sitting.code %}" id="take-form"
-        data-save-url="{% url 'taker:save' sitting.code %}" data-total="{{ total }}">
+        data-save-url="{% url 'taker:save' sitting.code %}" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}>
     {% csrf_token %}
     <input type="hidden" name="form_sent" value="1">
+    {% if unstarted %}
+      <input type="hidden" name="unstarted" value="1">
+      <input type="hidden" name="attempt_token" value="{{ token }}">
+      <div class="stack details">
+        {% for f in fields %}
+          <div class="field">
+            <label for="tf_{{ f.key }}">{{ f.label }}{% if not f.required %} <span class="muted">({% trans "optional" %})</span>{% endif %}</label>
+            <input type="text" id="tf_{{ f.key }}" name="tf_{{ f.key }}" maxlength="200" autocomplete="off"
+                   {% if f.required %}required{% endif %} value="{{ f.value }}">
+          </div>
+        {% endfor %}
+        {% if sitting.access_code %}
+          <div class="field">
+            <label for="access_code">{% trans "Access code" %}</label>
+            <input type="text" id="access_code" name="access_code" maxlength="32" required autocomplete="off">
+            <span class="help">{% trans "Ask your teacher for the access code." %}</span>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
     <div class="questions">
       {% for q in questions %}
         <fieldset class="question" id="q-{{ q.id }}">
@@ -41,7 +69,9 @@
     </div>
     <div class="sticky-bar">
       <span class="progress">{% trans "Answered" %} <span id="answered-count">{{ answered }}</span> / {{ total }}</span>
-      {% if seconds_left is not None %}
+      {% if unstarted and time_limit %}
+        <span class="timer" role="timer">{% trans "Time left" %} <span id="timer" class="mono">{{ time_limit }}:00</span></span>
+      {% elif seconds_left is not None %}
         <span class="timer" role="timer">{% trans "Time left" %} <span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
       {% endif %}
       <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
@@ -51,5 +81,5 @@
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/autosave.js' %}" defer></script>
-{% if seconds_left is not None %}<script src="{% static 'js/timer.js' %}" defer></script>{% endif %}
+{% if seconds_left is not None or time_limit %}<script src="{% static 'js/timer.js' %}" defer></script>{% endif %}
 {% endblock %}

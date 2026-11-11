@@ -104,9 +104,13 @@ def shuffled_orders(test: dict, seed: str) -> tuple[list[str], dict[str, list[st
     return order, option_orders
 
 
-def start_attempt(sitting: Sitting, taker: dict) -> Attempt:
+def start_attempt(sitting: Sitting, taker: dict, token=None) -> Attempt:
+    """Create an attempt. `token` lets the page that was shown to the taker (and shuffled with
+    that token) become the attempt without re-shuffling; ignored if it is already taken."""
     test = sitting.revision.test
     attempt = Attempt(sitting=sitting, taker=taker)
+    if token is not None and not Attempt.objects.filter(token=token).exists():
+        attempt.token = token
     attempt.question_order, attempt.option_orders = shuffled_orders(test, str(attempt.token))
     attempt.save()
     minutes = time_limit_minutes(test)

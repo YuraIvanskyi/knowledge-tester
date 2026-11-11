@@ -3,6 +3,7 @@
 import json
 import uuid
 from decimal import Decimal
+from types import SimpleNamespace
 
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
@@ -115,6 +116,46 @@ def _render_take(request, sitting, attempt, missing=None):
     return render(request, "delivery/take.html", context)
 
 
+def _parse_token(raw) -> uuid.UUID | None:
+    try:
+        return uuid.UUID(str(raw))
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+def _render_unstarted(request, sitting, test, errors=None, data=None, token=None):
+    """The test itself as the landing page: identity fields on top, questions below.
+    The attempt is created on the first autosave or on submit, using this page's token."""
+    data = data if data is not None else {}
+    token = token or uuid.uuid4()
+    order, option_orders = services.shuffled_orders(test, str(token))
+    stub = SimpleNamespace(question_order=order, option_orders=option_orders)
+    getlist = data.getlist if hasattr(data, "getlist") else lambda key: []
+    values = {}
+    for qid, q in services.question_map(test).items():
+        raw = getlist(f"q_{qid}") if q["type"] in services.CHOICE_TYPES else data.get(f"q_{qid}")
+        values[qid] = services.clean_value(q, raw)
+    questions = _build_questions(stub, test, values)
+    fields = [
+        {**f, "value": data.get(FIELD_PREFIX + f["key"], "")} for f in services.taker_fields(test)
+    ]
+    context = {
+        "sitting": sitting,
+        "test": test,
+        "unstarted": True,
+        "token": token,
+        "fields": fields,
+        "errors": errors or [],
+        "questions": questions,
+        "total": len(questions),
+        "answered": sum(1 for q in questions if q["value"] is not None),
+        "seconds_left": None,
+        "time_limit": services.time_limit_minutes(test),  # clock starts with the attempt
+        "missing": [],
+    }
+    return render(request, "delivery/take.html", context)
+
+
 # --- entering and starting ---------------------------------------------------------------------
 
 
@@ -129,15 +170,15 @@ def enter(request):
     return render(request, "delivery/enter_error.html", {"entered": raw.strip()[:12]})
 
 
-def _start_errors(request, sitting: Sitting, test: dict, fields: list[dict]):
+def _start_errors(data, sitting: Sitting, test: dict, fields: list[dict]):
+    """Validate identity fields + access code from a QueryDict or plain dict."""
     errors, taker = [], {}
     if sitting.access_code and (
-        request.POST.get("access_code", "").strip().casefold()
-        != sitting.access_code.strip().casefold()
+        (data.get("access_code") or "").strip().casefold() != sitting.access_code.strip().casefold()
     ):
         errors.append(_("The access code is not correct."))
     for field in fields:
-        value = " ".join(request.POST.get(FIELD_PREFIX + field["key"], "").split())[:200]
+        value = " ".join(str(data.get(FIELD_PREFIX + field["key"]) or "").split())[:200]
         if field.get("required", False) and not value:
             errors.append(_("Please fill in: %(field)s.") % {"field": field["label"]})
         taker[field["key"]] = value
@@ -171,10 +212,12 @@ def session(request, code: str):
         "closed": closed,
         "previous": attempt,
     }
+    if not closed and request.method != "POST":
+        return _render_unstarted(request, sitting, test)
     if closed or request.method != "POST":
         return render(request, "delivery/session.html", context)
 
-    errors, taker = _start_errors(request, sitting, test, fields)
+    errors, taker = _start_errors(request.POST, sitting, test, fields)
     if errors:
         context["errors"] = errors
         return render(request, "delivery/session.html", context)
@@ -197,30 +240,47 @@ def take(request, code: str):
 
 @require_POST
 def save(request, code: str):
-    """Autosave endpoint: JSON {"answers": {question_id: value}}. Never required for submit."""
+    """Autosave endpoint: JSON {"answers": {question_id: value}}. Never required for submit.
+    Before the attempt exists (the test page is the landing page), a payload with
+    "unstarted": true plus the tf_* fields starts it as soon as the details are valid."""
     sitting = _get_sitting(code)
     attempt = _get_attempt(request, sitting)
-    if attempt is None:
-        return JsonResponse({"error": "no attempt"}, status=403)
+    try:
+        payload = json.loads(request.body or b"{}")
+        answers = payload["answers"]
+        if not isinstance(answers, dict):
+            raise ValueError
+    except (ValueError, KeyError, TypeError):
+        return JsonResponse({"error": "bad request"}, status=400)
+
+    created = False
+    if attempt is None or (attempt.is_finished and payload.get("unstarted")):
+        if not payload.get("unstarted") or sitting.status == Sitting.Status.CLOSED:
+            return JsonResponse({"error": "no attempt"}, status=403)
+        test = sitting.revision.test
+        errors, taker = _start_errors(payload, sitting, test, services.taker_fields(test))
+        if errors:
+            return JsonResponse({"started": False, "errors": errors})
+        attempt = services.start_attempt(
+            sitting, taker, token=_parse_token(payload.get("attempt_token"))
+        )
+        created = True
+
     if not attempt.is_finished and services.is_past_deadline(attempt, services.SUBMIT_GRACE):
         services.finalize(attempt, Attempt.Status.AUTO_SUBMITTED)
     if attempt.is_finished:
         url = reverse("taker:done", kwargs={"code": sitting.code})
         return JsonResponse({"done": True, "url": url}, status=409)
-    try:
-        answers = json.loads(request.body or b"{}")["answers"]
-        if not isinstance(answers, dict):
-            raise ValueError
-    except (ValueError, KeyError, TypeError):
-        return JsonResponse({"error": "bad request"}, status=400)
     services.save_answers(attempt, sitting.revision.test, answers)
-    return JsonResponse(
+    response = JsonResponse(
         {
             "done": False,
+            "started": True,
             "answered": len(services.answered_ids(attempt)),
             "left": _seconds_left(attempt),
         }
     )
+    return _set_cookie(response, sitting, attempt) if created else response
 
 
 def _posted_values(request, test: dict) -> dict[str, object]:
@@ -237,13 +297,34 @@ def _posted_values(request, test: dict) -> dict[str, object]:
 @require_POST
 def submit(request, code: str):
     sitting = _get_sitting(code)
-    attempt = _get_attempt(request, sitting)
-    if attempt is None:
-        return redirect("taker:session", code=sitting.code)
-    if attempt.is_finished:
-        return redirect("taker:done", code=sitting.code)
-
     test = sitting.revision.test
+    attempt = _get_attempt(request, sitting)
+    token = _parse_token(request.POST.get("attempt_token"))
+    created = False
+
+    if attempt is not None and token is not None and attempt.token == token:
+        pass  # the attempt shown on this page (autosave started it, or a repeated submit)
+    elif attempt is None or attempt.is_finished:
+        if attempt is not None and not request.POST.get("unstarted"):
+            return redirect("taker:done", code=sitting.code)  # repeated submit: idempotent
+        if attempt is not None and sitting.status == Sitting.Status.CLOSED:
+            return redirect("taker:done", code=sitting.code)
+        if not request.POST.get("unstarted") or sitting.status == Sitting.Status.CLOSED:
+            return redirect("taker:session", code=sitting.code)
+        errors, taker = _start_errors(request.POST, sitting, test, services.taker_fields(test))
+        if errors:
+            return _render_unstarted(
+                request, sitting, test, errors=errors, data=request.POST, token=token
+            )
+        attempt = services.start_attempt(sitting, taker, token=token)
+        created = True
+
+    def reply(response):
+        return _set_cookie(response, sitting, attempt) if created else response
+
+    if attempt.is_finished:
+        return reply(redirect("taker:done", code=sitting.code))
+
     within_grace = not services.is_past_deadline(attempt, services.SUBMIT_GRACE)
     # Only overwrite autosaved answers when the full form was actually posted.
     if request.POST.get("form_sent") and within_grace:
@@ -251,17 +332,17 @@ def submit(request, code: str):
 
     if services.is_past_deadline(attempt):
         services.finalize(attempt, Attempt.Status.AUTO_SUBMITTED)
-        return redirect("taker:done", code=sitting.code)
+        return reply(redirect("taker:done", code=sitting.code))
 
     answered = services.answered_ids(attempt)
     missing = [
         q for q in _build_questions(attempt, test, {}) if q["required"] and q["id"] not in answered
     ]
     if missing:
-        return _render_take(request, sitting, attempt, missing=missing)
+        return reply(_render_take(request, sitting, attempt, missing=missing))
 
     services.finalize(attempt, Attempt.Status.SUBMITTED)
-    return redirect("taker:done", code=sitting.code)
+    return reply(redirect("taker:done", code=sitting.code))
 
 
 # --- done --------------------------------------------------------------------------------------
