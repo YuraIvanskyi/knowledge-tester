@@ -10,6 +10,7 @@
   <div class="row row-between no-print">
     <a href="{% url 'reports:session' sitting.pk %}">&larr; {% trans "All results" %}</a>
     <div class="row">
+      {% include "reports/_pdf_form.html" with action=pdf_url batch=False %}
       {% if next_attempt %}<a class="btn" href="{% url 'reports:attempt' next_attempt.pk %}">{% trans "Next unreviewed attempt" %}</a>{% endif %}
     </div>
   </div>

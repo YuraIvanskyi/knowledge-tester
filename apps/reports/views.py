@@ -5,13 +5,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import content_disposition_header
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from apps.delivery.models import Answer, Attempt, Sitting
 from apps.grading.service import grade_attempt
 
-from . import data
+from . import data, pdf
 
 HALF = Decimal("0.5")
 
@@ -135,6 +137,7 @@ def attempt_sheet(request, pk: int):
             "grading_enabled": grading.get("enabled", True),
             "provisional": attempt.pending_reviews > 0,
             "next_attempt": data.next_unreviewed_attempt(attempt),
+            "pdf_url": reverse("reports:attempt_pdf", args=[attempt.pk]),
         },
     )
 
@@ -205,3 +208,38 @@ def session_csv(request, sitting_pk: int):
             ]
         )
     return response
+
+
+def _pdf_response(content: bytes, filename: str) -> HttpResponse:
+    response = HttpResponse(content, content_type="application/pdf")
+    response["Content-Disposition"] = content_disposition_header(False, filename)
+    return response
+
+
+@login_required
+def attempt_pdf(request, pk: int):
+    attempt = get_object_or_404(
+        Attempt.objects.select_related("sitting__revision__assessment").prefetch_related("answers"),
+        pk=pk,
+    )
+    if not data.can_view_sitting(request.user, attempt.sitting):
+        raise Http404
+    options = pdf.PdfOptions.from_query(request.GET)
+    return _pdf_response(pdf.render_pdf([attempt], options), pdf.attempt_filename(attempt))
+
+
+@login_required
+def session_pdf(request, sitting_pk: int):
+    """All sheets of a session in one file. `status` picks the selection (default: finished)."""
+    sitting = _sitting_or_404(request.user, sitting_pk)
+    attempts = list(
+        sitting.attempts.select_related("sitting__revision__assessment").prefetch_related("answers")
+    )
+    status = request.GET.get("status", "finished")
+    if status not in data.STATUS_FILTERS:
+        status = "finished"
+    selected = data.filter_and_sort(attempts, status, "name")
+    if status == "all":
+        selected = [a for a in selected if a.status != Attempt.Status.VOIDED]
+    options = pdf.PdfOptions.from_query(request.GET)
+    return _pdf_response(pdf.render_pdf(selected, options), pdf.session_filename(sitting))

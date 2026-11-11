@@ -78,6 +78,10 @@ Rules for contributors:
 - Use named placeholders (`%(name)s`) so word order can change, and `pgettext` / `{% translate "..." context "..." %}` when one English word needs different translations (for example "Open" as an adjective versus a verb).
 - Do not translate test content, only the interface.
 
+## PDF sheets
+
+`apps/reports/pdf.py` builds PDFs with fpdf2 and the bundled DejaVu Sans (Latin and Cyrillic, embedded as a subset; licence in `assets/fonts/LICENSE_DEJAVU`). A sheet is one attempt: taker details, score and grade, then the questions with points and a result word. Options: compact or full (every option marked), A4 or Letter, show correct answers / comments / unanswered questions, shorten long questions, and for a whole session "continuous" (no page break between sheets). Entry points are `reports:attempt_pdf` and `reports:session_pdf` (`?status=` picks finished, needs_review or all). The labels follow the UI language of whoever downloads it. Tests read the text back with `pypdf` (a dev dependency).
+
 ## Layout
 
 ```
@@ -93,6 +97,7 @@ templates/         shared templates (base.html is the UI kit shell)
 static/css/        base.css = UI kit (tokens, components, dark mode)
 scripts/           check.ps1, start.ps1, i18n.py (translation catalog tooling)
 locale/            uk/LC_MESSAGES/django.po + django.mo
+assets/fonts/      DejaVu Sans (regular, bold) + licence, embedded in PDF sheets
 tests/             cross-app tests (smoke, offline guard)
 idea/              plan, ADRs, issues, board
 ```

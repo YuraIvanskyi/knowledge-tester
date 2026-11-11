@@ -132,3 +132,21 @@
 .review-fields .grow {
   min-width: 12rem;
 }
+
+/* PDF download box */
+
+.pdf-box > summary {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pdf-box > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pdf-form {
+  margin-top: var(--space-3);
+  max-width: 28rem;
+}

@@ -51,6 +51,7 @@
 
   <section class="stack" aria-labelledby="attempts-h">
     <h2 id="attempts-h">{% trans "Attempts" %}</h2>
+    {% if rows %}{% url 'reports:session_pdf' sitting.pk as pdf_url %}{% include "reports/_pdf_form.html" with action=pdf_url batch=True %}{% endif %}
     <form method="get" class="row no-print">
       <input type="hidden" name="sort" value="{{ sort }}">
       <div class="field grow">

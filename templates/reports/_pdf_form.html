@@ -1,0 +1,39 @@
+{% load i18n %}
+<details class="pdf-box no-print">
+  <summary class="btn">{% if batch %}{% trans "Download all as PDF" %}{% else %}{% trans "Download PDF" %}{% endif %}</summary>
+  <form method="get" action="{{ action }}" class="stack-sm pdf-form">
+    <input type="hidden" name="opts" value="1">
+    {% if batch %}
+    <div class="field">
+      <label for="pdf-status">{% trans "Which sheets" %}</label>
+      <select id="pdf-status" name="status">
+        <option value="finished" selected>{% trans "Finished" %}</option>
+        <option value="needs_review">{% trans "Needs review" %}</option>
+        <option value="all">{% trans "All" %}</option>
+      </select>
+    </div>
+    {% endif %}
+    <div class="field">
+      <label for="pdf-mode">{% trans "Layout" %}</label>
+      <select id="pdf-mode" name="mode">
+        <option value="compact" selected>{% trans "Compact: only the chosen answers" %}</option>
+        <option value="full">{% trans "Full: every option, chosen and correct ones marked" %}</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="pdf-paper">{% trans "Paper" %}</label>
+      <select id="pdf-paper" name="paper">
+        <option value="A4" selected>A4</option>
+        <option value="Letter">Letter</option>
+      </select>
+    </div>
+    <label class="choice"><input type="checkbox" name="correct" checked> {% trans "Show correct answers" %}</label>
+    <label class="choice"><input type="checkbox" name="comments" checked> {% trans "Show teacher comments" %}</label>
+    <label class="choice"><input type="checkbox" name="unanswered" checked> {% trans "Show unanswered questions" %}</label>
+    <label class="choice"><input type="checkbox" name="shorten"> {% trans "Shorten long question text" %}</label>
+    {% if batch %}
+    <label class="choice"><input type="checkbox" name="continuous"> {% trans "Save paper: do not start a new page for every sheet" %}</label>
+    {% endif %}
+    <button class="btn btn-primary" type="submit">{% trans "Download PDF" %}</button>
+  </form>
+</details>

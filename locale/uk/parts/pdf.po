@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "page"
+msgstr "стор."
+
+msgid "Provisional: some answers still need review."
+msgstr "Попередній результат: деякі відповіді ще потребують перевірки."
+
+msgid "Download all as PDF"
+msgstr "Завантажити все як PDF"
+
+msgid "Download PDF"
+msgstr "Завантажити PDF"
+
+msgid "Which sheets"
+msgstr "Які аркуші"
+
+msgid "Layout"
+msgstr "Вигляд"
+
+msgid "Compact: only the chosen answers"
+msgstr "Стисло: лише вибрані відповіді"
+
+msgid "Full: every option, chosen and correct ones marked"
+msgstr "Повно: усі варіанти, з позначками вибраних і правильних"
+
+msgid "Paper"
+msgstr "Папір"
+
+msgid "Show correct answers"
+msgstr "Показувати правильні відповіді"
+
+msgid "Show teacher comments"
+msgstr "Показувати коментарі вчителя"
+
+msgid "Show unanswered questions"
+msgstr "Показувати запитання без відповіді"
+
+msgid "Shorten long question text"
+msgstr "Скорочувати довгі запитання"
+
+msgid "Save paper: do not start a new page for every sheet"
+msgstr "Економити папір: не починати кожен аркуш з нової сторінки"

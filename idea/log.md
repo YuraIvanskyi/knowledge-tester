@@ -4,6 +4,16 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-11: PDF sheets (KT-501 to KT-503)
+
+- `apps/reports/pdf.py` (fpdf2 + bundled DejaVu Sans, extracted from the matplotlib wheel; licence kept in `assets/fonts/`). One sheet per attempt: header with taker fields, score, grade and a "provisional" note, then each question with points, a result word (colour plus text, so it survives black-and-white printing), the answer, the correct answer and the teacher comment. Questions are kept together on a page; page footer shows the attempt code, taker and page n/N.
+- Options: compact or full, A4 or Letter, correct answers / comments / unanswered on or off, shorten long questions, and for batches "continuous". Batch = the whole session sorted by name, default finished attempts only (`status` filter: needs_review, all without voided).
+- UI: a "Download PDF" box on the attempt sheet and "Download all as PDF" on the session results page. The PDF opens inline in the browser with a Unicode file name.
+- Checked: Ukrainian glyph coverage of both fonts, text read back with pypdf, hostile input (control characters, emoji, very long words), sizes (about 24 KB for a sheet; 40 sheets under 1 MB), permissions. Looked at the rendered pages once.
+- Learned: with a wider points column the question layout no longer leaves gaps; page numbers in a batch are for the whole file, not per sheet.
+- Not done: selection of individual attempts by checkboxes (only the status filter), per-sheet page numbers in a batch, the language of a test driving the PDF labels (KT-803), a school name/logo in the header.
+- Next: Phase 6 (people).
+
 ## 2026-11-11: Browser editor for tests
 
 - Teachers can now build a test without writing JSON: "New test" (title + project), test settings (time limit, attempts, shuffling, what the student sees, grading scale and pass mark, taker fields), and a question editor for all five types, with up/down, duplicate and delete (with a confirmation page). Plain server-rendered forms, no JavaScript, so it works on a phone and under the CSP. Code: `apps/assessments/editing.py` (pure functions), `editor_views.py`, `templates/assessments/editor/`.
