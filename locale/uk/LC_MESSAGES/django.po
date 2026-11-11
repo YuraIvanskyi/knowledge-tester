@@ -69,6 +69,10 @@ msgid "Question duplicated."
 msgstr "Запитання дубльовано."
 
 #: apps/assessments/editor_views.py:221
+msgid "Test \"%(title)s\" deleted."
+msgstr "Тест «%(title)s» видалено."
+
+#: apps/assessments/editor_views.py:237
 msgid "Fix the errors in the test before previewing it."
 msgstr "Виправте помилки в тесті, перш ніж переглядати його."
 
@@ -243,7 +247,15 @@ msgstr "Неправильно"
 msgid "Partly correct"
 msgstr "Частково правильно"
 
-#: apps/delivery/views.py:117
+#: apps/delivery/views.py:116
+msgid "Session reopened. Students can join again with the same link and code."
+msgstr "Сесію відкрито знову. Учні можуть приєднатися за тим самим посиланням і кодом."
+
+#: apps/delivery/views.py:126
+msgid "Session deleted."
+msgstr "Сесію видалено."
+
+#: apps/delivery/views.py:142
 msgid "Session closed. %(count)d unfinished attempt(s) were submitted automatically."
 msgstr "Сесію закрито. Незавершені спроби (%(count)d) надіслано автоматично."
 
@@ -334,12 +346,17 @@ msgstr "Налаштування тесту"
 msgid "Export JSON"
 msgstr "Експортувати JSON"
 
-#: templates/assessments/detail.html:45 templates/assessments/list.html:24
+#: templates/assessments/detail.html:42 templates/assessments/editor/confirm_delete_test.html:3
+#: templates/assessments/editor/confirm_delete_test.html:21
+msgid "Delete test"
+msgstr "Видалити тест"
+
+#: templates/assessments/detail.html:46 templates/assessments/list.html:24
 #: templates/assessments/list.html:33 templates/reports/session.html:101
 msgid "Questions"
 msgstr "Запитання"
 
-#: templates/assessments/detail.html:48 templates/assessments/import.html:71
+#: templates/assessments/detail.html:49 templates/assessments/import.html:71
 #: templates/delivery/create.html:10 templates/delivery/session.html:11
 #: templates/delivery/take.html:13
 msgid "%(n)s question"
@@ -348,91 +365,92 @@ msgstr[0] "%(n)s запитання"
 msgstr[1] "%(n)s запитання"
 msgstr[2] "%(n)s запитань"
 
-#: templates/assessments/detail.html:49 templates/assessments/import.html:72
+#: templates/assessments/detail.html:50 templates/assessments/import.html:72
 msgid "%(n)s points"
 msgstr "Бали: %(n)s"
 
-#: templates/assessments/detail.html:50
+#: templates/assessments/detail.html:51
 msgid "min"
 msgstr "хв"
 
-#: templates/assessments/detail.html:58 templates/assessments/detail.html:68
+#: templates/assessments/detail.html:59 templates/assessments/detail.html:69
 #: templates/reports/session.html:106 templates/reports/session.html:115
 msgid "Question"
 msgstr "Запитання"
 
-#: templates/assessments/detail.html:59 templates/assessments/detail.html:69
+#: templates/assessments/detail.html:60 templates/assessments/detail.html:70
 msgid "Type"
 msgstr "Тип"
 
-#: templates/assessments/detail.html:60 templates/assessments/detail.html:70
+#: templates/assessments/detail.html:61 templates/assessments/detail.html:71
 #: templates/assessments/editor/question.html:83 templates/assessments/editor/settings.html:67
 #: templates/reports/attempt.html:82
 msgid "Points"
 msgstr "Бали"
 
-#: templates/assessments/detail.html:61 templates/assessments/detail.html:71
+#: templates/assessments/detail.html:62 templates/assessments/detail.html:72
 msgid "Actions"
 msgstr "Дії"
 
-#: templates/assessments/detail.html:73
+#: templates/assessments/detail.html:74
 msgid "Edit"
 msgstr "Редагувати"
 
-#: templates/assessments/detail.html:75
+#: templates/assessments/detail.html:76
 msgid "Move question %(n)s up"
 msgstr "Перемістити запитання %(n)s вгору"
 
-#: templates/assessments/detail.html:75
+#: templates/assessments/detail.html:76
 msgid "Up"
 msgstr "Вгору"
 
-#: templates/assessments/detail.html:78
+#: templates/assessments/detail.html:79
 msgid "Move question %(n)s down"
 msgstr "Перемістити запитання %(n)s вниз"
 
-#: templates/assessments/detail.html:78
+#: templates/assessments/detail.html:79
 msgid "Down"
 msgstr "Вниз"
 
-#: templates/assessments/detail.html:80
+#: templates/assessments/detail.html:81
 msgid "Duplicate question %(n)s"
 msgstr "Дублювати запитання %(n)s"
 
-#: templates/assessments/detail.html:80
+#: templates/assessments/detail.html:81
 msgid "Duplicate"
 msgstr "Дублювати"
 
-#: templates/assessments/detail.html:81
+#: templates/assessments/detail.html:82
 msgid "Delete question %(n)s"
 msgstr "Видалити запитання %(n)s"
 
-#: templates/assessments/detail.html:81
+#: templates/assessments/detail.html:82 templates/delivery/list.html:29
+#: templates/delivery/share.html:78
 msgid "Delete"
 msgstr "Видалити"
 
-#: templates/assessments/detail.html:89
+#: templates/assessments/detail.html:90
 msgid "No questions yet. Add the first one below."
 msgstr "Запитань ще немає. Додайте перше нижче."
 
-#: templates/assessments/detail.html:91
+#: templates/assessments/detail.html:92
 msgid "Add a question"
 msgstr "Додати запитання"
 
-#: templates/assessments/detail.html:100
+#: templates/assessments/detail.html:101
 msgid "Revisions"
 msgstr "Версії"
 
-#: apps/assessments/models.py:35 templates/assessments/detail.html:104
-#: templates/assessments/detail.html:110
+#: apps/assessments/models.py:35 templates/assessments/detail.html:105
+#: templates/assessments/detail.html:111
 msgid "Published"
 msgstr "Опубліковано"
 
-#: templates/assessments/detail.html:111 templates/delivery/create.html:24
+#: templates/assessments/detail.html:112 templates/delivery/create.html:24
 msgid "Open session"
 msgstr "Відкрити сесію"
 
-#: templates/assessments/detail.html:117
+#: templates/assessments/detail.html:118
 msgid "Not published yet. Publish the test to open a session for it."
 msgstr "Ще не опубліковано. Опублікуйте тест, щоб відкрити для нього сесію."
 
@@ -453,10 +471,48 @@ msgstr ""
 "Опубліковані версії та завершені сесії не зміняться. Запитання буде видалено лише з чернетки."
 
 #: templates/assessments/editor/confirm_delete.html:13
+#: templates/assessments/editor/confirm_delete_test.html:22
 #: templates/assessments/editor/question.html:116 templates/assessments/editor/settings.html:91
-#: templates/delivery/create.html:25
+#: templates/delivery/confirm_delete.html:17 templates/delivery/create.html:25
 msgid "Cancel"
 msgstr "Скасувати"
+
+#: templates/assessments/editor/confirm_delete_test.html:7
+msgid "Delete this test?"
+msgstr "Видалити цей тест?"
+
+#: templates/assessments/editor/confirm_delete_test.html:11
+msgid ""
+"The %(n)s session opened from this test will be deleted too, with %(attempts)s attempt(s) and all "
+"results."
+msgid_plural ""
+"All %(n)s sessions opened from this test will be deleted too, with %(attempts)s attempt(s) and all"
+" results."
+msgstr[0] ""
+"Буде видалено також %(n)s сесію, відкриту з цього тесту, з усіма результатами (спроб: "
+"%(attempts)s)."
+msgstr[1] ""
+"Буде видалено також %(n)s сесії, відкриті з цього тесту, з усіма результатами (спроб: "
+"%(attempts)s)."
+msgstr[2] ""
+"Буде видалено також %(n)s сесій, відкритих з цього тесту, з усіма результатами (спроб: "
+"%(attempts)s)."
+
+#: templates/assessments/editor/confirm_delete_test.html:12
+msgid "Some of these sessions are still open."
+msgstr "Деякі з цих сесій ще відкриті."
+
+#: templates/assessments/editor/confirm_delete_test.html:14
+msgid "No sessions have been opened from this test."
+msgstr "З цього тесту ще не відкривали сесій."
+
+#: templates/assessments/editor/confirm_delete_test.html:16
+msgid "This cannot be undone."
+msgstr "Цю дію не можна скасувати."
+
+#: templates/assessments/editor/confirm_delete_test.html:18
+msgid "Export the test as JSON first if you may need it again."
+msgstr "Якщо тест може знадобитися знову, спершу експортуйте його як JSON."
 
 #: templates/assessments/editor/create.html:3 templates/assessments/editor/create.html:8
 #: templates/assessments/list.html:10
@@ -853,7 +909,7 @@ msgstr "Імпорт"
 msgid "Log out"
 msgstr "Вийти"
 
-#: templates/base.html:38
+#: templates/core/_lang_switch.html:1
 msgid "Language"
 msgstr "Мова"
 
@@ -862,7 +918,7 @@ msgid "Dashboard"
 msgstr "Панель"
 
 #: templates/core/dashboard.html:11 templates/core/dashboard.html:33
-#: templates/delivery/share.html:73
+#: templates/delivery/share.html:79
 msgid "All sessions"
 msgstr "Усі сесії"
 
@@ -952,6 +1008,29 @@ msgstr "Приєднатися"
 #: templates/core/landing.html:18 templates/registration/login.html:6
 msgid "Teacher log in"
 msgstr "Вхід для вчителя"
+
+#: templates/delivery/confirm_delete.html:3 templates/delivery/confirm_delete.html:16
+msgid "Delete session"
+msgstr "Видалити сесію"
+
+#: templates/delivery/confirm_delete.html:7
+msgid "Delete this session?"
+msgstr "Видалити цю сесію?"
+
+#: templates/delivery/confirm_delete.html:10
+msgid "The %(n)s attempt of this session and its results will be deleted for good."
+msgid_plural "All %(n)s attempts of this session and their results will be deleted for good."
+msgstr[0] "Буде назавжди видалено %(n)s спробу цієї сесії та її результати."
+msgstr[1] "Буде назавжди видалено %(n)s спроби цієї сесії та їхні результати."
+msgstr[2] "Буде назавжди видалено %(n)s спроб цієї сесії та їхні результати."
+
+#: templates/delivery/confirm_delete.html:11
+msgid "The session is still open: students who are taking it will lose their answers."
+msgstr "Сесія ще відкрита: учні, які зараз проходять тест, втратять свої відповіді."
+
+#: templates/delivery/confirm_delete.html:13
+msgid "The test itself is not affected. Download the results first if you need them."
+msgstr "Сам тест не зміниться. Якщо потрібні результати, спершу завантажте їх."
 
 #: templates/delivery/create.html:3 templates/delivery/create.html:7
 msgid "Open a session"
@@ -1065,7 +1144,7 @@ msgstr "Закрита"
 msgid "Share"
 msgstr "Поділитися"
 
-#: templates/delivery/list.html:29 templates/delivery/share.html:72 templates/reports/session.html:3
+#: templates/delivery/list.html:29 templates/delivery/share.html:77 templates/reports/session.html:3
 #: templates/reports/session.html:10
 msgid "Results"
 msgstr "Результати"
@@ -1163,6 +1242,10 @@ msgstr "з"
 #: templates/delivery/share.html:69
 msgid "Close session"
 msgstr "Закрити сесію"
+
+#: templates/delivery/share.html:74
+msgid "Reopen session"
+msgstr "Відкрити сесію знову"
 
 #: templates/delivery/take.html:9
 msgid "Preview."

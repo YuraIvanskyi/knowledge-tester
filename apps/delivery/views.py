@@ -109,6 +109,31 @@ def session_stats(request, pk: int):
 
 @login_required
 @require_POST
+def session_reopen(request, pk: int):
+    sitting = _own_sitting(request, pk)
+    if services.reopen_sitting(sitting):
+        messages.success(
+            request, _("Session reopened. Students can join again with the same link and code.")
+        )
+    return redirect("delivery:share", pk=sitting.pk)
+
+
+@login_required
+def session_delete(request, pk: int):
+    sitting = _own_sitting(request, pk)
+    if request.method == "POST":
+        services.delete_sitting(sitting)
+        messages.success(request, _("Session deleted."))
+        return redirect("delivery:list")
+    return render(
+        request,
+        "delivery/confirm_delete.html",
+        {"sitting": sitting, "attempt_count": sitting.attempts.count()},
+    )
+
+
+@login_required
+@require_POST
 def session_close(request, pk: int):
     sitting = _own_sitting(request, pk)
     count = services.close_sitting(sitting)

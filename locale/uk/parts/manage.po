@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Test \"%(title)s\" deleted."
+msgstr "Тест «%(title)s» видалено."
+
+msgid "Session reopened. Students can join again with the same link and code."
+msgstr "Сесію відкрито знову. Учні можуть приєднатися за тим самим посиланням і кодом."
+
+msgid "Session deleted."
+msgstr "Сесію видалено."
+
+msgid "Delete test"
+msgstr "Видалити тест"
+
+msgid "Delete this test?"
+msgstr "Видалити цей тест?"
+
+msgid "The %(n)s session opened from this test will be deleted too, with %(attempts)s attempt(s) and all results."
+msgid_plural "All %(n)s sessions opened from this test will be deleted too, with %(attempts)s attempt(s) and all results."
+msgstr[0] "Буде видалено також %(n)s сесію, відкриту з цього тесту, з усіма результатами (спроб: %(attempts)s)."
+msgstr[1] "Буде видалено також %(n)s сесії, відкриті з цього тесту, з усіма результатами (спроб: %(attempts)s)."
+msgstr[2] "Буде видалено також %(n)s сесій, відкритих з цього тесту, з усіма результатами (спроб: %(attempts)s)."
+
+msgid "Some of these sessions are still open."
+msgstr "Деякі з цих сесій ще відкриті."
+
+msgid "No sessions have been opened from this test."
+msgstr "З цього тесту ще не відкривали сесій."
+
+msgid "This cannot be undone."
+msgstr "Цю дію не можна скасувати."
+
+msgid "Export the test as JSON first if you may need it again."
+msgstr "Якщо тест може знадобитися знову, спершу експортуйте його як JSON."
+
+msgid "Delete session"
+msgstr "Видалити сесію"
+
+msgid "Delete this session?"
+msgstr "Видалити цю сесію?"
+
+msgid "The %(n)s attempt of this session and its results will be deleted for good."
+msgid_plural "All %(n)s attempts of this session and their results will be deleted for good."
+msgstr[0] "Буде назавжди видалено %(n)s спробу цієї сесії та її результати."
+msgstr[1] "Буде назавжди видалено %(n)s спроби цієї сесії та їхні результати."
+msgstr[2] "Буде назавжди видалено %(n)s спроб цієї сесії та їхні результати."
+
+msgid "The session is still open: students who are taking it will lose their answers."
+msgstr "Сесія ще відкрита: учні, які зараз проходять тест, втратять свої відповіді."
+
+msgid "The test itself is not affected. Download the results first if you need them."
+msgstr "Сам тест не зміниться. Якщо потрібні результати, спершу завантажте їх."
+
+msgid "Reopen session"
+msgstr "Відкрити сесію знову"

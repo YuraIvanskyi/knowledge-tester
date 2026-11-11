@@ -66,20 +66,42 @@ def test_set_language_ignores_external_next(client):
     assert "evil.example" not in response["Location"]
 
 
-def test_footer_switcher_lists_both_languages_untranslated(client):
+def switchers(html: str) -> list[str]:
+    return re.findall(r'<form class="lang-switch[^"]*".*?</form>', html, re.S)
+
+
+def test_switcher_is_in_header_and_footer_with_abbreviations(client):
     html = client.get(reverse("core:landing")).content.decode()
-    form = re.search(r'<form class="lang-switch".*?</form>', html, re.S).group(0)
-    assert reverse("set_language") in form
-    assert "csrfmiddlewaretoken" in form
-    assert 'name="next" value="/"' in form
-    assert 'value="uk"' in form and ">Українська<" in form
-    assert 'value="en"' in form and ">English<" in form
-    # Switcher labels are endonyms: identical in both languages.
+    header, footer = switchers(html)
+    assert "lang-switch-header" in header and "lang-switch-footer" in footer
+    assert html.index(header) < html.index("<main") < html.index(footer)
+    for form in (header, footer):
+        assert reverse("set_language") in form
+        assert "csrfmiddlewaretoken" in form
+        assert 'name="next" value="/"' in form
+        assert 'value="uk"' in form and ">UA<" in form
+        assert 'value="en"' in form and ">ENG<" in form
+        # Full names stay available to screen readers and as tooltips, untranslated.
+        assert 'aria-label="Українська"' in form and 'aria-label="English"' in form
+    # Labels are the same in every UI language.
     client.cookies[LANG_COOKIE] = "en"
-    form_en = re.search(
-        r'<form class="lang-switch".*?</form>', client.get("/").content.decode(), re.S
-    ).group(0)
-    assert ">Українська<" in form_en and ">English<" in form_en
+    for form in switchers(client.get("/").content.decode()):
+        assert ">UA<" in form and ">ENG<" in form and 'aria-label="Language"' in form
+
+
+def test_switcher_marks_current_language_in_both_places(client):
+    for form in switchers(client.get("/").content.decode()):
+        assert re.search(r'value="uk"[^>]*aria-current="true"', form)
+    client.cookies[LANG_COOKIE] = "en"
+    for form in switchers(client.get("/").content.decode()):
+        assert re.search(r'value="en"[^>]*aria-current="true"', form)
+
+
+def test_css_shows_header_switcher_on_desktop_and_footer_on_phones():
+    css = (settings.BASE_DIR / "static" / "css" / "base.css").read_text(encoding="utf-8")
+    assert re.search(r"\.lang-switch-header\s*\{\s*display:\s*none", css)
+    media = css[css.index("@media (min-width: 640px)") :]
+    assert ".lang-switch-header" in media and ".site-footer" in media
 
 
 def test_ukrainian_plural_forms():

@@ -581,6 +581,18 @@ legend {
   column-gap: var(--space-4);
   margin: 0;
 }
+/* Header on wide screens, footer on phones */
+.lang-switch-header {
+  display: none;
+}
+@media (min-width: 640px) {
+  .lang-switch-header {
+    display: flex;
+  }
+  .site-footer {
+    display: none;
+  }
+}
 .lang-switch button {
   min-height: 44px;
   padding: 0;

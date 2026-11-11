@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Delete session" %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Delete this session?" %}</h1>
+  <p><strong>{{ sitting.title|default:sitting.code }}</strong> <span class="mono">{{ sitting.code }}</span></p>
+  <p class="alert alert-warn">
+    {% blocktrans count n=attempt_count %}The {{ n }} attempt of this session and its results will be deleted for good.{% plural %}All {{ n }} attempts of this session and their results will be deleted for good.{% endblocktrans %}
+    {% if sitting.status == "open" %}{% trans "The session is still open: students who are taking it will lose their answers." %}{% endif %}
+  </p>
+  <p class="muted">{% trans "The test itself is not affected. Download the results first if you need them." %}</p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% trans "Delete session" %}</button>
+    <a class="btn" href="{% url 'delivery:share' sitting.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

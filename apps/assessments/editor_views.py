@@ -212,6 +212,22 @@ def question_duplicate(request, pk, question_id):
 
 
 @login_required
+def delete(request, pk):
+    """Delete a test. Its sessions and their results go too, so this asks first."""
+    assessment = _owned_assessment(request, pk)
+    if request.method == "POST":
+        title = assessment.title
+        services.delete_assessment(assessment)
+        messages.success(request, _('Test "%(title)s" deleted.') % {"title": title})
+        return redirect("assessments:list")
+    return render(
+        request,
+        "assessments/editor/confirm_delete_test.html",
+        {"assessment": assessment, "impact": services.deletion_impact(assessment)},
+    )
+
+
+@login_required
 def preview(request, pk):
     """Show the draft as a taker would see it. Nothing is saved."""
     assessment = _owned_assessment(request, pk)

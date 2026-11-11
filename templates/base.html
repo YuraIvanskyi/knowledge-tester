@@ -24,6 +24,7 @@
         </form>
       </nav>
       {% endif %}{% endblock %}
+      {% include "core/_lang_switch.html" with where="header" %}
     </div>
   </header>
   <main id="main" class="container">
@@ -35,11 +36,7 @@
     {% block content %}{% endblock %}
   </main>
   <footer class="site-footer">
-    <form class="lang-switch" method="post" action="{% url 'set_language' %}" aria-label="{% trans 'Language' %}">{% csrf_token %}
-      <input type="hidden" name="next" value="{{ request.get_full_path }}">
-      {% get_available_languages as available %}{% get_language_info_list for available as languages %}
-      {% for lang in languages %}<button type="submit" name="language" value="{{ lang.code }}" lang="{{ lang.code }}"{% if lang.code == LANGUAGE_CODE %} aria-current="true"{% endif %}>{{ lang.name_local|capfirst }}</button>{% endfor %}
-    </form>
+    {% include "core/_lang_switch.html" with where="footer" %}
   </footer>
   {% block scripts %}{% endblock %}
 </body>

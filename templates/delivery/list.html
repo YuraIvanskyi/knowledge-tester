@@ -26,7 +26,7 @@
           <td data-label="{% trans 'Code' %}" class="mono">{{ s.code }}</td>
           <td data-label="{% trans 'Status' %}">{% if s.status == "open" %}<span class="status-ok">{% trans "Open" %}</span>{% else %}<span class="muted">{% trans "Closed" %}</span>{% endif %}</td>
           <td data-label="{% trans 'Attempts' %}" class="num">{{ s.attempt_count }}</td>
-          <td><a href="{% url 'delivery:share' s.pk %}">{% trans "Share" %}</a> &middot; <a href="{% url 'reports:session' s.pk %}">{% trans "Results" %}</a></td>
+          <td><a href="{% url 'delivery:share' s.pk %}">{% trans "Share" %}</a> &middot; <a href="{% url 'reports:session' s.pk %}">{% trans "Results" %}</a> &middot; <a href="{% url 'delivery:delete' s.pk %}">{% trans "Delete" %}</a></td>
         </tr>
       {% endfor %}
     </tbody>

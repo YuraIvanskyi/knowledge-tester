@@ -487,3 +487,56 @@ def test_detail_links_to_preview_only_when_valid(client_t, blank, previewable):
         reverse("assessments:preview", args=[empty.pk])
         not in client_t.get(reverse("assessments:detail", args=[empty.pk])).content.decode()
     )
+
+
+# --- delete a test --------------------------------------------------------------------------
+
+
+def test_delete_test_without_sessions(client_t, blank, teacher):
+    url = reverse("assessments:delete", args=[blank.pk])
+    page = client_t.get(url)
+    assert page.status_code == 200 and "No sessions have been opened" in page.content.decode()
+    assert Assessment.objects.count() == 1
+    response = client_t.post(url)
+    assert response["Location"] == reverse("assessments:list")
+    assert not Assessment.objects.exists()
+
+
+def test_delete_test_takes_revisions_sessions_and_attempts_with_it(client_t, blank, teacher):
+    from apps.delivery import services as delivery
+    from apps.delivery.models import Attempt, Sitting
+
+    add(client_t, blank, "open", text="Explain", points="1")
+    blank.refresh_from_db()
+    revision, error, _created = services.publish(blank, teacher)
+    assert error is None
+    sitting = delivery.create_sitting(revision=revision, user=teacher, title="S")
+    Attempt.objects.create(sitting=sitting, taker={"name": "A"})
+    Attempt.objects.create(sitting=sitting, taker={"name": "B"})
+
+    page = client_t.get(reverse("assessments:delete", args=[blank.pk])).content.decode()
+    assert "still open" in page and "2 attempt" in page
+    client_t.post(reverse("assessments:delete", args=[blank.pk]))
+    assert not Assessment.objects.exists()
+    assert not Sitting.objects.exists() and not Attempt.objects.exists()
+
+
+def test_delete_leaves_other_tests_alone(client_t, blank, teacher):
+    keep = services.create_assessment(blank.project, editing.blank_document("Keep", "en"))
+    client_t.post(reverse("assessments:delete", args=[blank.pk]))
+    assert list(Assessment.objects.all()) == [keep]
+
+
+def test_delete_test_permissions(client, client_t, blank, other):
+    client_t.logout()
+    url = reverse("assessments:delete", args=[blank.pk])
+    assert client_t.post(url).status_code == 302 and Assessment.objects.count() == 1
+    client_t.force_login(other)
+    assert client_t.get(url).status_code == 404
+    assert client_t.post(url).status_code == 404
+    assert Assessment.objects.count() == 1
+
+
+def test_detail_has_delete_link(client_t, blank):
+    html = client_t.get(reverse("assessments:detail", args=[blank.pk])).content.decode()
+    assert reverse("assessments:delete", args=[blank.pk]) in html

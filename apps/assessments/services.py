@@ -56,6 +56,34 @@ def save_draft(assessment: Assessment, document: dict) -> None:
     assessment.save()
 
 
+def delete_assessment(assessment: Assessment) -> tuple[int, int]:
+    """Delete a test with its revisions, and the sessions opened from them (with all results).
+
+    Returns (sessions, attempts) that went with it.
+    """
+    from apps.delivery.models import Attempt, Sitting
+
+    sittings = Sitting.objects.filter(revision__assessment=assessment)
+    sessions = sittings.count()
+    attempts = Attempt.objects.filter(sitting__in=sittings).count()
+    with transaction.atomic():
+        sittings.delete()  # Sitting.revision is PROTECT, so sessions must go first
+        assessment.delete()
+    return sessions, attempts
+
+
+def deletion_impact(assessment: Assessment) -> dict:
+    from apps.delivery.models import Attempt, Sitting
+
+    sittings = Sitting.objects.filter(revision__assessment=assessment)
+    return {
+        "revisions": assessment.revisions.count(),
+        "sessions": sittings.count(),
+        "open_sessions": sittings.filter(status=Sitting.Status.OPEN).count(),
+        "attempts": Attempt.objects.filter(sitting__in=sittings).count(),
+    }
+
+
 def publish(assessment: Assessment, user) -> tuple[Revision | None, str | None, bool]:
     """Publish the draft. Returns (revision, error_text, created).
 

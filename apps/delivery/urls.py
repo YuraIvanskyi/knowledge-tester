@@ -10,4 +10,6 @@ urlpatterns = [
     path("<int:pk>/", views.session_share, name="share"),
     path("<int:pk>/stats/", views.session_stats, name="stats"),
     path("<int:pk>/close/", views.session_close, name="close"),
+    path("<int:pk>/reopen/", views.session_reopen, name="reopen"),
+    path("<int:pk>/delete/", views.session_delete, name="delete"),
 ]

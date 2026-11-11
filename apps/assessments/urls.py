@@ -10,6 +10,7 @@ urlpatterns = [
     path("import/", views.import_test, name="import"),
     path("<int:pk>/", views.detail, name="detail"),
     path("<int:pk>/publish/", views.publish, name="publish"),
+    path("<int:pk>/delete/", editor_views.delete, name="delete"),
     path("<int:pk>/preview/", editor_views.preview, name="preview"),
     path("<int:pk>/export/", views.export, name="export"),
     path("<int:pk>/settings/", editor_views.test_settings, name="settings"),

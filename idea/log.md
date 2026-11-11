@@ -4,6 +4,13 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-11: Fixes after first review
+
+- **Language switcher:** now abbreviations (ENG, UA; the full name is the tooltip and the accessible name). The same markup (`templates/core/_lang_switch.html`) is rendered in the header and in the footer; CSS shows the header one from 640 px up and the footer one below that (no JS). The footer is hidden on desktop.
+- **Delete:** a test (confirmation page says how many sessions and attempts go with it; `Sitting.revision` is PROTECT, so `services.delete_assessment` removes sessions first, in one transaction) and a session (all its attempts and answers; the test is untouched). Both are POST-after-confirmation and ownership-checked. Buttons on the test page, the session page and the session list.
+- **Reopen:** a closed session can be reopened (`delivery:reopen`), same link and code, `closed_at` cleared. Attempts auto-submitted at close stay finished, and `max_attempts` still applies.
+- 16 new Ukrainian strings, 454 tests.
+
 ## 2026-11-11: PDF sheets (KT-501 to KT-503)
 
 - `apps/reports/pdf.py` (fpdf2 + bundled DejaVu Sans, extracted from the matplotlib wheel; licence kept in `assets/fonts/`). One sheet per attempt: header with taker fields, score, grade and a "provisional" note, then each question with points, a result word (colour plus text, so it survives black-and-white printing), the answer, the correct answer and the teacher comment. Questions are kept together on a page; page footer shows the attempt code, taker and page n/N.

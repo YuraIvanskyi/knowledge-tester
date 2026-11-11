@@ -68,8 +68,14 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">{% trans "Close session" %}</button>
       </form>
+    {% else %}
+      <form method="post" action="{% url 'delivery:reopen' sitting.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">{% trans "Reopen session" %}</button>
+      </form>
     {% endif %}
-    <a class="btn{% if not is_open %} btn-primary{% endif %}" href="{% url 'reports:session' sitting.pk %}">{% trans "Results" %}</a>
+    <a class="btn" href="{% url 'reports:session' sitting.pk %}">{% trans "Results" %}</a>
+    <a class="btn btn-danger" href="{% url 'delivery:delete' sitting.pk %}">{% trans "Delete" %}</a>
     <a class="btn btn-link" href="{% url 'delivery:list' %}">{% trans "All sessions" %}</a>
   </div>
 </div>

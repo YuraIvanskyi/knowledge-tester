@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Delete test" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Delete this test?" %}</h1>
+  <p><strong>{{ assessment.title }}</strong></p>
+  <p class="alert alert-warn">
+    {% if impact.sessions %}
+      {% blocktrans count n=impact.sessions with attempts=impact.attempts %}The {{ n }} session opened from this test will be deleted too, with {{ attempts }} attempt(s) and all results.{% plural %}All {{ n }} sessions opened from this test will be deleted too, with {{ attempts }} attempt(s) and all results.{% endblocktrans %}
+      {% if impact.open_sessions %}{% trans "Some of these sessions are still open." %}{% endif %}
+    {% else %}
+      {% trans "No sessions have been opened from this test." %}
+    {% endif %}
+    {% trans "This cannot be undone." %}
+  </p>
+  <p class="muted">{% trans "Export the test as JSON first if you may need it again." %}</p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% trans "Delete test" %}</button>
+    <a class="btn" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

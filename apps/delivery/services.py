@@ -222,6 +222,26 @@ def close_sitting(sitting: Sitting) -> int:
     return count
 
 
+def reopen_sitting(sitting: Sitting) -> bool:
+    """Let students join again with the same link and code. Returns False if already open.
+
+    Attempts that were submitted automatically when the session closed stay as they are.
+    """
+    if sitting.status == Sitting.Status.OPEN:
+        return False
+    sitting.status = Sitting.Status.OPEN
+    sitting.closed_at = None
+    sitting.save(update_fields=["status", "closed_at"])
+    return True
+
+
+def delete_sitting(sitting: Sitting) -> int:
+    """Delete a session with all its attempts and answers. Returns the number of attempts."""
+    count = sitting.attempts.count()
+    sitting.delete()
+    return count
+
+
 # --- teacher live stats ------------------------------------------------------------------------
 
 
