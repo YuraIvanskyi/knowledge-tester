@@ -16,7 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # Installed with `uv sync --extra <name>` when the feature is used (plan §6.2).
-xlsx = []        # phase 5-6: openpyxl
+xlsx = ["openpyxl>=3.1"]   # roster import (phase 6) and results export
 docs = []        # phase 7: python-docx, pypdf
 mdns = []        # phase 9: zeroconf
 translate = []   # phase 8: django-rosetta
