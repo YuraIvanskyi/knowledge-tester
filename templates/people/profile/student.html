@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load i18n static report_extras %}
+{% block title %}{{ student.full_name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+{% block content %}
+<div class="stack profile">
+  <p class="back"><a href="{{ back_url }}">&larr; {% if student.group %}{{ student.group.name }}{% else %}{% trans "Back to students" %}{% endif %}</a></p>
+
+  <header class="stack-sm">
+    <div class="page-head">
+      <h1>{{ student.full_name }}</h1>
+      <a class="btn" href="{% url 'people:student_edit' student.pk %}">{% trans "Edit" %}</a>
+    </div>
+    <dl class="facts-list">
+      <div>
+        <dt>{% trans "Group" %}</dt>
+        <dd>{% if student.group %}<a href="{% url 'people:group' student.group.pk %}">{{ student.group.name }}</a>{% else %}<span class="muted">{% trans "No group" %}</span>{% endif %}</dd>
+      </div>
+      <div>
+        <dt>{% trans "Status" %}</dt>
+        <dd>{% if student.is_active %}<span class="badge badge-ok">{% trans "Active student" %}</span>{% else %}<span class="badge">{% trans "Inactive student" %}</span>{% endif %}</dd>
+      </div>
+      <div>
+        <dt>{% trans "PIN" %}</dt>
+        <dd>{% if student.pin %}<span class="mono">{{ student.pin }}</span>{% else %}<span class="muted">{% trans "No PIN" %}</span>{% endif %}</dd>
+      </div>
+    </dl>
+  </header>
+
+  <section class="stack-sm" aria-labelledby="h-averages">
+    <h2 id="h-averages">{% trans "Averages" %}</h2>
+    {% if profile.rows %}
+    <dl class="p-stats">
+      <div>
+        <dt>{% trans "Overall average" %}</dt>
+        <dd>{% if profile.overall_mean is not None %}{{ profile.overall_mean|numd }} %{% else %}&ndash;{% endif %}{% if profile.provisional %} <span class="status-warn flag">{% trans "Provisional" %}</span>{% endif %}</dd>
+      </div>
+      <div>
+        <dt>{% trans "Counted attempts" %}</dt>
+        <dd>{{ profile.rows|length }}</dd>
+      </div>
+      {% if profile.provisional_attempts %}
+      <div>
+        <dt>{% trans "Waiting for review" %}</dt>
+        <dd>{{ profile.provisional_attempts }}</dd>
+      </div>
+      {% endif %}
+    </dl>
+
+    {% if profile.provisional %}
+    <p class="alert alert-warn">{% trans "Provisional: some answers still need review." %} {% trans "The averages marked as provisional will change once the open answers are graded." %}</p>
+    {% endif %}
+
+    {% if profile.projects %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{% trans "Project" %}</th>
+          <th scope="col" class="num">{% trans "Attempts" %}</th>
+          <th scope="col" class="num">{% trans "Average" %}</th>
+          <th scope="col" class="num">{% trans "Best" %}</th>
+          <th scope="col" class="num">{% trans "Latest" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stats in profile.projects %}
+        <tr>
+          <td data-label="{% trans 'Project' %}">{{ stats.title }}</td>
+          <td data-label="{% trans 'Attempts' %}" class="num">{{ stats.count }}</td>
+          <td data-label="{% trans 'Average' %}" class="num"><span>{{ stats.mean|numd }} %{% if stats.provisional %} <span class="status-warn flag">{% trans "Provisional" %}</span>{% endif %}</span></td>
+          <td data-label="{% trans 'Best' %}" class="num">{{ stats.best|numd }} %</td>
+          <td data-label="{% trans 'Latest' %}" class="num">{{ stats.latest|numd }} %</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <p class="muted hint">{% trans "Only finished attempts with a score count; voided attempts never do. Each average is the mean of the percent of those attempts, and the overall average is the mean of all of them (not of the project averages)." %}</p>
+    {% else %}
+    <p class="muted">{% trans "No finished results yet." %}</p>
+    {% endif %}
+  </section>
+
+  <section class="stack-sm" aria-labelledby="h-history">
+    <h2 id="h-history">{% trans "History" %}</h2>
+    {% if profile.rows %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{% trans "Date" %}</th>
+          <th scope="col">{% trans "Test" %}</th>
+          <th scope="col">{% trans "Session" %}</th>
+          <th scope="col" class="num">{% trans "Score" %}</th>
+          <th scope="col" class="num">{% trans "Percent" %}</th>
+          <th scope="col">{% trans "Grade" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in profile.rows %}
+        <tr>
+          <td data-label="{% trans 'Date' %}">{{ row.when|date:"d.m.Y H:i" }}</td>
+          <td data-label="{% trans 'Test' %}"><span class="cell"><a href="{% url 'reports:attempt' row.attempt_id %}">{{ row.test_title }}</a><span class="sub">{{ row.project_title }}</span></span></td>
+          <td data-label="{% trans 'Session' %}"><span class="cell">{{ row.session_title|default:row.session_code }}{% if row.session_title %}<span class="sub mono">{{ row.session_code }}</span>{% endif %}</span></td>
+          <td data-label="{% trans 'Score' %}" class="num">{% if row.score is not None %}{{ row.score|numd }} / {{ row.max_score|numd }}{% else %}&ndash;{% endif %}</td>
+          <td data-label="{% trans 'Percent' %}" class="num"><span>{% if row.percent is not None %}{{ row.percent|numd }} %{% else %}&ndash;{% endif %}{% if row.provisional %} <span class="status-warn flag">{% trans "Provisional" %}</span>{% endif %}</span></td>
+          <td data-label="{% trans 'Grade' %}">{% if row.grade %}{{ row.grade|grade_text }}{% else %}<span class="muted">&ndash;</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+      <p>{% trans "No finished results are linked to this student yet." %}</p>
+      <p class="hint">{% trans "Open a session for the group, or use “Link to students” on a session’s results page." %}</p>
+    </div>
+    {% endif %}
+
+    {% if profile.others %}
+    <details class="others">
+      <summary>{{ not_counted }}</summary>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">{% trans "Date" %}</th>
+            <th scope="col">{% trans "Test" %}</th>
+            <th scope="col">{% trans "Status" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in profile.others %}
+          <tr>
+            <td data-label="{% trans 'Date' %}">{{ row.when|date:"d.m.Y H:i" }}</td>
+            <td data-label="{% trans 'Test' %}"><span class="cell"><a href="{% url 'reports:attempt' row.attempt_id %}">{{ row.test_title }}</a><span class="sub">{{ row.session_title|default:row.session_code }}</span></span></td>
+            <td data-label="{% trans 'Status' %}">{% if row.kind == "voided" %}{% trans "Voided" %}{% elif row.kind == "in_progress" %}{% trans "In progress" %}{% else %}{% trans "Not graded" %}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </details>
+    {% endif %}
+  </section>
+
+  <section class="stack-sm" id="notes" aria-labelledby="h-notes">
+    <h2 id="h-notes">{% trans "Notes" %}</h2>
+    <form method="post" action="{% url 'people:student_notes' student.pk %}" class="stack-sm">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.notes.id_for_label }}" class="visually-hidden">{% trans "Notes" %}</label>
+        {{ form.notes }}
+        {{ form.notes.errors }}
+        <span class="help">{% blocktrans with n=notes_limit %}Plain text, up to {{ n }} characters. Only you (and administrators) can see your notes.{% endblocktrans %}</span>
+      </div>
+      <button class="btn btn-primary" type="submit">{% trans "Save notes" %}</button>
+    </form>
+  </section>
+
+  <section class="stack-sm" aria-labelledby="h-download">
+    <h2 id="h-download">{% trans "Download" %}</h2>
+    <div class="row downloads">
+      <a class="btn" href="{% url 'people:student_csv' student.pk %}">{% trans "Download CSV" %}</a>
+      <form method="get" action="{% url 'people:student_pdf' student.pk %}" class="row">
+        <label class="visually-hidden" for="pdf-paper">{% trans "Paper" %}</label>
+        <select id="pdf-paper" name="paper" class="paper-select">
+          <option value="A4" selected>A4</option>
+          <option value="Letter">Letter</option>
+        </select>
+        <button class="btn" type="submit">{% trans "Download PDF" %}</button>
+      </form>
+    </div>
+    <p class="muted hint">{% trans "The CSV lists every linked attempt with its status; the PDF is a printable summary of the counted ones." %}</p>
+  </section>
+
+  <section class="panel stack-sm danger-zone" aria-labelledby="h-danger">
+    <h2 id="h-danger">{% trans "Delete student" %}</h2>
+    <p class="muted">{% trans "Remove this student from your roster. You choose what happens to their attempts on the next page." %}</p>
+    <p><a class="btn btn-danger" href="{% url 'people:student_delete' student.pk %}">{% trans "Delete student…" %}</a></p>
+  </section>
+</div>
+{% endblock %}

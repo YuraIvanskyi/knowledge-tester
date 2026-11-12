@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Delete student" %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack profile">
+  <h1>{% trans "Delete this student?" %}</h1>
+  <p><strong>{{ student.full_name }}</strong>{% if student.group %} <span class="muted">&middot; {{ student.group.name }}</span>{% endif %}</p>
+
+  {% if counts.linked == 0 %}
+  <p class="muted">{% trans "No attempts are linked to this student. Only the roster entry and its notes are removed." %}</p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit" name="attempts" value="{{ KEEP }}">{% trans "Delete student" %}</button>
+    <a class="btn" href="{{ back_url }}">{% trans "Cancel" %}</a>
+  </form>
+  {% else %}
+  <p class="alert alert-warn">{% blocktrans count n=counts.linked %}{{ n }} attempt is linked to this student. Choose what happens to it.{% plural %}{{ n }} attempts are linked to this student. Choose what happens to them.{% endblocktrans %}</p>
+
+  <section class="panel stack-sm choice-box">
+    <h2>{% trans "Keep the results" %}</h2>
+    <p>{% trans "Delete the student, keep the results: the attempts stay in their sessions, unlinked. What the student typed (their name) is kept as it was, and the session results do not change." %}</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger" type="submit" name="attempts" value="{{ KEEP }}">{% trans "Delete student, keep results" %}</button>
+    </form>
+  </section>
+
+  <section class="panel stack-sm choice-box">
+    <h2>{% trans "Delete everything" %}</h2>
+    <p>{% blocktrans count n=counts.removable %}Delete the student and all their linked attempts: {{ n }} attempt and its answers will be removed from the sessions for good.{% plural %}Delete the student and all their linked attempts: {{ n }} attempts and their answers will be removed from the sessions for good.{% endblocktrans %}</p>
+    {% if counts.removable != counts.linked %}
+    <p class="muted">{% trans "Attempts from sessions of another teacher are only unlinked, never deleted." %}</p>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger" type="submit" name="attempts" value="{{ DELETE }}"{% if not counts.removable %} disabled{% endif %}>{% trans "Delete student and attempts" %}</button>
+    </form>
+  </section>
+
+  <p><a class="btn" href="{{ back_url }}">{% trans "Cancel" %}</a></p>
+  {% endif %}
+</div>
+{% endblock %}

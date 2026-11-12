@@ -1,0 +1,146 @@
+/* Student profile (KT-605). Uses the tokens from base.css. */
+
+.profile .back {
+  margin: 0;
+}
+.profile h1 {
+  overflow-wrap: anywhere;
+}
+
+/* Header facts: group, status, PIN */
+
+.facts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+}
+.facts-list dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.facts-list dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.badge-ok {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+/* Averages */
+
+.p-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.p-stats > div {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.p-stats dt {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.p-stats dd {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.flag {
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+.hint {
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+
+/* History */
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 7.5rem;
+  overflow-wrap: anywhere;
+}
+.profile .table td.num,
+.profile .table td:last-child {
+  white-space: nowrap;
+}
+.sub {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+@media (max-width: 639px) {
+  .cell {
+    align-items: flex-end;
+  }
+}
+.others > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--muted);
+}
+.others[open] > summary {
+  margin-bottom: var(--space-2);
+}
+
+/* Notes and downloads */
+
+.profile textarea {
+  min-height: 7rem;
+}
+.downloads {
+  align-items: flex-start;
+}
+.downloads form {
+  margin: 0;
+  flex-wrap: nowrap;
+}
+.paper-select {
+  width: auto;
+  min-width: 6.5rem;
+}
+
+/* Delete */
+
+.danger-zone {
+  margin-top: var(--space-5);
+}
+/* base.css styles button.btn after .btn-danger, so say it again for real buttons */
+button.btn-danger {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.choice-box h2 {
+  margin-bottom: 0;
+}
+.choice-box form {
+  margin: 0;
+}
+.choice-box .btn {
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .choice-box .btn {
+    width: auto;
+  }
+}

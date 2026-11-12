@@ -1,0 +1,186 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# Student profile (KT-605): page, delete flow, CSV and PDF summary.
+
+msgid "Student results"
+msgstr "Результати учня"
+
+msgid "Student"
+msgstr "Учень"
+
+msgid "Group"
+msgstr "Група"
+
+msgid "No group"
+msgstr "Без групи"
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Generated"
+msgstr "Створено"
+
+msgid "Active student"
+msgstr "Активний учень"
+
+msgid "Inactive student"
+msgstr "Неактивний учень"
+
+msgid "PIN"
+msgstr "PIN-код"
+
+msgid "No PIN"
+msgstr "Без PIN-коду"
+
+msgid "Back to students"
+msgstr "До списку учнів"
+
+msgid "Averages"
+msgstr "Середні результати"
+
+msgid "Overall average"
+msgstr "Загальне середнє"
+
+msgid "Counted attempts"
+msgstr "Враховані спроби"
+
+msgid "Best"
+msgstr "Найкращий"
+
+msgid "Latest"
+msgstr "Останній"
+
+msgid "History"
+msgstr "Історія"
+
+msgid "The averages marked as provisional will change once the open answers are graded."
+msgstr "Середні, позначені як попередні, зміняться, щойно відкриті відповіді буде оцінено."
+
+msgid "Only finished attempts with a score count; voided attempts never do. Each average is the mean of the percent of those attempts, and the overall average is the mean of all of them (not of the project averages)."
+msgstr "Враховуються лише завершені спроби з балами; скасовані спроби не враховуються ніколи. Кожне середнє — це середній відсоток цих спроб, а загальне середнє — середнє всіх них (а не середнє проєктних середніх)."
+
+msgid "Mean of the percent of %(n)s counted attempt."
+msgid_plural "Mean of the percent of %(n)s counted attempts."
+msgstr[0] "Середнє відсотка за %(n)s врахованою спробою."
+msgstr[1] "Середнє відсотка за %(n)s врахованими спробами."
+msgstr[2] "Середнє відсотка за %(n)s врахованими спробами."
+
+msgid "No finished results yet."
+msgstr "Завершених результатів ще немає."
+
+msgid "No finished results are linked to this student yet."
+msgstr "До цього учня ще не прив’язано завершених результатів."
+
+msgid "Open a session for the group, or use “Link to students” on a session’s results page."
+msgstr "Відкрийте сесію для групи або скористайтеся «Прив’язати до учнів» на сторінці результатів сесії."
+
+msgid "%(n)s attempt in progress"
+msgid_plural "%(n)s attempts in progress"
+msgstr[0] "%(n)s незавершена спроба"
+msgstr[1] "%(n)s незавершені спроби"
+msgstr[2] "%(n)s незавершених спроб"
+
+msgid "%(n)s voided attempt"
+msgid_plural "%(n)s voided attempts"
+msgstr[0] "%(n)s скасована спроба"
+msgstr[1] "%(n)s скасовані спроби"
+msgstr[2] "%(n)s скасованих спроб"
+
+msgid "%(n)s attempt without a score"
+msgid_plural "%(n)s attempts without a score"
+msgstr[0] "%(n)s спроба без балів"
+msgstr[1] "%(n)s спроби без балів"
+msgstr[2] "%(n)s спроб без балів"
+
+msgid "Not counted: %(parts)s"
+msgstr "Не враховано: %(parts)s"
+
+msgid "Notes"
+msgstr "Нотатки"
+
+msgid "Notes saved."
+msgstr "Нотатки збережено."
+
+msgid "Save notes"
+msgstr "Зберегти нотатки"
+
+msgid "Plain text, up to %(n)s characters. Only you (and administrators) can see your notes."
+msgstr "Простий текст, до %(n)s символів. Ваші нотатки бачите лише ви (та адміністратори)."
+
+msgid "Download"
+msgstr "Завантажити"
+
+msgid "The CSV lists every linked attempt with its status; the PDF is a printable summary of the counted ones."
+msgstr "У CSV є кожна прив’язана спроба з її статусом; PDF — підсумок для друку з урахованих спроб."
+
+msgid "Delete student"
+msgstr "Видалити учня"
+
+msgid "Delete student…"
+msgstr "Видалити учня…"
+
+msgid "Remove this student from your roster. You choose what happens to their attempts on the next page."
+msgstr "Видалити цього учня зі списку. Що станеться з його спробами, ви оберете на наступній сторінці."
+
+msgid "Delete this student?"
+msgstr "Видалити цього учня?"
+
+msgid "No attempts are linked to this student. Only the roster entry and its notes are removed."
+msgstr "До цього учня не прив’язано жодної спроби. Буде видалено лише запис у списку класу та нотатки."
+
+msgid "%(n)s attempt is linked to this student. Choose what happens to it."
+msgid_plural "%(n)s attempts are linked to this student. Choose what happens to them."
+msgstr[0] "До цього учня прив’язана %(n)s спроба. Оберіть, що з нею зробити."
+msgstr[1] "До цього учня прив’язано %(n)s спроби. Оберіть, що з ними зробити."
+msgstr[2] "До цього учня прив’язано %(n)s спроб. Оберіть, що з ними зробити."
+
+msgid "Keep the results"
+msgstr "Зберегти результати"
+
+msgid "Delete the student, keep the results: the attempts stay in their sessions, unlinked. What the student typed (their name) is kept as it was, and the session results do not change."
+msgstr "Видалити учня, зберегти результати: спроби залишаються у своїх сесіях, але без прив’язки до учня. Те, що учень ввів сам (його ім’я), зберігається як було, а результати сесій не змінюються."
+
+msgid "Delete student, keep results"
+msgstr "Видалити учня, зберегти результати"
+
+msgid "Delete everything"
+msgstr "Видалити все"
+
+msgid "Delete the student and all their linked attempts: %(n)s attempt and its answers will be removed from the sessions for good."
+msgid_plural "Delete the student and all their linked attempts: %(n)s attempts and their answers will be removed from the sessions for good."
+msgstr[0] "Видалити учня та всі його прив’язані спроби: %(n)s спробу з її відповідями буде остаточно вилучено із сесій."
+msgstr[1] "Видалити учня та всі його прив’язані спроби: %(n)s спроби з їхніми відповідями буде остаточно вилучено із сесій."
+msgstr[2] "Видалити учня та всі його прив’язані спроби: %(n)s спроб з їхніми відповідями буде остаточно вилучено із сесій."
+
+msgid "Attempts from sessions of another teacher are only unlinked, never deleted."
+msgstr "Спроби із сесій іншого вчителя лише відв’язуються, але ніколи не видаляються."
+
+msgid "Delete student and attempts"
+msgstr "Видалити учня та спроби"
+
+msgid "Choose what happens to the attempts of this student."
+msgstr "Оберіть, що станеться зі спробами цього учня."
+
+msgid "Student “%(name)s” deleted."
+msgstr "Учня «%(name)s» видалено."
+
+msgid "Student “%(name)s” deleted. %(n)s attempt stays in its session, unlinked."
+msgid_plural "Student “%(name)s” deleted. %(n)s attempts stay in their sessions, unlinked."
+msgstr[0] "Учня «%(name)s» видалено. %(n)s спроба залишається у своїй сесії без прив’язки."
+msgstr[1] "Учня «%(name)s» видалено. %(n)s спроби залишаються у своїх сесіях без прив’язки."
+msgstr[2] "Учня «%(name)s» видалено. %(n)s спроб залишаються у своїх сесіях без прив’язки."
+
+msgid "Student “%(name)s” and %(n)s attempt deleted."
+msgid_plural "Student “%(name)s” and %(n)s attempts deleted."
+msgstr[0] "Учня «%(name)s» і %(n)s спробу видалено."
+msgstr[1] "Учня «%(name)s» і %(n)s спроби видалено."
+msgstr[2] "Учня «%(name)s» і %(n)s спроб видалено."
+
+msgid "%(n)s attempt from a session of another teacher was only unlinked."
+msgid_plural "%(n)s attempts from sessions of another teacher were only unlinked."
+msgstr[0] "%(n)s спробу із сесії іншого вчителя лише відв’язано."
+msgstr[1] "%(n)s спроби із сесій іншого вчителя лише відв’язано."
+msgstr[2] "%(n)s спроб із сесій іншого вчителя лише відв’язано."
