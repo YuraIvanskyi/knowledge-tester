@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Admin area" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Admin area" %}</h1>
+    <a class="btn btn-primary" href="{% url 'manage:teacher_create' %}">{% trans "Add a teacher" %}</a>
+  </div>
+  {% include "manage/_subnav.html" %}
+
+  <dl class="stat-grid">
+    <div class="stat">
+      <dt><a href="{% url 'manage:teachers' %}">{% trans "Teachers" %}</a></dt>
+      <dd class="stat-num">{{ teacher_count }}</dd>
+      <dd class="muted">{% blocktrans count n=admin_count %}and {{ n }} admin{% plural %}and {{ n }} admins{% endblocktrans %}</dd>
+    </div>
+    <div class="stat">
+      <dt>{% trans "Active accounts" %}</dt>
+      <dd class="stat-num">{{ active_count }}</dd>
+      <dd class="muted">{% trans "can log in" %}</dd>
+    </div>
+    <div class="stat">
+      <dt>{% trans "Tests" %}</dt>
+      <dd class="stat-num">{{ test_count }}</dd>
+      <dd class="muted">{% trans "from all teachers" %}</dd>
+    </div>
+    <div class="stat">
+      <dt>{% trans "Sessions" %}</dt>
+      <dd class="stat-num">{{ session_count }}</dd>
+      <dd class="muted">{% blocktrans count n=open_session_count %}{{ n }} open now{% plural %}{{ n }} open now{% endblocktrans %}</dd>
+    </div>
+  </dl>
+
+  <section class="stack-sm">
+    <h2>{% trans "Registration" %}</h2>
+    {% if register_url %}
+      <p><span class="status-ok">{% trans "Self-registration is on." %}</span> {% trans "Teachers who know the invite code can sign up at:" %}</p>
+      <p class="mono wrap">{{ register_url }}</p>
+    {% else %}
+      <p><span class="status-warn">{% trans "Self-registration is off." %}</span> {% trans "Only admins can create teacher accounts." %}</p>
+    {% endif %}
+    <p><a href="{% url 'manage:settings' %}">{% trans "Change settings" %}</a></p>
+  </section>
+
+  <section class="stack-sm">
+    <h2>{% trans "What you can do here" %}</h2>
+    <ul>
+      <li><a href="{% url 'manage:teachers' %}">{% trans "See all accounts, reset a password or deactivate an account." %}</a></li>
+      <li><a href="{% url 'manage:teacher_create' %}">{% trans "Create an account for a new teacher." %}</a></li>
+      <li><a href="{% url 'manage:settings' %}">{% trans "Set the school name and the registration rules." %}</a></li>
+    </ul>
+  </section>
+</div>
+{% endblock %}

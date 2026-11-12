@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Settings" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Settings" %}</h1>
+  </div>
+  {% include "manage/_subnav.html" %}
+
+  <form method="post" class="form-narrow stack" novalidate>
+    {% csrf_token %}
+    {% include "manage/_form_errors.html" %}
+    {% for field in form %}{% include "manage/_field.html" %}{% endfor %}
+    {% if register_url %}
+    <p>{% trans "Registration page:" %} <span class="mono wrap">{{ register_url }}</span></p>
+    {% endif %}
+    <div class="row">
+      <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+      <button type="submit" name="action" value="generate_code" class="btn">{% trans "Generate a new invite code" %}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

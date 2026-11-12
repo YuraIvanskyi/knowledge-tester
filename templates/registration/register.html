@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Register as a teacher" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Register as a teacher" %}</h1>
+  {% if blocked %}
+  <div class="alert alert-bad" role="alert">{% trans "Too many wrong invite codes. Wait about ten minutes and try again, or ask an admin for help." %}</div>
+  {% else %}
+  <p class="muted">{% trans "Ask your administrator for the invite code." %}</p>
+  <form method="post" class="stack" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-bad" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>
+    {% endif %}
+    {% for field in form %}{% include "manage/_field.html" %}{% endfor %}
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Create my account" %}</button>
+  </form>
+  {% endif %}
+  <p class="muted"><a href="{% url 'accounts:login' %}">{% trans "I already have an account" %}</a></p>
+</div>
+{% endblock %}

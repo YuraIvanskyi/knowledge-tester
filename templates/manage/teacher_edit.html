@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ target }} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{{ target }}</h1>
+    <a class="btn" href="{% url 'manage:teacher_password' target.pk %}">{% trans "Set or reset password" %}</a>
+  </div>
+  {% include "manage/_subnav.html" %}
+
+  <p class="muted">
+    {% trans "Username" %}: <span class="mono">{{ target.username }}</span> &middot;
+    {% blocktrans count n=target.test_count %}{{ n }} test{% plural %}{{ n }} tests{% endblocktrans %} &middot;
+    {% blocktrans count n=target.session_count %}{{ n }} session{% plural %}{{ n }} sessions{% endblocktrans %}
+  </p>
+
+  <form method="post" class="form-narrow stack" novalidate>
+    {% csrf_token %}
+    {% include "manage/_form_errors.html" %}
+    {% for field in form %}{% include "manage/_field.html" %}{% endfor %}
+    <div class="row">
+      <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+      <a class="btn btn-link" href="{% url 'manage:teachers' %}">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

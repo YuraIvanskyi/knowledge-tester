@@ -1,0 +1,293 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# Navigation bar (templates/base.html)
+
+msgid "Manage"
+msgstr "Керування"
+
+# Admin area: overview
+
+msgid "Admin area"
+msgstr "Адміністрування"
+
+msgid "Overview"
+msgstr "Огляд"
+
+msgid "Teachers"
+msgstr "Вчителі"
+
+msgid "Settings"
+msgstr "Налаштування"
+
+msgid "Add a teacher"
+msgstr "Додати вчителя"
+
+msgid "and %(n)s admin"
+msgid_plural "and %(n)s admins"
+msgstr[0] "і %(n)s адміністратор"
+msgstr[1] "і %(n)s адміністратори"
+msgstr[2] "і %(n)s адміністраторів"
+
+msgid "Active accounts"
+msgstr "Активні облікові записи"
+
+msgid "can log in"
+msgstr "можуть входити"
+
+msgid "from all teachers"
+msgstr "від усіх вчителів"
+
+msgid "%(n)s open now"
+msgid_plural "%(n)s open now"
+msgstr[0] "%(n)s відкрита зараз"
+msgstr[1] "%(n)s відкриті зараз"
+msgstr[2] "%(n)s відкритих зараз"
+
+msgid "Registration"
+msgstr "Реєстрація"
+
+msgid "Self-registration is on."
+msgstr "Самореєстрацію увімкнено."
+
+msgid "Teachers who know the invite code can sign up at:"
+msgstr "Вчителі, які знають код запрошення, можуть зареєструватися за адресою:"
+
+msgid "Self-registration is off."
+msgstr "Самореєстрацію вимкнено."
+
+msgid "Only admins can create teacher accounts."
+msgstr "Облікові записи вчителів створюють лише адміністратори."
+
+msgid "Change settings"
+msgstr "Змінити налаштування"
+
+msgid "What you can do here"
+msgstr "Що тут можна зробити"
+
+msgid "See all accounts, reset a password or deactivate an account."
+msgstr "Переглянути всі облікові записи, скинути пароль або деактивувати обліковий запис."
+
+msgid "Create an account for a new teacher."
+msgstr "Створити обліковий запис для нового вчителя."
+
+msgid "Set the school name and the registration rules."
+msgstr "Вказати назву школи та правила реєстрації."
+
+# Admin area: settings
+
+msgid "Registration page:"
+msgstr "Сторінка реєстрації:"
+
+msgid "Generate a new invite code"
+msgstr "Згенерувати новий код запрошення"
+
+msgid "School name"
+msgstr "Назва школи"
+
+msgid "Let teachers register themselves"
+msgstr "Дозволити вчителям реєструватися самостійно"
+
+msgid "Invite code"
+msgstr "Код запрошення"
+
+msgid "Kept for later use, for example in printed sheets."
+msgstr "Зберігається для подальшого використання, наприклад у друкованих аркушах."
+
+msgid "Off by default. When on, anyone who knows the invite code can create a teacher account at the registration page."
+msgstr "Типово вимкнено. Коли ввімкнено, будь-хто, хто знає код запрошення, може створити обліковий запис вчителя на сторінці реєстрації."
+
+msgid "People must type this code to register. Share it only with colleagues."
+msgstr "Щоб зареєструватися, потрібно ввести цей код. Передавайте його лише колегам."
+
+msgid "Set an invite code before turning registration on. You can generate one."
+msgstr "Задайте код запрошення, перш ніж вмикати реєстрацію. Його можна згенерувати."
+
+msgid "The invite code needs at least %(n)s characters."
+msgstr "Код запрошення має містити щонайменше %(n)s символів."
+
+msgid "Settings saved with a new invite code."
+msgstr "Налаштування збережено з новим кодом запрошення."
+
+# Admin area: list of accounts
+
+msgid "Search by name or username"
+msgstr "Пошук за ім’ям або іменем користувача"
+
+msgid "Search"
+msgstr "Шукати"
+
+msgid "Show all"
+msgstr "Показати всіх"
+
+msgid "Role"
+msgstr "Роль"
+
+msgid "Last login"
+msgstr "Останній вхід"
+
+msgid "you"
+msgstr "ви"
+
+msgid "Active"
+msgstr "Активний"
+
+msgid "Deactivated"
+msgstr "Деактивовано"
+
+msgid "Never"
+msgstr "Ніколи"
+
+msgid "Deactivate"
+msgstr "Деактивувати"
+
+msgid "Activate"
+msgstr "Активувати"
+
+msgid "Nobody matches your search."
+msgstr "За вашим запитом нікого не знайдено."
+
+msgid "There are no accounts yet."
+msgstr "Облікових записів ще немає."
+
+msgid "Account “%(name)s” created."
+msgstr "Обліковий запис «%(name)s» створено."
+
+msgid "“%(name)s” can log in again."
+msgstr "«%(name)s» знову може входити."
+
+msgid "“%(name)s” can no longer log in. Their data is kept."
+msgstr "«%(name)s» більше не може входити. Дані збережено."
+
+# Admin area: create and edit
+
+msgid "Create account"
+msgstr "Створити обліковий запис"
+
+msgid "Create with a generated password"
+msgstr "Створити зі згенерованим паролем"
+
+msgid "A generated password is shown once, right after you create the account. Write it down or pass it on then."
+msgstr "Згенерований пароль показується один раз, одразу після створення облікового запису. Запишіть його або передайте вчителеві саме тоді."
+
+msgid "Set or reset password"
+msgstr "Встановити або скинути пароль"
+
+msgid "%(n)s session"
+msgid_plural "%(n)s sessions"
+msgstr[0] "%(n)s сесія"
+msgstr[1] "%(n)s сесії"
+msgstr[2] "%(n)s сесій"
+
+msgid "Name shown in the app"
+msgstr "Ім’я в застосунку"
+
+msgid "Used to log in. It cannot be changed later."
+msgstr "Потрібне для входу. Пізніше його не можна змінити."
+
+msgid "For example: Olena Kovalenko."
+msgstr "Наприклад: Олена Коваленко."
+
+msgid "Active (can log in)"
+msgstr "Активний (може входити)"
+
+msgid "Turn off to stop this person logging in. Nothing is deleted, and their open sessions keep working for students."
+msgstr "Вимкніть, щоб ця людина більше не могла входити. Нічого не видаляється, а її відкриті сесії й надалі працюють для учнів."
+
+msgid "You cannot change your own role or deactivate yourself."
+msgstr "Ви не можете змінити власну роль або деактивувати себе."
+
+msgid "This account is a superuser, so it always has the admin role."
+msgstr "Це суперкористувач, тож він завжди має роль адміністратора."
+
+msgid "This username is already taken."
+msgstr "Це ім’я користувача вже зайняте."
+
+msgid "Changes saved."
+msgstr "Зміни збережено."
+
+# Admin area: passwords
+
+msgid "Password again"
+msgstr "Пароль ще раз"
+
+msgid "At least 8 characters. Or leave it empty and create the account with a generated password."
+msgstr "Щонайменше 8 символів. Або залиште порожнім і створіть обліковий запис зі згенерованим паролем."
+
+msgid "At least 8 characters."
+msgstr "Щонайменше 8 символів."
+
+msgid "New password"
+msgstr "Новий пароль"
+
+msgid "New password again"
+msgstr "Новий пароль ще раз"
+
+msgid "Password for %(name)s"
+msgstr "Пароль: %(name)s"
+
+msgid "The new password"
+msgstr "Новий пароль"
+
+msgid "This is the only time it is shown. Write it down or pass it on now. If you lose it, set a new one."
+msgstr "Пароль показано лише цього разу. Запишіть його або передайте зараз. Якщо загубите, встановіть новий."
+
+msgid "Setting a new password for %(name)s replaces the old one at once. The person is logged out everywhere."
+msgstr "Новий пароль для %(name)s одразу замінює старий. Людину буде виведено з облікового запису на всіх пристроях."
+
+msgid "Set this password"
+msgstr "Встановити цей пароль"
+
+msgid "Generate a password"
+msgstr "Згенерувати пароль"
+
+msgid "Back to teachers"
+msgstr "Назад до вчителів"
+
+msgid "Type a password, or press the button to generate one."
+msgstr "Введіть пароль або натисніть кнопку, щоб його згенерувати."
+
+msgid "Type a password."
+msgstr "Введіть пароль."
+
+msgid "The two passwords do not match."
+msgstr "Паролі не збігаються."
+
+msgid "The password of “%(name)s” was changed."
+msgstr "Пароль користувача «%(name)s» змінено."
+
+# Safety rules
+
+msgid "This is the last active admin. Make someone else an admin first."
+msgstr "Це останній активний адміністратор. Спершу призначте адміністратором когось іншого."
+
+msgid "You cannot deactivate your own account."
+msgstr "Ви не можете деактивувати власний обліковий запис."
+
+msgid "You cannot change your own role. Ask another admin to do it."
+msgstr "Ви не можете змінити власну роль. Попросіть про це іншого адміністратора."
+
+# Registration
+
+msgid "Register as a teacher"
+msgstr "Зареєструватися як вчитель"
+
+msgid "Ask your administrator for the invite code."
+msgstr "Попросіть код запрошення в адміністратора."
+
+msgid "Too many wrong invite codes. Wait about ten minutes and try again, or ask an admin for help."
+msgstr "Забагато неправильних кодів запрошення. Зачекайте близько десяти хвилин і спробуйте ще раз або зверніться до адміністратора."
+
+msgid "Create my account"
+msgstr "Створити мій обліковий запис"
+
+msgid "I already have an account"
+msgstr "У мене вже є обліковий запис"
+
+msgid "The invite code is not correct."
+msgstr "Код запрошення неправильний."
+
+msgid "Your account is ready. Welcome!"
+msgstr "Ваш обліковий запис готовий. Ласкаво просимо!"

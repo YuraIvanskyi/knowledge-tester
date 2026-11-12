@@ -1,17 +1,17 @@
-"""Admin area URLs (prefix /manage/, workstream A)."""
+"""Admin area URLs (prefix /manage/, workstream A). Every view is wrapped in `admin_required`."""
 
 from django.urls import path
 
-from apps.core.stubs import not_implemented as stub
+from . import manage_views as views
 
 app_name = "manage"
 
 urlpatterns = [
-    path("", stub, name="home"),
-    path("teachers/", stub, name="teachers"),
-    path("teachers/new/", stub, name="teacher_create"),
-    path("teachers/<int:pk>/", stub, name="teacher_edit"),
-    path("teachers/<int:pk>/password/", stub, name="teacher_password"),
-    path("teachers/<int:pk>/active/", stub, name="teacher_active"),
-    path("settings/", stub, name="settings"),
+    path("", views.home, name="home"),
+    path("teachers/", views.teachers, name="teachers"),
+    path("teachers/new/", views.teacher_create, name="teacher_create"),
+    path("teachers/<int:pk>/", views.teacher_edit, name="teacher_edit"),
+    path("teachers/<int:pk>/password/", views.teacher_password, name="teacher_password"),
+    path("teachers/<int:pk>/active/", views.teacher_active, name="teacher_active"),
+    path("settings/", views.settings_page, name="settings"),
 ]

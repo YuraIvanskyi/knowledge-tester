@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Teachers" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <h1>{% trans "Teachers" %}</h1>
+    <a class="btn btn-primary" href="{% url 'manage:teacher_create' %}">{% trans "Add a teacher" %}</a>
+  </div>
+  {% include "manage/_subnav.html" %}
+
+  <form method="get" class="search-form" role="search">
+    <div class="field grow">
+      <label for="q" class="visually-hidden">{% trans "Search by name or username" %}</label>
+      <input type="search" id="q" name="q" value="{{ q }}" placeholder="{% trans 'Search by name or username' %}" autocomplete="off">
+    </div>
+    <button type="submit" class="btn">{% trans "Search" %}</button>
+    {% if q %}<a class="btn btn-link" href="{% url 'manage:teachers' %}">{% trans "Show all" %}</a>{% endif %}
+  </form>
+
+  {% if accounts %}
+  <table class="table accounts">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Name" %}</th>
+        <th scope="col">{% trans "Username" %}</th>
+        <th scope="col">{% trans "Role" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Last login" %}</th>
+        <th scope="col" class="num">{% trans "Tests" %}</th>
+        <th scope="col" class="num">{% trans "Sessions" %}</th>
+        <th scope="col">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in accounts %}
+      <tr>
+        <td data-label="{% trans 'Name' %}"><span><a href="{% url 'manage:teacher_edit' u.pk %}">{{ u }}</a>{% if u.pk == me.pk %} <span class="muted">({% trans "you" %})</span>{% endif %}</span></td>
+        <td data-label="{% trans 'Username' %}" class="mono">{{ u.username }}</td>
+        <td data-label="{% trans 'Role' %}">{{ u.get_role_display }}</td>
+        <td data-label="{% trans 'Status' %}">{% if u.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="status-bad">{% trans "Deactivated" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Last login' %}">{% if u.last_login %}<time datetime="{{ u.last_login|date:'c' }}" title="{{ u.last_login|date:'SHORT_DATETIME_FORMAT' }}">{{ u.last_login|date:"SHORT_DATE_FORMAT" }}</time>{% else %}<span class="muted">{% trans "Never" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Tests' %}" class="num">{{ u.test_count }}</td>
+        <td data-label="{% trans 'Sessions' %}" class="num">{{ u.session_count }}</td>
+        <td>
+          <div class="actions">
+            <a class="btn" href="{% url 'manage:teacher_edit' u.pk %}">{% trans "Edit" %}</a>
+            <a class="btn" href="{% url 'manage:teacher_password' u.pk %}">{% trans "Password" %}</a>
+            {% if u.pk != me.pk %}
+            <form method="post" action="{% url 'manage:teacher_active' u.pk %}">
+              {% csrf_token %}
+              {% if u.is_active %}
+              <input type="hidden" name="active" value="0">
+              <button type="submit" class="btn btn-danger">{% trans "Deactivate" %}</button>
+              {% else %}
+              <input type="hidden" name="active" value="1">
+              <button type="submit" class="btn">{% trans "Activate" %}</button>
+              {% endif %}
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% elif q %}
+  <div class="empty">
+    <p>{% trans "Nobody matches your search." %}</p>
+    <a class="btn" href="{% url 'manage:teachers' %}">{% trans "Show all" %}</a>
+  </div>
+  {% else %}
+  <div class="empty">
+    <p>{% trans "There are no accounts yet." %}</p>
+    <a class="btn btn-primary" href="{% url 'manage:teacher_create' %}">{% trans "Add a teacher" %}</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
