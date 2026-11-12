@@ -1,6 +1,8 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from apps.core.stubs import not_implemented as stub
+
 app_name = "accounts"
 
 urlpatterns = [
@@ -13,4 +15,5 @@ urlpatterns = [
     ),
     # Logout accepts POST only (Django 5+); the nav bar renders a small form.
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("register/", stub, name="register"),
 ]

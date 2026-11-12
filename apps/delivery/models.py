@@ -23,6 +23,12 @@ class Sitting(models.Model):
     title = models.CharField(max_length=200, blank=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.OPEN)
     access_code = models.CharField(max_length=32, blank=True)
+    # Group-bound session (plan §14): takers pick their name from this group's roster.
+    group = models.ForeignKey(
+        "people.Group", null=True, blank=True, on_delete=models.SET_NULL, related_name="sittings"
+    )
+    # Group-bound only: the taker must also type their personal PIN (Student.pin).
+    use_pin = models.BooleanField(default=False)
     closes_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="sittings"
@@ -46,6 +52,11 @@ class Attempt(models.Model):
 
     sitting = models.ForeignKey(Sitting, on_delete=models.CASCADE, related_name="attempts")
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    # Set automatically in group-bound sessions, or by the teacher afterwards (plan §14).
+    # Deleting a student either unlinks (SET_NULL) or deletes the attempts: the service decides.
+    student = models.ForeignKey(
+        "people.Student", null=True, blank=True, on_delete=models.SET_NULL, related_name="attempts"
+    )
     taker = models.JSONField(default=dict)  # taker field values, e.g. {"name": "..."}
     question_order = models.JSONField(default=list)  # list of question ids as shown
     option_orders = models.JSONField(default=dict)  # {question_id: [option ids]}

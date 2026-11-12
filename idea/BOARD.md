@@ -2,7 +2,9 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-11 · **Current phase:** 0 (Foundation) · **Next milestone:** M1, first classroom run (end of Phase 4)
+**Last updated:** 2026-11-12 · **Current work:** Phase 6 (People) on top of the working prototype · **Next milestone:** M3, class records (end of Phase 6)
+
+> The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
 **Legend:** `[ ]` open · `[~]` in progress · `[x]` done · `[!]` blocked · Size **S** ≤ ½ day · **M** 1–2 days · **L** 3+ days · *(should)* / *(could)* = priority below Must
 
@@ -39,7 +41,12 @@ This board is the single source of truth for status. The task content lives in [
 
 ## In progress
 
-_Nothing yet._
+- [~] KT-601 Admin area: teacher accounts and system settings · M ([contracts](specs/people-contracts.md))
+- [~] KT-602 Groups and students: CRUD, paste-list and CSV/XLSX import with preview · M
+- [~] KT-603 Group-bound sessions: pick-your-name entry with optional PIN · M
+- [~] KT-604 Link attempts to students after the fact, with fuzzy suggestions · S
+- [~] KT-605 Student profile: history, averages, notes, CSV/PDF summary · M
+- [~] KT-606 Group gradebook matrix and CSV export · M
 
 ## Ready (listed in suggested order)
 

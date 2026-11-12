@@ -23,3 +23,23 @@ class User(AbstractUser):
 
     def __str__(self) -> str:
         return self.display_name or self.get_username()
+
+
+class SystemSettings(models.Model):
+    """Site-wide settings edited by an admin in /manage/. A single row (pk=1): use `load()`."""
+
+    school_name = models.CharField(max_length=200, blank=True)
+    # Self-registration of teachers (plan §14): off by default, needs the invite code when on.
+    allow_registration = models.BooleanField(default=False)
+    registration_code = models.CharField(max_length=64, blank=True)
+
+    class Meta:
+        verbose_name_plural = "system settings"
+
+    def __str__(self) -> str:
+        return "System settings"
+
+    @classmethod
+    def load(cls) -> "SystemSettings":
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
