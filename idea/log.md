@@ -4,6 +4,17 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-12: Phase 6, People (KT-601 to KT-606)
+
+- **Method:** first a frozen skeleton (the `apps.people` models `Group` and `Student`, `Attempt.student`, `Sitting.group` and `use_pin`, `accounts.SystemSettings`, ownership helpers in `apps/people/access.py`, name normalisation in `names.py`, reserved URL names pointing at a 501 stub) and a contract ([specs/people-contracts.md](specs/people-contracts.md)); then five agents in parallel with disjoint file ownership, each verifying its part on a live server with its own data folder. Translations were written as fragments in `locale/uk/parts/` and merged once (735 catalog entries, `i18n.py check` clean).
+- **Built:** admin area at `/manage/` (teacher list, create, edit, deactivate, password reset with a password shown once, system settings, invite-code self-registration that is off by default and throttled); roster (groups, students, printable PIN sheet, one preview-and-confirm import for pasted lists, CSV with encoding/delimiter detection and XLSX through the `xlsx` extra); group-bound sessions (name picker, optional PIN with 5 tries per student per 5 minutes, `max_attempts` per student on all three start paths); linking of free-name attempts with ranked suggestions; student profile (history, averages per project, notes, CSV, PDF, delete with a keep-or-delete choice); group gradebook with CSV.
+- **Decisions:** a student belongs to at most one group; PINs are plain text on purpose (classroom convenience, not a credential); gradebook cell = best counted attempt; "counted" = submitted or auto-submitted, has a score, not voided, and "provisional" while `pending_reviews > 0` everywhere; KT-607 sharing between teachers and KT-608 student logins are skipped (Could; plan Q3).
+- **Learned:** `button.btn` in `base.css` outranked `.btn-primary`, so primary buttons were unstyled and three workstreams each added a workaround (fixed once in `base.css`, workarounds removed); Python text IO defaults to cp1252 on this Windows machine, so a one-line edit corrupted UTF-8 files until `encoding="utf-8"` was added; headless Edge cannot render below about 500 px, so phone views are rendered in a 390 px iframe; SQLite orders "І" after "Я", so Ukrainian sorting is done in Python.
+- **Known limits:** the class list of a group session is visible to anyone who has the session link (names only); a classmate can lock another student out of a PIN session for 5 minutes by guessing; PDF layout was checked as extracted text only; the school name from settings is stored but not printed yet.
+- 1113 tests (was 454), ruff clean.
+- **Wave 2 (running):** ownership audit matrix over every URL, a read-only code review of the seams between the workstreams, an end-to-end scenario plus a 32-taker load run on the real Waitress server, and a UX pass in Ukrainian, light and dark. Results go in the next entry.
+- **Next:** finish wave 2, then Phase 7 (local LLM assistant) or the Phase 3/4 gaps the prototype skipped (resilience and timer details, item analysis).
+
 ## 2026-11-11: Fixes after first review
 
 - **Language switcher:** now abbreviations (ENG, UA; the full name is the tooltip and the accessible name). The same markup (`templates/core/_lang_switch.html`) is rendered in the header and in the footer; CSS shows the header one from 640 px up and the footer one below that (no JS). The footer is hidden on desktop.

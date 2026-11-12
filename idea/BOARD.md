@@ -20,11 +20,11 @@ This board is the single source of truth for status. The task content lives in [
 | 3. Delivery | Sessions, links and QR, taking tests on phones | Backlog | 0 / 10 |
 | 4. Grading and results | Autograding, review queue, results | Backlog | 0 / 8 |
 | 5. Print and export | PDF sheets, CSV/XLSX/JSON results | Backlog | 0 / 6 |
-| 6. People | Teacher admin, students, groups, profiles | Backlog | 0 / 8 |
+| 6. People | Teacher admin, students, groups, profiles | In progress (6 of 8 built; wave-2 verification running) | 6 / 8 |
 | 7. Local LLM assistant | Imports and drafting with a local LLM | Backlog | 0 / 9 |
 | 8. Ukrainian | Full Ukrainian localization | Backlog | 0 / 4 |
 | 9. Hardening and packaging | Backups, launcher, security, docs | Backlog | 0 / 9 |
-| **Total** | | | **1 / 78** |
+| **Total** | | | **7 / 78** |
 
 ## Milestones
 
@@ -41,12 +41,7 @@ This board is the single source of truth for status. The task content lives in [
 
 ## In progress
 
-- [~] KT-601 Admin area: teacher accounts and system settings · M ([contracts](specs/people-contracts.md))
-- [~] KT-602 Groups and students: CRUD, paste-list and CSV/XLSX import with preview · M
-- [~] KT-603 Group-bound sessions: pick-your-name entry with optional PIN · M
-- [~] KT-604 Link attempts to students after the fact, with fuzzy suggestions · S
-- [~] KT-605 Student profile: history, averages, notes, CSV/PDF summary · M
-- [~] KT-606 Group gradebook matrix and CSV export · M
+- [~] Phase 6 wave 2: ownership audit (KT-607 audit part), end-to-end and load run with 32 takers, code review, UX pass in Ukrainian light/dark
 
 ## Ready (listed in suggested order)
 
@@ -131,14 +126,14 @@ _Nothing yet._
 - [ ] KT-506 Results JSON v1 · S
 
 ### Phase 6: People
-- [ ] KT-601 Admin area: teachers and system settings · M
-- [ ] KT-602 Groups and students: CRUD and imports · M
-- [ ] KT-603 Group-bound sessions with pick-your-name entry · M
-- [ ] KT-604 Link attempts to students after the fact · S
-- [ ] KT-605 Student profile · M
-- [ ] KT-606 Group gradebook *(should)* · M
-- [ ] KT-607 Ownership audit and teacher sharing *(could)* · S
-- [ ] KT-608 Read-only student login *(could)* · M
+- [x] KT-601 Admin area: teachers and system settings · M
+- [x] KT-602 Groups and students: CRUD and imports · M
+- [x] KT-603 Group-bound sessions with pick-your-name entry · M
+- [x] KT-604 Link attempts to students after the fact · S
+- [x] KT-605 Student profile · M
+- [x] KT-606 Group gradebook *(should)* · M
+- [~] KT-607 Ownership audit (in wave 2); sharing between teachers is not planned for v1 *(could)* · S
+- [ ] KT-608 Read-only student login *(could, skipped: plan Q3 = no student logins in v1)* · M
 
 ### Phase 7: Local LLM assistant
 - [ ] KT-701 LLM settings, client and feature flag · S
@@ -181,3 +176,9 @@ _New ideas go here first, then into the plan once they're accepted._
 
 - [x] KT-000 Planning groundwork: plan, board, ADRs, issue system · 2026-11-10
 - [x] KT-001 Repository and tooling bootstrap · 2026-11-11
+- [x] KT-601 Admin area: `/manage/` teachers (create, edit, deactivate, password reset shown once), system settings, invite-code registration · 2026-11-12
+- [x] KT-602 Groups and students: CRUD, printable PIN sheet, paste/CSV/XLSX import with preview and duplicate detection · 2026-11-12
+- [x] KT-603 Group-bound sessions: pick your name, optional personal PIN with throttle, per-student attempt limit · 2026-11-12
+- [x] KT-604 Linking attempts to students after the fact, with ranked suggestions · 2026-11-12
+- [x] KT-605 Student profile: history, provisional-aware averages, notes, CSV/PDF, delete keeping or removing results · 2026-11-12
+- [x] KT-606 Group gradebook (best attempt per student and session) with CSV · 2026-11-12

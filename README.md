@@ -15,12 +15,12 @@ Keep the virtual environment **outside OneDrive**, otherwise thousands of packag
 
 ```powershell
 $env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\KnowledgeTester\venv"   # setx to make it permanent
-python -m uv sync
+python -m uv sync --extra xlsx                  # the xlsx extra (openpyxl) enables XLSX roster import
 python -m uv run manage.py migrate
 python -m uv run manage.py seed_demo      # demo users: teacher/teacher and admin/admin
 ```
 
-(`seed_demo` is provided by the assessments/delivery work; without it use `python -m uv run manage.py createsuperuser`.)
+Without `seed_demo` create the first admin with `python -m uv run manage.py createsuperuser`; that admin then creates the teacher accounts in the browser at `/manage/`. Without the `xlsx` extra everything works except XLSX uploads (CSV and pasted lists still do).
 
 Data (database, `kt.toml` with the generated secret key, media) lives in `%LOCALAPPDATA%\KnowledgeTester\` (`~/.local/share/knowledge-tester/` elsewhere). Override with `KT_DATA_DIR`. `serve` warns if that folder is inside OneDrive, Dropbox or Google Drive, because sync clients can corrupt SQLite.
 
@@ -78,6 +78,15 @@ Rules for contributors:
 - Use named placeholders (`%(name)s`) so word order can change, and `pgettext` / `{% translate "..." context "..." %}` when one English word needs different translations (for example "Open" as an adjective versus a verb).
 - Do not translate test content, only the interface.
 
+## People, classes and the admin area
+
+- **Admin area (`/manage/`, admins only; teachers get 404):** teacher accounts (create, edit, deactivate, reset the password: typed or generated, a generated one is shown exactly once), and system settings (school name, optional teacher self-registration at `/accounts/register/` with an invite code; off by default). There is no e-mail on a LAN, so password resets are done by the admin.
+- **Ownership:** a teacher sees only their own tests, sessions, groups and students; an admin sees everything. A foreign id always returns 404. Use `apps/people/access.py` (`groups_for`, `students_for`, `get_group_or_404`, `get_student_or_404`) for people data and `apps.delivery.services.can_manage` for sessions.
+- **Roster (`/teach/people/`):** groups and students; each student can have a PIN (4 digits, plain text on purpose: a classroom convenience, not a credential) and a printable PIN sheet per group. Import a class from a pasted list (`Name` or `Name; Group`, numbering is stripped), a CSV (`,` `;` or tab; utf-8 or cp1251) or an XLSX. All routes end in the same preview with duplicate detection, then a confirm step.
+- **Group sessions:** when a session is opened for a group, takers choose their name from the class list (names only) and, if "ask for a personal PIN" is on, type their PIN (5 wrong tries per student per 5 minutes). The attempt is linked to the student automatically. Anyone who has the session link can see the class list, so share it only with the class.
+- **Free-name sessions:** afterwards, "Link to students" on the session page suggests matches (same name, same words in another order, fuzzy) for the teacher to confirm.
+- **Student profile and gradebook:** the profile lists a student's linked attempts, averages per test project, notes, and CSV/PDF downloads; deleting a student either keeps their results (unlinked) or deletes them. The group gradebook is a students-by-sessions matrix of each student's best attempt, with CSV. A grade is marked provisional while any open answer behind it still waits for review.
+
 ## PDF sheets
 
 `apps/reports/pdf.py` builds PDFs with fpdf2 and the bundled DejaVu Sans (Latin and Cyrillic, embedded as a subset; licence in `assets/fonts/LICENSE_DEJAVU`). A sheet is one attempt: taker details, score and grade, then the questions with points and a result word. Options: compact or full (every option marked), A4 or Letter, show correct answers / comments / unanswered questions, shorten long questions, and for a whole session "continuous" (no page break between sheets). Entry points are `reports:attempt_pdf` and `reports:session_pdf` (`?status=` picks finished, needs_review or all). The labels follow the UI language of whoever downloads it. Tests read the text back with `pypdf` (a dev dependency).
@@ -87,10 +96,11 @@ Rules for contributors:
 ```
 config/            Django project (settings: base, dev, lan)
 apps/core/         landing, dashboard, healthz, `serve` command, LAN/IP helpers
-apps/accounts/     custom User (admin/teacher roles), login and logout
+apps/accounts/     custom User (admin/teacher roles), login, /manage/ admin area, registration
 apps/assessments/  projects and tests (Test Document JSON), publishing
 apps/exchange/     JSON import/export and validation
-apps/delivery/     sessions, share/QR screen, taker flow
+apps/delivery/     sessions, share/QR screen, taker flow, group name picker, linking
+apps/people/       groups, students, roster import, profile, gradebook, ownership helpers
 apps/grading/      pure scoring engine and grade scales
 apps/reports/      results, review of open answers, CSV
 templates/         shared templates (base.html is the UI kit shell)
@@ -106,5 +116,5 @@ idea/              plan, ADRs, issues, board
 
 - UI rules (plan section 17): system fonts, one accent colour, no gradients or shadows, radius at most 6px, no emoji, tap targets of 44px, inputs of 16px or more. The CSS vocabulary is documented in the contracts file.
 - No inline styles or scripts (CSP). Wrap user-visible strings for translation (see Translations).
-- Every teacher view needs `@login_required` and an ownership check.
+- Every teacher view needs `@login_required` and an ownership check (404 for foreign ids). Pages under `/manage/` use `apps.accounts.permissions.admin_required`.
 - Run `scripts\check.ps1` before committing.
