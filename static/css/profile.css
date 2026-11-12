@@ -125,11 +125,6 @@
 .danger-zone {
   margin-top: var(--space-5);
 }
-/* base.css styles button.btn after .btn-danger, so say it again for real buttons */
-button.btn-danger {
-  border-color: var(--bad);
-  color: var(--bad);
-}
 .choice-box h2 {
   margin-bottom: 0;
 }

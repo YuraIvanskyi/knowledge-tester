@@ -1,24 +1,5 @@
 /* Admin area (/manage/). Uses the tokens and components of base.css. */
 
-/* base.css styles `button.btn` (specificity 0,1,1), which outranks `.btn-primary` (0,1,0), so a
-   primary <button> loses its accent colour. Restore it for the pages that load this file. */
-button.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-contrast);
-}
-button.btn-primary:hover {
-  border-color: var(--text);
-}
-button.btn-danger {
-  background: var(--surface);
-  border-color: var(--bad);
-  color: var(--bad);
-}
-button.btn-danger:hover {
-  background: var(--bad-bg);
-}
-
 /* Section switcher under the page title: plain links, tall enough to tap */
 .subnav {
   display: flex;

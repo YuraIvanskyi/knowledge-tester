@@ -28,21 +28,6 @@
   border-bottom-color: var(--accent);
 }
 
-/* `button.btn` in base.css outranks .btn-primary and .btn-danger: restore them for <button> */
-button.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-contrast);
-}
-button.btn-danger {
-  background: var(--surface);
-  border-color: var(--bad);
-  color: var(--bad);
-}
-button.btn-danger:hover {
-  background: var(--bad-bg);
-}
-
 .row-center {
   justify-content: center;
 }

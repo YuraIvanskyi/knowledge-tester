@@ -8,13 +8,162 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+#: apps/accounts/forms.py:45
+msgid "Type a password, or press the button to generate one."
+msgstr "Введіть пароль або натисніть кнопку, щоб його згенерувати."
+
+#: apps/accounts/forms.py:47
+msgid "Type a password."
+msgstr "Введіть пароль."
+
+#: apps/accounts/forms.py:51
+msgid "The two passwords do not match."
+msgstr "Паролі не збігаються."
+
+#: apps/accounts/forms.py:63 apps/accounts/forms.py:251
+msgid "Password again"
+msgstr "Пароль ще раз"
+
+#: apps/accounts/forms.py:70 apps/accounts/forms.py:119 apps/accounts/forms.py:245
+msgid "Name shown in the app"
+msgstr "Ім’я в застосунку"
+
+#: apps/accounts/forms.py:74 apps/accounts/forms.py:241
+msgid "Used to log in. It cannot be changed later."
+msgstr "Потрібне для входу. Пізніше його не можна змінити."
+
+#: apps/accounts/forms.py:75 apps/accounts/forms.py:247
+msgid "For example: Olena Kovalenko."
+msgstr "Наприклад: Олена Коваленко."
+
+#: apps/accounts/forms.py:84
+msgid "At least 8 characters. Or leave it empty and create the account with a generated password."
+msgstr ""
+"Щонайменше 8 символів. Або залиште порожнім і створіть обліковий запис зі згенерованим паролем."
+
+#: apps/accounts/forms.py:93 apps/accounts/forms.py:273 apps/accounts/views.py:83
+msgid "This username is already taken."
+msgstr "Це ім’я користувача вже зайняте."
+
+#: apps/accounts/forms.py:121
+msgid "Active (can log in)"
+msgstr "Активний (може входити)"
+
+#: apps/accounts/forms.py:124
+msgid ""
+"Turn off to stop this person logging in. Nothing is deleted, and their open sessions keep working "
+"for students."
+msgstr ""
+"Вимкніть, щоб ця людина більше не могла входити. Нічого не видаляється, а її відкриті сесії й "
+"надалі працюють для учнів."
+
+#: apps/accounts/forms.py:137
+msgid "You cannot change your own role or deactivate yourself."
+msgstr "Ви не можете змінити власну роль або деактивувати себе."
+
+#: apps/accounts/forms.py:142
+msgid "This account is a superuser, so it always has the admin role."
+msgstr "Це суперкористувач, тож він завжди має роль адміністратора."
+
+#: apps/accounts/forms.py:166
+msgid "New password"
+msgstr "Новий пароль"
+
+#: apps/accounts/forms.py:167
+msgid "New password again"
+msgstr "Новий пароль ще раз"
+
+#: apps/accounts/forms.py:172 apps/accounts/forms.py:258
+msgid "At least 8 characters."
+msgstr "Щонайменше 8 символів."
+
+#: apps/accounts/forms.py:185
+msgid "School name"
+msgstr "Назва школи"
+
+#: apps/accounts/forms.py:186
+msgid "Let teachers register themselves"
+msgstr "Дозволити вчителям реєструватися самостійно"
+
+#: apps/accounts/forms.py:187 apps/accounts/forms.py:233
+msgid "Invite code"
+msgstr "Код запрошення"
+
+#: apps/accounts/forms.py:190
+msgid "Kept for later use, for example in printed sheets."
+msgstr "Зберігається для подальшого використання, наприклад у друкованих аркушах."
+
+#: apps/accounts/forms.py:191
+msgid ""
+"Off by default. When on, anyone who knows the invite code can create a teacher account at the "
+"registration page."
+msgstr ""
+"Типово вимкнено. Коли ввімкнено, будь-хто, хто знає код запрошення, може створити обліковий запис "
+"вчителя на сторінці реєстрації."
+
+#: apps/accounts/forms.py:195
+msgid "People must type this code to register. Share it only with colleagues."
+msgstr "Щоб зареєструватися, потрібно ввести цей код. Передавайте його лише колегам."
+
+#: apps/accounts/forms.py:212
+msgid "Set an invite code before turning registration on. You can generate one."
+msgstr "Задайте код запрошення, перш ніж вмикати реєстрацію. Його можна згенерувати."
+
+#: apps/accounts/forms.py:217
+msgid "The invite code needs at least %(n)s characters."
+msgstr "Код запрошення має містити щонайменше %(n)s символів."
+
+#: apps/accounts/forms.py:269
+msgid "The invite code is not correct."
+msgstr "Код запрошення неправильний."
+
+#: apps/accounts/manage_views.py:99
+msgid "Account “%(name)s” created."
+msgstr "Обліковий запис «%(name)s» створено."
+
+#: apps/accounts/manage_views.py:126
+msgid "Changes saved."
+msgstr "Зміни збережено."
+
+#: apps/accounts/manage_views.py:147
+msgid "The password of “%(name)s” was changed."
+msgstr "Пароль користувача «%(name)s» змінено."
+
+#: apps/accounts/manage_views.py:176
+msgid "“%(name)s” can log in again."
+msgstr "«%(name)s» знову може входити."
+
+#: apps/accounts/manage_views.py:180
+msgid "“%(name)s” can no longer log in. Their data is kept."
+msgstr "«%(name)s» більше не може входити. Дані збережено."
+
+#: apps/accounts/manage_views.py:197
+msgid "Settings saved with a new invite code."
+msgstr "Налаштування збережено з новим кодом запрошення."
+
+#: apps/accounts/manage_views.py:199 apps/assessments/editor_views.py:82
+msgid "Settings saved."
+msgstr "Налаштування збережено."
+
 #: apps/accounts/models.py:8
 msgid "Admin"
 msgstr "Адміністратор"
 
-#: apps/accounts/models.py:9
-msgid "Teacher"
-msgstr "Вчитель"
+#: apps/accounts/services.py:70
+msgid "You cannot deactivate your own account."
+msgstr "Ви не можете деактивувати власний обліковий запис."
+
+#: apps/accounts/services.py:72
+msgid "You cannot change your own role. Ask another admin to do it."
+msgstr "Ви не можете змінити власну роль. Попросіть про це іншого адміністратора."
+
+#: apps/accounts/services.py:79
+msgid "This is the last active admin. Make someone else an admin first."
+msgstr "Це останній активний адміністратор. Спершу призначте адміністратором когось іншого."
+
+#: apps/accounts/views.py:87
+msgid "Your account is ready. Welcome!"
+msgstr "Ваш обліковий запис готовий. Ласкаво просимо!"
 
 #: apps/assessments/editing.py:210
 msgid "Points must be a number, for example 1 or 1.5."
@@ -51,10 +200,6 @@ msgstr "Вкажіть назву тесту."
 #: apps/assessments/editor_views.py:58
 msgid "Test created. Add the first question."
 msgstr "Тест створено. Додайте перше запитання."
-
-#: apps/assessments/editor_views.py:82
-msgid "Settings saved."
-msgstr "Налаштування збережено."
 
 #: apps/assessments/editor_views.py:156
 msgid "Question saved."
@@ -108,11 +253,12 @@ msgstr "Коротка відповідь"
 msgid "Open (manual grading)"
 msgstr "Відкрите (ручне оцінювання)"
 
-#: apps/assessments/views.py:96
+#: apps/assessments/views.py:96 apps/people/forms.py:154 apps/people/importing.py:366
+#: apps/people/importing.py:402
 msgid "The file is too large (limit 2 MB)."
 msgstr "Файл завеликий (ліміт — 2 МБ)."
 
-#: apps/assessments/views.py:102
+#: apps/assessments/views.py:102 apps/people/importing.py:299
 msgid "The text is too large (limit 2 MB)."
 msgstr "Текст завеликий (ліміт — 2 МБ)."
 
@@ -182,82 +328,525 @@ msgstr "Зупинено."
 msgid "Scan to open %(url)s"
 msgstr "Скануйте, щоб відкрити %(url)s"
 
-#: apps/delivery/forms.py:6
+#: apps/delivery/forms.py:13
+msgid "%(name)s (%(n)d student)"
+msgid_plural "%(name)s (%(n)d students)"
+msgstr[0] "%(name)s (%(n)d учень)"
+msgstr[1] "%(name)s (%(n)d учні)"
+msgstr[2] "%(name)s (%(n)d учнів)"
+
+#: apps/delivery/forms.py:17
+msgid "%(n)d without a PIN"
+msgstr "без PIN-коду: %(n)d"
+
+#: apps/delivery/forms.py:22
 msgid "Session title"
 msgstr "Назва сесії"
 
-#: apps/delivery/forms.py:8
+#: apps/delivery/forms.py:24
 msgid "Access code (optional)"
 msgstr "Код доступу (необов’язково)"
 
-#: apps/delivery/forms.py:11
+#: apps/delivery/forms.py:27
 msgid "Takers must type this code to start. Leave empty for an open session."
 msgstr ""
 "Щоб розпочати, учні мають ввести цей код. Залиште поле порожнім, якщо сесія відкрита для всіх."
 
-#: apps/delivery/models.py:44
+#: apps/delivery/forms.py:30
+msgid "Class (group)"
+msgstr "Клас (група)"
+
+#: apps/delivery/forms.py:33
+msgid "No class: students type their own name"
+msgstr "Без класу: учні вводять ім’я самі"
+
+#: apps/delivery/forms.py:34
+msgid ""
+"Pick a class and students choose their name from its list; their results land on their profile "
+"automatically."
+msgstr ""
+"Оберіть клас, і учні виберуть своє ім’я зі списку; їхні результати потраплять у профіль "
+"автоматично."
+
+#: apps/delivery/forms.py:38
+msgid "Choose one of your own classes."
+msgstr "Оберіть один зі своїх класів."
+
+#: apps/delivery/forms.py:41
+msgid "Ask for a personal PIN"
+msgstr "Запитувати особистий PIN-код"
+
+#: apps/delivery/forms.py:43
+msgid ""
+"Students also type the PIN from their card. Students without a PIN cannot be picked in a PIN "
+"session."
+msgstr ""
+"Учні також вводять PIN-код зі своєї картки. Учнів без PIN-коду не можна вибрати в сесії з PIN-"
+"кодом."
+
+#: apps/delivery/forms.py:71
+msgid "A personal PIN needs a class. Choose a class above, or untick this box."
+msgstr "Для особистого PIN-коду потрібен клас. Оберіть клас вище або зніміть цю позначку."
+
+#: apps/delivery/models.py:50
 msgid "Auto-submitted"
 msgstr "Надіслано автоматично"
 
-#: apps/delivery/models.py:45 apps/reports/views.py:69
-msgid "Voided"
-msgstr "Скасовано"
-
-#: apps/delivery/models.py:77
+#: apps/delivery/models.py:88
 msgid "Unanswered"
 msgstr "Без відповіді"
 
-#: apps/delivery/models.py:78
+#: apps/delivery/models.py:89
 msgid "Graded"
 msgstr "Оцінено"
 
-#: apps/delivery/models.py:80
+#: apps/delivery/models.py:91
 msgid "Reviewed"
 msgstr "Перевірено"
 
-#: apps/delivery/services.py:71
-msgid "Full name"
-msgstr "Прізвище та ім’я"
+#: apps/delivery/roster.py:111
+msgid "This name has no PIN yet. Ask your teacher."
+msgstr "Для цього імені ще немає PIN-коду. Запитайте вчителя."
 
-#: apps/delivery/taker_views.py:191
-msgid "The access code is not correct."
-msgstr "Код доступу неправильний."
+#: apps/delivery/roster.py:114
+msgid "Too many wrong PINs for this name. Please try again in a few minutes."
+msgstr "Забагато неправильних PIN-кодів для цього імені. Спробуйте ще раз за кілька хвилин."
 
-#: apps/delivery/taker_views.py:195
-msgid "Please fill in: %(field)s."
-msgstr "Будь ласка, заповніть поле: %(field)s."
+#: apps/delivery/roster.py:117
+msgid "Please type your PIN."
+msgstr "Будь ласка, введіть свій PIN-код."
 
-#: apps/delivery/taker_views.py:199
+#: apps/delivery/roster.py:120
+msgid "The PIN is not correct."
+msgstr "PIN-код неправильний."
+
+#: apps/delivery/roster.py:162 apps/delivery/taker_views.py:232
+msgid "Please choose your name from the list."
+msgstr "Будь ласка, оберіть своє ім’я зі списку."
+
+#: apps/delivery/roster.py:168 apps/delivery/taker_views.py:238
 msgid "You have already taken this test."
 msgstr "Ви вже проходили цей тест."
 
-#: apps/delivery/taker_views.py:366
+#: apps/delivery/services.py:78 apps/people/forms.py:81 apps/people/models.py:39
+msgid "Full name"
+msgstr "Прізвище та ім’я"
+
+#: apps/delivery/taker_views.py:218
+msgid "The access code is not correct."
+msgstr "Код доступу неправильний."
+
+#: apps/delivery/taker_views.py:224
+msgid "Please fill in: %(field)s."
+msgstr "Будь ласка, заповніть поле: %(field)s."
+
+#: apps/delivery/taker_views.py:410
 msgid "Not answered"
 msgstr "Без відповіді"
 
-#: apps/delivery/taker_views.py:369
+#: apps/delivery/taker_views.py:413
 msgid "Awaiting review"
 msgstr "Очікує перевірки"
 
-#: apps/delivery/taker_views.py:373
+#: apps/delivery/taker_views.py:417
 msgid "Incorrect"
 msgstr "Неправильно"
 
-#: apps/delivery/taker_views.py:374 apps/reports/data.py:91
+#: apps/delivery/taker_views.py:418 apps/reports/data.py:91
 msgid "Partly correct"
 msgstr "Частково правильно"
 
-#: apps/delivery/views.py:116
+#: apps/delivery/views.py:85
+msgid "This class has no active students yet. Add students before you share the link."
+msgstr "У цьому класі ще немає активних учнів. Додайте учнів, перш ніж ділитися посиланням."
+
+#: apps/delivery/views.py:90
+msgid ""
+"%(n)d student of this class has no PIN yet and cannot be picked in this session. Generate PINs on "
+"the class page."
+msgid_plural ""
+"%(n)d students of this class have no PIN yet and cannot be picked in this session. Generate PINs "
+"on the class page."
+msgstr[0] ""
+"%(n)d учень цього класу ще не має PIN-коду й не може бути вибраний у цій сесії. Створіть PIN-коди "
+"на сторінці класу."
+msgstr[1] ""
+"%(n)d учні цього класу ще не мають PIN-коду й не можуть бути вибрані в цій сесії. Створіть PIN-"
+"коди на сторінці класу."
+msgstr[2] ""
+"%(n)d учнів цього класу ще не мають PIN-коду й не можуть бути вибрані в цій сесії. Створіть PIN-"
+"коди на сторінці класу."
+
+#: apps/delivery/views.py:150
 msgid "Session reopened. Students can join again with the same link and code."
 msgstr "Сесію відкрито знову. Учні можуть приєднатися за тим самим посиланням і кодом."
 
-#: apps/delivery/views.py:126
+#: apps/delivery/views.py:160
 msgid "Session deleted."
 msgstr "Сесію видалено."
 
-#: apps/delivery/views.py:142
+#: apps/delivery/views.py:176
 msgid "Session closed. %(count)d unfinished attempt(s) were submitted automatically."
 msgstr "Сесію закрито. Незавершені спроби (%(count)d) надіслано автоматично."
+
+#: apps/delivery/views.py:187
+msgid "same name"
+msgstr "те саме ім’я"
+
+#: apps/delivery/views.py:188
+msgid "same words"
+msgstr "ті самі слова"
+
+#: apps/delivery/views.py:189
+msgid "similar"
+msgstr "схоже"
+
+#: apps/delivery/views.py:210
+msgid "No class"
+msgstr "Без класу"
+
+#: apps/delivery/views.py:292
+msgid ""
+"One of the chosen students is not available (any more). Nothing was saved. Check the list and try "
+"again."
+msgstr ""
+"Одного з вибраних учнів недоступно (вже). Нічого не збережено. Перевірте список і спробуйте ще "
+"раз."
+
+#: apps/delivery/views.py:300
+msgid "Saved: %(n)d attempt updated."
+msgid_plural "Saved: %(n)d attempts updated."
+msgstr[0] "Збережено: оновлено %(n)d спробу."
+msgstr[1] "Збережено: оновлено %(n)d спроби."
+msgstr[2] "Збережено: оновлено %(n)d спроб."
+
+#: apps/delivery/views.py:308
+msgid "Nothing to change."
+msgstr "Нічого змінювати."
+
+#: apps/people/forms.py:32
+msgid "Enter a name with letters or digits."
+msgstr "Введіть назву з літерами або цифрами."
+
+#: apps/people/forms.py:39
+msgid "Enter a name with letters."
+msgstr "Введіть ім’я з літерами."
+
+#: apps/people/forms.py:48
+msgid "Group name"
+msgstr "Назва групи"
+
+#: apps/people/forms.py:49 apps/people/models.py:17
+msgid "Note"
+msgstr "Примітка"
+
+#: apps/people/forms.py:50
+msgid "Archived (hidden from the list; students and results are kept)"
+msgstr "В архіві (прихована зі списку; учні та результати зберігаються)"
+
+#: apps/people/forms.py:57
+msgid "For example 7-A or Physics, evening course."
+msgstr "Наприклад, 7-А або Фізика, вечірні курси."
+
+#: apps/people/forms.py:65 apps/people/views_roster.py:100 apps/people/views_roster.py:145
+msgid "You already have a group with this name."
+msgstr "У вас уже є група з такою назвою."
+
+#: apps/people/forms.py:84
+msgid "Active (untick when the student has left the class)"
+msgstr "Активний (зніміть позначку, коли учень вибув із класу)"
+
+#: apps/people/forms.py:103
+msgid "Optional, 3 to 8 digits. Used to confirm identity in group sessions."
+msgstr "Необов’язково, від 3 до 8 цифр. Використовується для підтвердження особи в групових сесіях."
+
+#: apps/people/forms.py:113
+msgid "The PIN must be 3 to 8 digits."
+msgstr "PIN має складатися з 3–8 цифр."
+
+#: apps/people/forms.py:122
+msgid "Another student in this group already has this PIN."
+msgstr "Інший учень у цій групі вже має такий PIN."
+
+#: apps/people/forms.py:132
+msgid "Or upload a CSV or XLSX file"
+msgstr "Або завантажте файл CSV чи XLSX"
+
+#: apps/people/forms.py:137
+msgid "Put students without a group into"
+msgstr "Учнів без групи додати до"
+
+#: apps/people/forms.py:142
+msgid "Or into a new group"
+msgstr "Або до нової групи"
+
+#: apps/people/forms.py:143
+msgid "Created when you confirm. Leave empty to use the group above."
+msgstr "Створюється після підтвердження. Залиште порожнім, щоб використати групу вище."
+
+#: apps/people/forms.py:164
+msgid "Use the text box or a file, not both."
+msgstr "Скористайтеся або текстовим полем, або файлом, але не обома одразу."
+
+#: apps/people/forms.py:166
+msgid "Paste a list of names or choose a file."
+msgstr "Вставте список імен або виберіть файл."
+
+#: apps/people/forms.py:169
+msgid "Choose an existing group or type a new group name, not both."
+msgstr "Виберіть наявну групу або введіть назву нової, але не обидва варіанти."
+
+#: apps/people/importing.py:46
+msgid "the name is empty"
+msgstr "ім’я порожнє"
+
+#: apps/people/importing.py:47
+msgid "the name is too long"
+msgstr "ім’я задовге"
+
+#: apps/people/importing.py:48
+msgid "the name has no letters"
+msgstr "в імені немає літер"
+
+#: apps/people/importing.py:49
+msgid "the group name is too long"
+msgstr "назва групи задовга"
+
+#: apps/people/importing.py:50
+msgid "the group name has no letters or digits"
+msgstr "у назві групи немає літер чи цифр"
+
+#: apps/people/importing.py:263
+msgid "Too many rows: at most %(max)s students can be imported at a time. Split the list."
+msgstr ""
+"Забагато рядків: за один раз можна імпортувати не більше ніж %(max)s учнів. Розділіть список."
+
+#: apps/people/importing.py:368
+msgid "This is not a CSV file. Choose a CSV or XLSX file."
+msgstr "Це не файл CSV. Виберіть файл CSV або XLSX."
+
+#: apps/people/importing.py:371
+msgid "This does not look like a text or CSV file."
+msgstr "Це не схоже на текстовий файл чи CSV."
+
+#: apps/people/importing.py:384
+msgid "The file could not be read as CSV."
+msgstr "Не вдалося прочитати файл як CSV."
+
+#: apps/people/importing.py:407
+msgid ""
+"Reading Excel files needs the optional xlsx component, which is not installed. Save the sheet as "
+"CSV instead, or ask the administrator to install the xlsx extra."
+msgstr ""
+"Для читання файлів Excel потрібен необов’язковий компонент xlsx, який не встановлено. Збережіть "
+"таблицю як CSV або попросіть адміністратора встановити додаток xlsx."
+
+#: apps/people/importing.py:417
+msgid "The workbook is too large to read."
+msgstr "Книга завелика для читання."
+
+#: apps/people/importing.py:419 apps/people/importing.py:425 apps/people/importing.py:444
+msgid "The file could not be read as an Excel workbook."
+msgstr "Не вдалося прочитати файл як книгу Excel."
+
+#: apps/people/importing.py:433
+msgid "The sheet has too many rows."
+msgstr "В аркуші забагато рядків."
+
+#: apps/people/importing.py:456
+msgid "Old .xls files are not supported. Save the sheet as .xlsx or CSV."
+msgstr "Старі файли .xls не підтримуються. Збережіть таблицю як .xlsx або CSV."
+
+#: apps/people/profile.py:306
+msgid "%(n)s attempt in progress"
+msgid_plural "%(n)s attempts in progress"
+msgstr[0] "%(n)s незавершена спроба"
+msgstr[1] "%(n)s незавершені спроби"
+msgstr[2] "%(n)s незавершених спроб"
+
+#: apps/people/profile.py:315
+msgid "%(n)s voided attempt"
+msgid_plural "%(n)s voided attempts"
+msgstr[0] "%(n)s скасована спроба"
+msgstr[1] "%(n)s скасовані спроби"
+msgstr[2] "%(n)s скасованих спроб"
+
+#: apps/people/profile.py:320
+msgid "%(n)s attempt without a score"
+msgid_plural "%(n)s attempts without a score"
+msgstr[0] "%(n)s спроба без балів"
+msgstr[1] "%(n)s спроби без балів"
+msgstr[2] "%(n)s спроб без балів"
+
+#: apps/people/profile.py:329
+msgid "Not counted: %(parts)s"
+msgstr "Не враховано: %(parts)s"
+
+#: apps/people/services.py:363
+msgid "%(name)s (row %(n)s of this list)"
+msgstr "%(name)s (рядок %(n)s цього списку)"
+
+#: apps/people/views_gradebook.py:56
+msgid "%(n)s %% and above: good"
+msgstr "%(n)s %% і вище: добре"
+
+#: apps/people/views_gradebook.py:57
+msgid "%(low)s %% to below %(high)s %%: fair"
+msgstr "від %(low)s %% до %(high)s %% (не включно): задовільно"
+
+#: apps/people/views_gradebook.py:58
+msgid "below %(n)s %%: weak"
+msgstr "нижче %(n)s %%: слабко"
+
+#: apps/people/views_gradebook.py:136
+msgid "* Provisional: some answers still wait for review, so the number may change."
+msgstr "* Попередньо: деякі відповіді ще чекають на перевірку, тому число може змінитися."
+
+#: apps/people/views_profile.py:83
+msgid "Notes saved."
+msgstr "Нотатки збережено."
+
+#: apps/people/views_profile.py:99
+msgid "Choose what happens to the attempts of this student."
+msgstr "Оберіть, що станеться зі спробами цього учня."
+
+#: apps/people/views_profile.py:122
+msgid "Student “%(name)s” and %(n)s attempt deleted."
+msgid_plural "Student “%(name)s” and %(n)s attempts deleted."
+msgstr[0] "Учня «%(name)s» і %(n)s спробу видалено."
+msgstr[1] "Учня «%(name)s» і %(n)s спроби видалено."
+msgstr[2] "Учня «%(name)s» і %(n)s спроб видалено."
+
+#: apps/people/views_profile.py:131
+msgid "%(n)s attempt from a session of another teacher was only unlinked."
+msgid_plural "%(n)s attempts from sessions of another teacher were only unlinked."
+msgstr[0] "%(n)s спробу із сесії іншого вчителя лише відв’язано."
+msgstr[1] "%(n)s спроби із сесій іншого вчителя лише відв’язано."
+msgstr[2] "%(n)s спроб із сесій іншого вчителя лише відв’язано."
+
+#: apps/people/views_profile.py:139
+msgid "Student “%(name)s” deleted. %(n)s attempt stays in its session, unlinked."
+msgid_plural "Student “%(name)s” deleted. %(n)s attempts stay in their sessions, unlinked."
+msgstr[0] "Учня «%(name)s» видалено. %(n)s спроба залишається у своїй сесії без прив’язки."
+msgstr[1] "Учня «%(name)s» видалено. %(n)s спроби залишаються у своїх сесіях без прив’язки."
+msgstr[2] "Учня «%(name)s» видалено. %(n)s спроб залишаються у своїх сесіях без прив’язки."
+
+#: apps/people/views_profile.py:146
+msgid "Student “%(name)s” deleted."
+msgstr "Учня «%(name)s» видалено."
+
+#: apps/people/views_profile.py:176 apps/reports/views.py:185
+msgid "Max score"
+msgstr "Макс. бали"
+
+#: apps/people/views_profile.py:179 apps/reports/views.py:188
+msgid "Pending reviews"
+msgstr "Очікують перевірки"
+
+#: apps/people/views_roster.py:102
+msgid "Group \"%(name)s\" created."
+msgstr "Групу «%(name)s» створено."
+
+#: apps/people/views_roster.py:147
+msgid "Group saved."
+msgstr "Групу збережено."
+
+#: apps/people/views_roster.py:163
+msgid "Choose what happens to the students."
+msgstr "Виберіть, що буде з учнями."
+
+#: apps/people/views_roster.py:170
+msgid "Group \"%(name)s\" and its %(n)s student were deleted."
+msgid_plural "Group \"%(name)s\" and its %(n)s students were deleted."
+msgstr[0] "Групу «%(name)s» та %(n)s її учня видалено."
+msgstr[1] "Групу «%(name)s» та %(n)s її учнів видалено."
+msgstr[2] "Групу «%(name)s» та %(n)s її учнів видалено."
+
+#: apps/people/views_roster.py:180
+msgid "Group \"%(name)s\" deleted. Its students are kept without a group."
+msgstr "Групу «%(name)s» видалено. Її учні залишилися без групи."
+
+#: apps/people/views_roster.py:215
+msgid "Choose what to do with the PINs."
+msgstr "Виберіть, що робити з PIN."
+
+#: apps/people/views_roster.py:220
+msgid "A PIN was set for %(n)s student."
+msgid_plural "PINs were set for %(n)s students."
+msgstr[0] "PIN встановлено для %(n)s учня."
+msgstr[1] "PIN встановлено для %(n)s учнів."
+msgstr[2] "PIN встановлено для %(n)s учнів."
+
+#: apps/people/views_roster.py:228
+msgid "Every active student already has a PIN."
+msgstr "Кожен активний учень уже має PIN."
+
+#: apps/people/views_roster.py:314
+msgid "Student \"%(name)s\" added."
+msgstr "Учня «%(name)s» додано."
+
+#: apps/people/views_roster.py:355
+msgid "Student saved."
+msgstr "Учня збережено."
+
+#: apps/people/views_roster.py:431
+msgid "No names were found in this list."
+msgstr "У цьому списку не знайдено жодного імені."
+
+#: apps/people/views_roster.py:451
+msgid "There is nothing to check. Start with a list."
+msgstr "Нічого перевіряти. Почніть зі списку."
+
+#: apps/people/views_roster.py:455 apps/people/views_roster.py:529
+msgid "The chosen group no longer exists. Start again."
+msgstr "Вибраної групи більше немає. Почніть спочатку."
+
+#: apps/people/views_roster.py:476
+msgid "%(n)s student added."
+msgid_plural "%(n)s students added."
+msgstr[0] "Додано %(n)s учня."
+msgstr[1] "Додано %(n)s учнів."
+msgstr[2] "Додано %(n)s учнів."
+
+#: apps/people/views_roster.py:481
+msgid "%(n)s group created."
+msgid_plural "%(n)s groups created."
+msgstr[0] "Створено %(n)s групу."
+msgstr[1] "Створено %(n)s групи."
+msgstr[2] "Створено %(n)s груп."
+
+#: apps/people/views_roster.py:489
+msgid "%(n)s duplicate skipped."
+msgid_plural "%(n)s duplicates skipped."
+msgstr[0] "Пропущено %(n)s дублікат."
+msgstr[1] "Пропущено %(n)s дублікати."
+msgstr[2] "Пропущено %(n)s дублікатів."
+
+#: apps/people/views_roster.py:498
+msgid "%(n)s row that is not valid was skipped."
+msgid_plural "%(n)s rows that are not valid were skipped."
+msgstr[0] "Пропущено %(n)s некоректний рядок."
+msgstr[1] "Пропущено %(n)s некоректні рядки."
+msgstr[2] "Пропущено %(n)s некоректних рядків."
+
+#: apps/people/views_roster.py:507
+msgid "%(n)s row you unticked was skipped."
+msgid_plural "%(n)s rows you unticked were skipped."
+msgstr[0] "Пропущено %(n)s рядок, який ви зняли з позначки."
+msgstr[1] "Пропущено %(n)s рядки, які ви зняли з позначки."
+msgstr[2] "Пропущено %(n)s рядків, які ви зняли з позначки."
+
+#: apps/people/views_roster.py:525
+msgid "This preview is out of date. Start the import again."
+msgstr "Цей перегляд застарів. Почніть імпорт знову."
+
+#: apps/people/views_roster.py:547
+msgid "Could not save the list. Please try again."
+msgstr "Не вдалося зберегти список. Спробуйте ще раз."
+
+#: apps/people/views_roster.py:553
+msgid "Nothing was added: every row is unticked, a duplicate or not valid."
+msgstr "Нічого не додано: кожен рядок знято з позначки, є дублікатом або некоректний."
 
 #: apps/reports/data.py:29
 msgid "(no name)"
@@ -267,17 +856,24 @@ msgstr "(без імені)"
 msgid "Wrong"
 msgstr "Неправильно"
 
-#: apps/reports/data.py:95
-msgid "Not graded"
-msgstr "Без оцінювання"
-
 #: apps/reports/pdf.py:84
 msgid "page"
 msgstr "стор."
 
-#: apps/reports/pdf.py:181
-msgid "Provisional: some answers still need review."
-msgstr "Попередній результат: деякі відповіді ще потребують перевірки."
+#: apps/reports/student_pdf.py:75
+msgid "Student results"
+msgstr "Результати учня"
+
+#: apps/reports/student_pdf.py:87
+msgid "Generated"
+msgstr "Створено"
+
+#: apps/reports/student_pdf.py:121
+msgid "Mean of the percent of %(n)s counted attempt."
+msgid_plural "Mean of the percent of %(n)s counted attempts."
+msgstr[0] "Середнє відсотка за %(n)s врахованою спробою."
+msgstr[1] "Середнє відсотка за %(n)s врахованими спробами."
+msgstr[2] "Середнє відсотка за %(n)s врахованими спробами."
 
 #: apps/reports/templatetags/report_extras.py:32
 msgid "Pass"
@@ -299,16 +895,8 @@ msgstr "Введіть бали від 0 до %(max)s з кроком 0,5."
 msgid "Saved."
 msgstr "Збережено."
 
-#: apps/reports/views.py:185
-msgid "Max score"
-msgstr "Макс. бали"
-
-#: apps/reports/views.py:188
-msgid "Pending reviews"
-msgstr "Очікують перевірки"
-
 #: templates/assessments/detail.html:11 templates/assessments/list.html:32
-#: templates/core/dashboard.html:64
+#: templates/core/dashboard.html:68
 msgid "unpublished changes"
 msgstr "неопубліковані зміни"
 
@@ -352,7 +940,7 @@ msgid "Delete test"
 msgstr "Видалити тест"
 
 #: templates/assessments/detail.html:46 templates/assessments/list.html:24
-#: templates/assessments/list.html:33 templates/reports/session.html:101
+#: templates/assessments/list.html:33 templates/reports/session.html:102
 msgid "Questions"
 msgstr "Запитання"
 
@@ -374,7 +962,7 @@ msgid "min"
 msgstr "хв"
 
 #: templates/assessments/detail.html:59 templates/assessments/detail.html:69
-#: templates/reports/session.html:106 templates/reports/session.html:115
+#: templates/reports/session.html:107 templates/reports/session.html:116
 msgid "Question"
 msgstr "Запитання"
 
@@ -389,10 +977,16 @@ msgid "Points"
 msgstr "Бали"
 
 #: templates/assessments/detail.html:62 templates/assessments/detail.html:72
+#: templates/manage/teachers.html:33 templates/people/roster/group.html:37
+#: templates/people/roster/group.html:46 templates/people/roster/groups.html:24
+#: templates/people/roster/groups.html:34 templates/people/roster/students.html:44
+#: templates/people/roster/students.html:54
 msgid "Actions"
 msgstr "Дії"
 
-#: templates/assessments/detail.html:74
+#: templates/assessments/detail.html:74 templates/manage/teachers.html:48
+#: templates/people/profile/student.html:12 templates/people/roster/group.html:46
+#: templates/people/roster/groups.html:34 templates/people/roster/students.html:54
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -425,7 +1019,7 @@ msgid "Delete question %(n)s"
 msgstr "Видалити запитання %(n)s"
 
 #: templates/assessments/detail.html:82 templates/delivery/list.html:29
-#: templates/delivery/share.html:78
+#: templates/delivery/share.html:91
 msgid "Delete"
 msgstr "Видалити"
 
@@ -446,7 +1040,7 @@ msgstr "Версії"
 msgid "Published"
 msgstr "Опубліковано"
 
-#: templates/assessments/detail.html:112 templates/delivery/create.html:24
+#: templates/assessments/detail.html:112 templates/delivery/create.html:33
 msgid "Open session"
 msgstr "Відкрити сесію"
 
@@ -473,7 +1067,13 @@ msgstr ""
 #: templates/assessments/editor/confirm_delete.html:13
 #: templates/assessments/editor/confirm_delete_test.html:22
 #: templates/assessments/editor/question.html:116 templates/assessments/editor/settings.html:91
-#: templates/delivery/confirm_delete.html:17 templates/delivery/create.html:25
+#: templates/delivery/confirm_delete.html:17 templates/delivery/create.html:34
+#: templates/delivery/link.html:80 templates/manage/teacher_create.html:19
+#: templates/manage/teacher_edit.html:25 templates/people/profile/delete.html:15
+#: templates/people/profile/delete.html:41 templates/people/roster/group_delete.html:44
+#: templates/people/roster/group_form.html:18 templates/people/roster/import.html:49
+#: templates/people/roster/import_preview.html:80 templates/people/roster/pins_confirm.html:15
+#: templates/people/roster/student_form.html:40
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -507,6 +1107,7 @@ msgid "No sessions have been opened from this test."
 msgstr "З цього тесту ще не відкривали сесій."
 
 #: templates/assessments/editor/confirm_delete_test.html:16
+#: templates/people/roster/group_delete.html:39
 msgid "This cannot be undone."
 msgstr "Цю дію не можна скасувати."
 
@@ -524,7 +1125,10 @@ msgstr "Новий тест"
 msgid "Title"
 msgstr "Назва"
 
+#: apps/people/views_profile.py:170 apps/reports/student_pdf.py:147
 #: templates/assessments/editor/create.html:19 templates/assessments/import.html:79
+#: templates/people/gradebook/gradebook.html:24 templates/people/profile/student.html:58
+#: templates/people/profile/student.html:68
 msgid "Project"
 msgstr "Проєкт"
 
@@ -672,7 +1276,7 @@ msgstr "Підказка для учня (необов'язково)"
 msgid "The student must answer this question"
 msgstr "Учень має відповісти на це запитання"
 
-#: templates/assessments/editor/question.html:118
+#: templates/assessments/editor/question.html:118 templates/people/roster/student_form.html:38
 msgid "Save and add another"
 msgstr "Зберегти й додати ще"
 
@@ -744,7 +1348,9 @@ msgstr "Виставляти оцінку"
 msgid "Grade scale"
 msgstr "Шкала оцінок"
 
-#: apps/reports/views.py:186 templates/assessments/editor/settings.html:67
+#: apps/people/views_profile.py:177 apps/reports/student_pdf.py:177 apps/reports/views.py:186
+#: templates/assessments/editor/settings.html:67 templates/people/profile/student.html:94
+#: templates/people/profile/student.html:105
 msgid "Percent"
 msgstr "Відсоток"
 
@@ -864,24 +1470,34 @@ msgid "Or a new project (optional)"
 msgstr "Або новий проєкт (необов’язково)"
 
 #: templates/assessments/list.html:3 templates/assessments/list.html:8 templates/base.html:19
+#: templates/manage/home.html:25 templates/manage/teachers.html:31 templates/manage/teachers.html:44
 msgid "Tests"
 msgstr "Тести"
 
+#: apps/people/views_profile.py:169 apps/reports/student_pdf.py:177
 #: templates/assessments/list.html:22 templates/assessments/list.html:31
-#: templates/core/dashboard.html:59 templates/core/dashboard.html:63 templates/delivery/list.html:14
-#: templates/delivery/list.html:25
+#: templates/core/dashboard.html:63 templates/core/dashboard.html:67 templates/delivery/list.html:14
+#: templates/delivery/list.html:25 templates/people/profile/student.html:91
+#: templates/people/profile/student.html:102 templates/people/profile/student.html:125
+#: templates/people/profile/student.html:133
 msgid "Test"
 msgstr "Тест"
 
-#: apps/reports/views.py:181 templates/assessments/list.html:23 templates/assessments/list.html:32
-#: templates/core/dashboard.html:59 templates/core/dashboard.html:64 templates/delivery/list.html:16
-#: templates/delivery/list.html:27 templates/delivery/share.html:49 templates/delivery/share.html:57
-#: templates/reports/session.html:71 templates/reports/session.html:84
+#: apps/people/views_profile.py:174 apps/reports/views.py:181 templates/assessments/list.html:23
+#: templates/assessments/list.html:32 templates/core/dashboard.html:63
+#: templates/core/dashboard.html:68 templates/delivery/link.html:34 templates/delivery/link.html:45
+#: templates/delivery/list.html:16 templates/delivery/list.html:27 templates/delivery/share.html:61
+#: templates/delivery/share.html:69 templates/manage/teachers.html:29
+#: templates/manage/teachers.html:42 templates/people/profile/student.html:20
+#: templates/people/profile/student.html:126 templates/people/profile/student.html:134
+#: templates/people/roster/group.html:36 templates/people/roster/group.html:45
+#: templates/people/roster/students.html:43 templates/people/roster/students.html:53
+#: templates/reports/session.html:72 templates/reports/session.html:85
 msgid "Status"
 msgstr "Статус"
 
 #: templates/assessments/list.html:25 templates/assessments/list.html:34
-#: templates/core/dashboard.html:59 templates/core/dashboard.html:65
+#: templates/core/dashboard.html:63 templates/core/dashboard.html:69
 msgid "Updated"
 msgstr "Оновлено"
 
@@ -898,14 +1514,23 @@ msgid "Main"
 msgstr "Основна навігація"
 
 #: templates/base.html:20 templates/delivery/list.html:3 templates/delivery/list.html:7
+#: templates/manage/home.html:30 templates/manage/teachers.html:32 templates/manage/teachers.html:45
 msgid "Sessions"
 msgstr "Сесії"
 
-#: templates/base.html:21
+#: templates/base.html:21 templates/core/dashboard.html:12 templates/people/roster/_tabs.html:2
+msgid "People"
+msgstr "Люди"
+
+#: templates/base.html:22
 msgid "Import"
 msgstr "Імпорт"
 
 #: templates/base.html:23
+msgid "Manage"
+msgstr "Керування"
+
+#: templates/base.html:25
 msgid "Log out"
 msgstr "Вийти"
 
@@ -917,75 +1542,92 @@ msgstr "Мова"
 msgid "Dashboard"
 msgstr "Панель"
 
-#: templates/core/dashboard.html:11 templates/core/dashboard.html:33
-#: templates/delivery/share.html:79
+#: templates/core/dashboard.html:11 templates/core/dashboard.html:37
+#: templates/delivery/share.html:92 templates/people/roster/group.html:91
 msgid "All sessions"
 msgstr "Усі сесії"
 
-#: templates/core/dashboard.html:17
+#: templates/core/dashboard.html:18
 msgid "No tests yet"
 msgstr "Тестів ще немає"
 
-#: templates/core/dashboard.html:18
+#: templates/core/dashboard.html:19
 msgid ""
 "Import a test from a JSON file to get started. Then publish it and open a session for your class."
 msgstr ""
 "Імпортуйте тест із файлу JSON, щоб розпочати. Потім опублікуйте його та відкрийте сесію для свого "
 "класу."
 
-#: templates/core/dashboard.html:19
+#: templates/core/dashboard.html:20
 msgid "Import your first test"
 msgstr "Імпортуйте свій перший тест"
 
-#: templates/core/dashboard.html:23
+#: templates/core/dashboard.html:24 templates/manage/teacher_edit.html:15
 msgid "%(n)s test"
 msgid_plural "%(n)s tests"
 msgstr[0] "%(n)s тест"
 msgstr[1] "%(n)s тести"
 msgstr[2] "%(n)s тестів"
 
-#: templates/core/dashboard.html:25
+#: templates/core/dashboard.html:26
 msgid "%(n)s open session"
 msgid_plural "%(n)s open sessions"
 msgstr[0] "%(n)s відкрита сесія"
 msgstr[1] "%(n)s відкриті сесії"
 msgstr[2] "%(n)s відкритих сесій"
 
-#: templates/core/dashboard.html:27
+#: templates/core/dashboard.html:28
 msgid "%(n)s session in total"
 msgid_plural "%(n)s sessions in total"
 msgstr[0] "%(n)s сесія загалом"
 msgstr[1] "%(n)s сесії загалом"
 msgstr[2] "%(n)s сесій загалом"
 
-#: templates/core/dashboard.html:32
+#: templates/core/dashboard.html:30
+msgid "%(n)s group"
+msgid_plural "%(n)s groups"
+msgstr[0] "%(n)s група"
+msgstr[1] "%(n)s групи"
+msgstr[2] "%(n)s груп"
+
+#: templates/core/dashboard.html:31 templates/delivery/share.html:14
+#: templates/people/gradebook/gradebook.html:11 templates/people/roster/students.html:36
+msgid "%(n)s student"
+msgid_plural "%(n)s students"
+msgstr[0] "%(n)s учень"
+msgstr[1] "%(n)s учні"
+msgstr[2] "%(n)s учнів"
+
+#: templates/core/dashboard.html:36
 msgid "Open sessions"
 msgstr "Відкриті сесії"
 
-#: templates/core/dashboard.html:37 templates/core/dashboard.html:41
+#: apps/people/views_profile.py:171 apps/reports/student_pdf.py:177 templates/core/dashboard.html:41
+#: templates/core/dashboard.html:45 templates/people/profile/student.html:92
+#: templates/people/profile/student.html:103
 msgid "Session"
 msgstr "Сесія"
 
-#: templates/core/dashboard.html:37 templates/core/dashboard.html:42 templates/delivery/list.html:15
-#: templates/delivery/list.html:26
+#: templates/core/dashboard.html:41 templates/core/dashboard.html:46 templates/delivery/list.html:15
+#: templates/delivery/list.html:26 templates/people/gradebook/gradebook.html:79
 msgid "Code"
 msgstr "Код"
 
-#: templates/core/dashboard.html:37 templates/core/dashboard.html:43
-#: templates/delivery/share.html:42 templates/delivery/share.html:43
-#: templates/reports/session.html:22
+#: templates/core/dashboard.html:41 templates/core/dashboard.html:47
+#: templates/delivery/share.html:54 templates/delivery/share.html:55
+#: templates/reports/session.html:23
 msgid "Takers"
 msgstr "Учасники"
 
-#: templates/core/dashboard.html:49
+#: templates/core/dashboard.html:53
 msgid "No open sessions. Open a session from a published test."
 msgstr "Відкритих сесій немає. Відкрийте сесію з опублікованого тесту."
 
-#: templates/core/dashboard.html:55
+#: templates/core/dashboard.html:59
 msgid "Recent tests"
 msgstr "Останні тести"
 
-#: templates/core/dashboard.html:56
+#: templates/core/dashboard.html:60
 msgid "All tests"
 msgstr "Усі тести"
 
@@ -997,7 +1639,8 @@ msgstr "Введіть код сесії"
 msgid "Your teacher shows a short code, or a QR code to scan."
 msgstr "Вчитель покаже короткий код або QR-код для сканування."
 
-#: templates/core/landing.html:11 templates/delivery/enter_error.html:11
+#: apps/people/views_profile.py:172 templates/core/landing.html:11
+#: templates/delivery/enter_error.html:11
 msgid "Session code"
 msgstr "Код сесії"
 
@@ -1005,9 +1648,53 @@ msgstr "Код сесії"
 msgid "Join"
 msgstr "Приєднатися"
 
-#: templates/core/landing.html:18 templates/registration/login.html:6
+#: templates/core/landing.html:18 templates/registration/login.html:7
 msgid "Teacher log in"
 msgstr "Вхід для вчителя"
+
+#: templates/delivery/_identity.html:9
+msgid "Your name"
+msgstr "Ваше ім’я"
+
+#: templates/delivery/_identity.html:11
+msgid "Search the class list"
+msgstr "Пошук у списку класу"
+
+#: templates/delivery/_identity.html:11
+msgid "Type part of your name"
+msgstr "Введіть частину свого імені"
+
+#: templates/delivery/_identity.html:12
+msgid "Choose your name"
+msgstr "Оберіть своє ім’я"
+
+#: templates/delivery/_identity.html:14
+msgid "no PIN yet"
+msgstr "PIN-коду ще немає"
+
+#: templates/delivery/_identity.html:17
+msgid "The class list is empty. Ask your teacher."
+msgstr "Список класу порожній. Запитайте вчителя."
+
+#: templates/delivery/_identity.html:21
+msgid "Your personal PIN"
+msgstr "Ваш особистий PIN-код"
+
+#: templates/delivery/_identity.html:23
+msgid "The PIN your teacher gave you."
+msgstr "PIN-код, який вам дав учитель."
+
+#: templates/delivery/_identity.html:29
+msgid "optional"
+msgstr "необов’язково"
+
+#: templates/delivery/_identity.html:36 templates/delivery/share.html:31
+msgid "Access code"
+msgstr "Код доступу"
+
+#: templates/delivery/_identity.html:38
+msgid "Ask your teacher for the access code."
+msgstr "Запитайте код доступу у вчителя."
 
 #: templates/delivery/confirm_delete.html:3 templates/delivery/confirm_delete.html:16
 msgid "Delete session"
@@ -1049,8 +1736,16 @@ msgstr "Ліміт часу: %(time_limit)s хв"
 msgid "No time limit"
 msgstr "Без обмеження часу"
 
-#: apps/delivery/models.py:43 apps/reports/pdf.py:152 apps/reports/views.py:183
-#: templates/delivery/done.html:3 templates/delivery/done.html:12 templates/delivery/share.html:37
+#: templates/delivery/create.html:27
+msgid "You have no classes yet."
+msgstr "У вас ще немає класів."
+
+#: templates/delivery/create.html:27
+msgid "Add a class on the People page"
+msgstr "Додайте клас на сторінці «Люди»"
+
+#: apps/delivery/models.py:49 apps/reports/pdf.py:152 apps/reports/views.py:183
+#: templates/delivery/done.html:3 templates/delivery/done.html:12 templates/delivery/share.html:48
 #: templates/reports/attempt.html:25
 msgid "Submitted"
 msgstr "Надіслано"
@@ -1075,13 +1770,18 @@ msgstr "Ваші відповіді надіслано. Дякуємо!"
 msgid "Your result"
 msgstr "Ваш результат"
 
-#: apps/reports/pdf.py:172 apps/reports/views.py:187 templates/delivery/done.html:21
-#: templates/reports/attempt.html:33 templates/reports/session.html:74
-#: templates/reports/session.html:87
+#: apps/people/views_profile.py:178 apps/reports/pdf.py:172 apps/reports/student_pdf.py:177
+#: apps/reports/views.py:187 templates/delivery/done.html:21
+#: templates/people/profile/student.html:95 templates/people/profile/student.html:106
+#: templates/reports/attempt.html:33 templates/reports/session.html:75
+#: templates/reports/session.html:88
 msgid "Grade"
 msgstr "Оцінка"
 
-#: templates/delivery/done.html:21 templates/reports/session.html:86
+#: templates/delivery/done.html:21 templates/delivery/link.html:46
+#: templates/people/gradebook/gradebook.html:102 templates/people/gradebook/gradebook.html:111
+#: templates/people/gradebook/gradebook.html:122 templates/people/gradebook/gradebook.html:127
+#: templates/reports/session.html:87
 msgid "provisional"
 msgstr "попередньо"
 
@@ -1096,11 +1796,12 @@ msgstr[2] "%(n)s відповідей очікують перевірки вчи
 msgid "Answers"
 msgstr "Відповіді"
 
-#: templates/delivery/done.html:34 templates/delivery/take.html:64 templates/delivery/take.html:67
+#: templates/delivery/done.html:34 templates/delivery/take.html:52 templates/delivery/take.html:55
 msgid "Your answer"
 msgstr "Ваша відповідь"
 
-#: templates/delivery/done.html:35
+#: templates/delivery/done.html:35 templates/people/roster/group.html:44
+#: templates/people/roster/import_preview.html:55 templates/people/roster/students.html:51
 msgid "none"
 msgstr "немає"
 
@@ -1120,7 +1821,104 @@ msgstr "Пройти тест ще раз"
 msgid "No open session has the code \"%(entered)s\". Check the code and try again."
 msgstr "Відкритої сесії з кодом «%(entered)s» не знайдено. Перевірте код і спробуйте ще раз."
 
-#: templates/delivery/list.html:17 templates/delivery/list.html:28 templates/reports/session.html:53
+#: templates/delivery/link.html:3 templates/delivery/link.html:9 templates/delivery/list.html:29
+#: templates/delivery/share.html:90 templates/reports/session.html:16
+msgid "Link to students"
+msgstr "Прив’язати до учнів"
+
+#: templates/delivery/link.html:13 templates/reports/session.html:15
+msgid "Session page"
+msgstr "Сторінка сесії"
+
+#: templates/delivery/link.html:14 templates/delivery/list.html:29 templates/delivery/share.html:89
+#: templates/reports/session.html:3 templates/reports/session.html:10
+msgid "Results"
+msgstr "Результати"
+
+#: templates/delivery/link.html:20
+msgid ""
+"Choose the student each attempt belongs to, then save. The name the taker typed is never changed. "
+"A student is pre-selected only when the name is the same (or has the same words in another order);"
+" other suggestions are hints for you to confirm."
+msgstr ""
+"Оберіть учня, якому належить кожна спроба, і збережіть. Ім’я, яке ввів учасник, ніколи не "
+"змінюється. Учня вибрано наперед лише тоді, коли ім’я те саме (або має ті самі слова в іншому "
+"порядку); решта підказок потребує вашого підтвердження."
+
+#: templates/delivery/link.html:23
+msgid "You have no active students yet, so there is nobody to link to."
+msgstr "У вас ще немає активних учнів, тож прив’язувати нема до кого."
+
+#: templates/delivery/link.html:23
+msgid "Open the People page"
+msgstr "Відкрити сторінку «Люди»"
+
+#: templates/delivery/link.html:27
+msgid "%(linked)s of %(total)s attempts are linked to a student."
+msgstr "Прив’язано до учня: %(linked)s із %(total)s спроб."
+
+#: templates/delivery/link.html:33 templates/delivery/link.html:44
+msgid "Typed name"
+msgstr "Введене ім’я"
+
+#: apps/people/views_profile.py:175 apps/reports/pdf.py:170 apps/reports/student_pdf.py:177
+#: apps/reports/views.py:184 templates/delivery/link.html:35 templates/delivery/link.html:46
+#: templates/people/profile/student.html:93 templates/people/profile/student.html:104
+#: templates/reports/attempt.html:32 templates/reports/session.html:74
+#: templates/reports/session.html:87
+msgid "Score"
+msgstr "Бали"
+
+#: templates/delivery/link.html:36 templates/delivery/link.html:47
+msgid "Linked to"
+msgstr "Прив’язано до"
+
+#: apps/people/views_gradebook.py:109 apps/people/views_profile.py:167
+#: templates/delivery/link.html:37 templates/delivery/link.html:48
+#: templates/people/gradebook/gradebook.html:76 templates/people/roster/group.html:34
+#: templates/people/roster/group.html:43 templates/people/roster/import_preview.html:39
+#: templates/people/roster/import_preview.html:54 templates/people/roster/import_preview.html:93
+#: templates/people/roster/import_preview.html:101 templates/people/roster/pins_list.html:21
+#: templates/people/roster/pins_list.html:28 templates/people/roster/students.html:40
+#: templates/people/roster/students.html:50
+msgid "Student"
+msgstr "Учень"
+
+#: templates/delivery/link.html:47
+msgid "not linked"
+msgstr "не прив’язано"
+
+#: templates/delivery/link.html:51
+msgid "Unlink (no student)"
+msgstr "Відв’язати (без учня)"
+
+#: templates/delivery/link.html:51
+msgid "Not linked"
+msgstr "Не прив’язано"
+
+#: templates/delivery/link.html:53
+msgid "Currently linked"
+msgstr "Зараз прив’язано"
+
+#: templates/delivery/link.html:56
+msgid "Suggestions"
+msgstr "Підказки"
+
+#: templates/delivery/link.html:67
+msgid "Suggestions:"
+msgstr "Підказки:"
+
+#: templates/delivery/link.html:79
+msgid "Apply all"
+msgstr "Застосувати все"
+
+#: templates/delivery/link.html:85
+msgid "Nobody has taken this session yet, so there is nothing to link."
+msgstr "Ніхто ще не проходив цю сесію, тож прив’язувати нічого."
+
+#: apps/reports/student_pdf.py:147 templates/delivery/list.html:17 templates/delivery/list.html:28
+#: templates/people/profile/student.html:59 templates/people/profile/student.html:69
+#: templates/reports/session.html:54
 msgid "Attempts"
 msgstr "Спроби"
 
@@ -1144,16 +1942,11 @@ msgstr "Закрита"
 msgid "Share"
 msgstr "Поділитися"
 
-#: templates/delivery/list.html:29 templates/delivery/share.html:77 templates/reports/session.html:3
-#: templates/reports/session.html:10
-msgid "Results"
-msgstr "Результати"
-
 #: templates/delivery/list.html:36
 msgid "No sessions yet. Open a session from a published test."
 msgstr "Сесій ще немає. Відкрийте сесію з опублікованого тесту."
 
-#: templates/delivery/list.html:37
+#: templates/delivery/list.html:37 templates/people/roster/group.html:90
 msgid "Go to tests"
 msgstr "До тестів"
 
@@ -1165,85 +1958,110 @@ msgstr "Цю сесію закрито. Вона більше не прийма�
 msgid "You have already submitted this test once. You can take it again below."
 msgstr "Ви вже надсилали цей тест. Нижче можна пройти його ще раз."
 
-#: templates/delivery/session.html:28 templates/delivery/take.html:36
-msgid "optional"
-msgstr "необов’язково"
-
-#: templates/delivery/session.html:35 templates/delivery/share.html:20
-#: templates/delivery/take.html:43
-msgid "Access code"
-msgstr "Код доступу"
-
-#: templates/delivery/session.html:37 templates/delivery/take.html:45
-msgid "Ask your teacher for the access code."
-msgstr "Запитайте код доступу у вчителя."
-
-#: templates/delivery/session.html:40
+#: templates/delivery/session.html:27
 msgid "Start"
 msgstr "Розпочати"
 
 #: templates/delivery/share.html:13
+msgid "Class"
+msgstr "Клас"
+
+#: templates/delivery/share.html:14
+msgid "personal PIN required"
+msgstr "потрібен особистий PIN-код"
+
+#: templates/delivery/share.html:14
+msgid "pick your name"
+msgstr "учні вибирають своє ім’я"
+
+#: templates/delivery/share.html:16
+msgid "%(n)s student has no PIN yet and cannot be picked in this session."
+msgid_plural "%(n)s students have no PIN yet and cannot be picked in this session."
+msgstr[0] "%(n)s учень ще не має PIN-коду й не може бути вибраний у цій сесії."
+msgstr[1] "%(n)s учні ще не мають PIN-коду й не можуть бути вибрані в цій сесії."
+msgstr[2] "%(n)s учнів ще не мають PIN-коду й не можуть бути вибрані в цій сесії."
+
+#: templates/delivery/share.html:16
+msgid "Set PINs on the class page"
+msgstr "Задати PIN-коди на сторінці класу"
+
+#: templates/delivery/share.html:19
+msgid "This class has no active students, so nobody can join yet."
+msgstr "У цьому класі немає активних учнів, тож приєднатися поки що нікому."
+
+#: templates/delivery/share.html:19
+msgid "Open the class page"
+msgstr "Відкрити сторінку класу"
+
+#: templates/delivery/share.html:24
 msgid "Join this session"
 msgstr "Приєднатися до сесії"
 
-#: templates/delivery/share.html:14
+#: templates/delivery/share.html:25
 msgid "QR code with the session link"
 msgstr "QR-код із посиланням на сесію"
 
-#: templates/delivery/share.html:16
+#: templates/delivery/share.html:27
 msgid "Scan the QR code or open"
 msgstr "Скануйте QR-код або відкрийте посилання"
 
-#: templates/delivery/share.html:18
+#: templates/delivery/share.html:29
 msgid "or enter the session code on the start page:"
 msgstr "або введіть код сесії на стартовій сторінці:"
 
-#: templates/delivery/share.html:25
+#: templates/delivery/share.html:36
 msgid "Network address:"
 msgstr "Адреса в мережі:"
 
-#: templates/delivery/share.html:33
+#: templates/delivery/share.html:44
 msgid "Live counters"
 msgstr "Лічильники в реальному часі"
 
-#: templates/delivery/share.html:35
+#: templates/delivery/share.html:46
 msgid "Joined"
 msgstr "Приєдналися"
 
-#: apps/delivery/models.py:42 apps/reports/views.py:67 templates/delivery/share.html:36
+#: apps/delivery/models.py:48 apps/reports/views.py:67 templates/delivery/share.html:47
+#: templates/people/profile/student.html:134
 msgid "In progress"
 msgstr "Виконується"
 
-#: templates/delivery/share.html:39
+#: templates/delivery/share.html:50
 msgid "Refresh"
 msgstr "Оновити"
 
-#: templates/delivery/share.html:39
+#: templates/delivery/share.html:50
 msgid "updates itself every 5 seconds"
 msgstr "оновлюється автоматично кожні 5 секунд"
 
-#: templates/delivery/share.html:44
+#: templates/delivery/share.html:51
+msgid "%(linked)s of %(joined)s linked to students."
+msgstr "Прив’язано до учнів: %(linked)s із %(joined)s."
+
+#: templates/delivery/share.html:56
 msgid "Nobody has joined yet."
 msgstr "Ще ніхто не приєднався."
 
-#: apps/reports/views.py:167 templates/delivery/share.html:48 templates/delivery/share.html:56
-#: templates/reports/session.html:69 templates/reports/session.html:82
+#: apps/people/models.py:16 apps/reports/views.py:167 templates/delivery/share.html:60
+#: templates/delivery/share.html:68 templates/manage/teachers.html:26
+#: templates/manage/teachers.html:39 templates/reports/session.html:70
+#: templates/reports/session.html:83
 msgid "Name"
 msgstr "Ім’я"
 
-#: templates/delivery/share.html:50 templates/delivery/share.html:58 templates/delivery/take.html:74
+#: templates/delivery/share.html:62 templates/delivery/share.html:70 templates/delivery/take.html:62
 msgid "Answered"
 msgstr "Дано відповідей"
 
-#: templates/delivery/share.html:53 templates/delivery/share.html:58
+#: templates/delivery/share.html:65 templates/delivery/share.html:70
 msgid "of"
 msgstr "з"
 
-#: templates/delivery/share.html:69
+#: templates/delivery/share.html:81
 msgid "Close session"
 msgstr "Закрити сесію"
 
-#: templates/delivery/share.html:74
+#: templates/delivery/share.html:86
 msgid "Reopen session"
 msgstr "Відкрити сесію знову"
 
@@ -1267,39 +2085,1183 @@ msgstr "Перш ніж надсилати, дайте відповідь на �
 msgid "Question %(n)s"
 msgstr "Запитання %(n)s"
 
-#: templates/delivery/take.html:53
+#: templates/delivery/take.html:41
 msgid "required"
 msgstr "обов’язкове"
 
-#: templates/delivery/take.html:55
+#: templates/delivery/take.html:43
 msgid "Choose exactly %(n)s."
 msgstr "Оберіть рівно %(n)s."
 
-#: templates/delivery/take.html:55
+#: templates/delivery/take.html:43
 msgid "Select all that apply."
 msgstr "Позначте всі правильні варіанти."
 
-#: templates/delivery/take.html:76 templates/delivery/take.html:78
+#: templates/delivery/take.html:64 templates/delivery/take.html:66
 msgid "Time left"
 msgstr "Залишилось часу"
 
-#: templates/delivery/take.html:80
+#: templates/delivery/take.html:68
 msgid "Submit"
 msgstr "Надіслати"
 
-#: templates/registration/login.html:3 templates/registration/login.html:23
-msgid "Log in"
-msgstr "Увійти"
+#: templates/manage/_subnav.html:2 templates/manage/home.html:3 templates/manage/home.html:8
+msgid "Admin area"
+msgstr "Адміністрування"
 
-#: templates/registration/login.html:13
+#: templates/manage/_subnav.html:3
+msgid "Overview"
+msgstr "Огляд"
+
+#: templates/manage/_subnav.html:4 templates/manage/home.html:15 templates/manage/teachers.html:3
+#: templates/manage/teachers.html:8
+msgid "Teachers"
+msgstr "Вчителі"
+
+#: templates/manage/_subnav.html:5 templates/manage/settings.html:3 templates/manage/settings.html:8
+msgid "Settings"
+msgstr "Налаштування"
+
+#: templates/manage/home.html:9 templates/manage/teacher_create.html:3
+#: templates/manage/teacher_create.html:8 templates/manage/teachers.html:9
+#: templates/manage/teachers.html:76
+msgid "Add a teacher"
+msgstr "Додати вчителя"
+
+#: templates/manage/home.html:17
+msgid "and %(n)s admin"
+msgid_plural "and %(n)s admins"
+msgstr[0] "і %(n)s адміністратор"
+msgstr[1] "і %(n)s адміністратори"
+msgstr[2] "і %(n)s адміністраторів"
+
+#: templates/manage/home.html:20
+msgid "Active accounts"
+msgstr "Активні облікові записи"
+
+#: templates/manage/home.html:22
+msgid "can log in"
+msgstr "можуть входити"
+
+#: templates/manage/home.html:27
+msgid "from all teachers"
+msgstr "від усіх вчителів"
+
+#: templates/manage/home.html:32
+msgid "%(n)s open now"
+msgid_plural "%(n)s open now"
+msgstr[0] "%(n)s відкрита зараз"
+msgstr[1] "%(n)s відкриті зараз"
+msgstr[2] "%(n)s відкритих зараз"
+
+#: templates/manage/home.html:37
+msgid "Registration"
+msgstr "Реєстрація"
+
+#: templates/manage/home.html:39
+msgid "Self-registration is on."
+msgstr "Самореєстрацію увімкнено."
+
+#: templates/manage/home.html:39
+msgid "Teachers who know the invite code can sign up at:"
+msgstr "Вчителі, які знають код запрошення, можуть зареєструватися за адресою:"
+
+#: templates/manage/home.html:42
+msgid "Self-registration is off."
+msgstr "Самореєстрацію вимкнено."
+
+#: templates/manage/home.html:42
+msgid "Only admins can create teacher accounts."
+msgstr "Облікові записи вчителів створюють лише адміністратори."
+
+#: templates/manage/home.html:44
+msgid "Change settings"
+msgstr "Змінити налаштування"
+
+#: templates/manage/home.html:48
+msgid "What you can do here"
+msgstr "Що тут можна зробити"
+
+#: templates/manage/home.html:50
+msgid "See all accounts, reset a password or deactivate an account."
+msgstr "Переглянути всі облікові записи, скинути пароль або деактивувати обліковий запис."
+
+#: templates/manage/home.html:51
+msgid "Create an account for a new teacher."
+msgstr "Створити обліковий запис для нового вчителя."
+
+#: templates/manage/home.html:52
+msgid "Set the school name and the registration rules."
+msgstr "Вказати назву школи та правила реєстрації."
+
+#: templates/manage/settings.html:17
+msgid "Registration page:"
+msgstr "Сторінка реєстрації:"
+
+#: templates/manage/settings.html:20 templates/manage/teacher_edit.html:24
+#: templates/people/roster/group_form.html:17 templates/people/roster/student_form.html:37
+#: templates/reports/attempt.html:89
+msgid "Save"
+msgstr "Зберегти"
+
+#: templates/manage/settings.html:21
+msgid "Generate a new invite code"
+msgstr "Згенерувати новий код запрошення"
+
+#: templates/manage/teacher_create.html:17
+msgid "Create account"
+msgstr "Створити обліковий запис"
+
+#: templates/manage/teacher_create.html:18
+msgid "Create with a generated password"
+msgstr "Створити зі згенерованим паролем"
+
+#: templates/manage/teacher_create.html:21
+msgid ""
+"A generated password is shown once, right after you create the account. Write it down or pass it "
+"on then."
+msgstr ""
+"Згенерований пароль показується один раз, одразу після створення облікового запису. Запишіть його "
+"або передайте вчителеві саме тоді."
+
+#: templates/manage/teacher_edit.html:9
+msgid "Set or reset password"
+msgstr "Встановити або скинути пароль"
+
+#: apps/accounts/forms.py:69 apps/accounts/forms.py:238 templates/manage/teacher_edit.html:14
+#: templates/manage/teacher_password.html:15 templates/manage/teachers.html:27
+#: templates/manage/teachers.html:40 templates/registration/login.html:14
 msgid "Username"
 msgstr "Ім’я користувача"
 
-#: templates/registration/login.html:18
+#: templates/manage/teacher_edit.html:16 templates/people/gradebook/gradebook.html:13
+msgid "%(n)s session"
+msgid_plural "%(n)s sessions"
+msgstr[0] "%(n)s сесія"
+msgstr[1] "%(n)s сесії"
+msgstr[2] "%(n)s сесій"
+
+#: apps/accounts/forms.py:62 apps/accounts/forms.py:250 templates/manage/teacher_password.html:3
+#: templates/manage/teachers.html:49 templates/registration/login.html:19
 msgid "Password"
 msgstr "Пароль"
 
-#: templates/registration/login.html:25
+#: templates/manage/teacher_password.html:8
+msgid "Password for %(name)s"
+msgstr "Пароль: %(name)s"
+
+#: templates/manage/teacher_password.html:14
+msgid "The new password"
+msgstr "Новий пароль"
+
+#: templates/manage/teacher_password.html:17
+msgid ""
+"This is the only time it is shown. Write it down or pass it on now. If you lose it, set a new one."
+msgstr ""
+"Пароль показано лише цього разу. Запишіть його або передайте зараз. Якщо загубите, встановіть "
+"новий."
+
+#: templates/manage/teacher_password.html:21
+msgid ""
+"Setting a new password for %(name)s replaces the old one at once. The person is logged out "
+"everywhere."
+msgstr ""
+"Новий пароль для %(name)s одразу замінює старий. Людину буде виведено з облікового запису на всіх "
+"пристроях."
+
+#: templates/manage/teacher_password.html:28
+msgid "Set this password"
+msgstr "Встановити цей пароль"
+
+#: templates/manage/teacher_password.html:29
+msgid "Generate a password"
+msgstr "Згенерувати пароль"
+
+#: templates/manage/teacher_password.html:30
+msgid "Back to teachers"
+msgstr "Назад до вчителів"
+
+#: templates/manage/teachers.html:15 templates/manage/teachers.html:16
+msgid "Search by name or username"
+msgstr "Пошук за ім’ям або іменем користувача"
+
+#: templates/manage/teachers.html:18 templates/people/roster/students.html:30
+msgid "Search"
+msgstr "Шукати"
+
+#: templates/manage/teachers.html:19 templates/manage/teachers.html:71
+msgid "Show all"
+msgstr "Показати всіх"
+
+#: apps/accounts/forms.py:71 apps/accounts/forms.py:120 templates/manage/teachers.html:28
+#: templates/manage/teachers.html:41
+msgid "Role"
+msgstr "Роль"
+
+#: templates/manage/teachers.html:30 templates/manage/teachers.html:43
+msgid "Last login"
+msgstr "Останній вхід"
+
+#: templates/manage/teachers.html:39
+msgid "you"
+msgstr "ви"
+
+#: templates/manage/teachers.html:42 templates/people/roster/group.html:45
+#: templates/people/roster/students.html:53
+msgid "Active"
+msgstr "Активний"
+
+#: templates/manage/teachers.html:42
+msgid "Deactivated"
+msgstr "Деактивовано"
+
+#: templates/manage/teachers.html:43
+msgid "Never"
+msgstr "Ніколи"
+
+#: templates/manage/teachers.html:55
+msgid "Deactivate"
+msgstr "Деактивувати"
+
+#: templates/manage/teachers.html:58
+msgid "Activate"
+msgstr "Активувати"
+
+#: templates/manage/teachers.html:70
+msgid "Nobody matches your search."
+msgstr "За вашим запитом нікого не знайдено."
+
+#: templates/manage/teachers.html:75
+msgid "There are no accounts yet."
+msgstr "Облікових записів ще немає."
+
+#: templates/people/gradebook/gradebook.html:3 templates/people/gradebook/gradebook.html:9
+#: templates/people/gradebook/gradebook.html:73 templates/people/roster/group.html:25
+msgid "Gradebook"
+msgstr "Журнал оцінок"
+
+#: templates/people/gradebook/gradebook.html:17 templates/people/gradebook/gradebook.html:54
+#: templates/people/roster/pins_list.html:9
+msgid "Back to the group"
+msgstr "Назад до групи"
+
+#: templates/people/gradebook/gradebook.html:18 templates/people/profile/student.html:160
+#: templates/reports/session.html:14
+msgid "Download CSV"
+msgstr "Завантажити CSV"
+
+#: templates/people/gradebook/gradebook.html:22
+msgid "Filter the sessions"
+msgstr "Фільтр сесій"
+
+#: templates/people/gradebook/gradebook.html:26
+msgid "All projects"
+msgstr "Усі проєкти"
+
+#: templates/people/gradebook/gradebook.html:31
+msgid "Sessions since"
+msgstr "Сесії від дати"
+
+#: templates/people/gradebook/gradebook.html:35 templates/reports/session.html:64
+msgid "Apply"
+msgstr "Застосувати"
+
+#: templates/people/gradebook/gradebook.html:36 templates/people/gradebook/gradebook.html:49
+msgid "Reset"
+msgstr "Скинути"
+
+#: templates/people/gradebook/gradebook.html:42 templates/people/roster/group.html:53
+msgid "This group has no students yet."
+msgstr "У цій групі ще немає учнів."
+
+#: templates/people/gradebook/gradebook.html:43
+msgid "Add students"
+msgstr "Додати учнів"
+
+#: templates/people/gradebook/gradebook.html:48
+msgid "No sessions match this filter."
+msgstr "Жодна сесія не відповідає фільтру."
+
+#: templates/people/gradebook/gradebook.html:51
+msgid ""
+"No sessions for this group yet. Open a session for the group, or link results to its students, and"
+" they appear here."
+msgstr ""
+"Для цієї групи ще немає сесій. Відкрийте сесію для групи або прив’яжіть результати до її учнів, і "
+"вони з’являться тут."
+
+#: templates/people/gradebook/gradebook.html:53
+msgid "Start a session"
+msgstr "Розпочати сесію"
+
+#: templates/people/gradebook/gradebook.html:59
+msgid ""
+"Each cell is the percent of the student's best finished attempt in that session. Attempts that are"
+" still running or were voided do not count."
+msgstr ""
+"У кожній клітинці — відсоток найкращої завершеної спроби учня в цій сесії. Спроби, що ще тривають "
+"або скасовані, не враховуються."
+
+#: templates/people/gradebook/gradebook.html:61
+msgid "Legend"
+msgstr "Умовні позначки"
+
+#: templates/people/gradebook/gradebook.html:63
+msgid "provisional: some answers still wait for review"
+msgstr "попередньо: деякі відповіді ще чекають на перевірку"
+
+#: templates/people/gradebook/gradebook.html:64
+msgid "the grade of the best attempt, as set by the test"
+msgstr "оцінка найкращої спроби за шкалою тесту"
+
+#: templates/people/gradebook/gradebook.html:65
+msgid "the student took the session more than once; the best attempt is shown"
+msgstr "учень проходив сесію кілька разів; показано найкращу спробу"
+
+#: templates/people/gradebook/gradebook.html:66 templates/people/gradebook/gradebook.html:107
+#: templates/people/gradebook/gradebook.html:112 templates/people/gradebook/gradebook.html:123
+#: templates/people/gradebook/gradebook.html:128
+msgid "no result"
+msgstr "немає результату"
+
+#: templates/people/gradebook/gradebook.html:69
+msgid "Swipe sideways to see all sessions. The names stay in place."
+msgstr "Проведіть пальцем убік, щоб побачити всі сесії. Імена залишаються на місці."
+
+#: templates/people/gradebook/gradebook.html:71
+msgid "Gradebook table"
+msgstr "Таблиця журналу оцінок"
+
+#: templates/people/gradebook/gradebook.html:81
+msgid "linked"
+msgstr "прив’язана"
+
+#: apps/people/views_gradebook.py:112 apps/people/views_gradebook.py:124
+#: apps/reports/student_pdf.py:147 templates/people/gradebook/gradebook.html:84
+#: templates/people/gradebook/gradebook.html:119 templates/people/profile/student.html:60
+#: templates/people/profile/student.html:70 templates/reports/session.html:25
+msgid "Average"
+msgstr "Середнє"
+
+#: templates/people/gradebook/gradebook.html:92
+msgid "inactive"
+msgstr "неактивний"
+
+#: templates/people/gradebook/gradebook.html:102
+msgid "good"
+msgstr "добре"
+
+#: templates/people/gradebook/gradebook.html:102
+msgid "fair"
+msgstr "задовільно"
+
+#: templates/people/gradebook/gradebook.html:102
+msgid "weak"
+msgstr "слабко"
+
+#: templates/people/gradebook/gradebook.html:102
+msgid "best of %(n)s attempt"
+msgid_plural "best of %(n)s attempts"
+msgstr[0] "найкраща з %(n)s спроби"
+msgstr[1] "найкраща з %(n)s спроб"
+msgstr[2] "найкраща з %(n)s спроб"
+
+#: templates/people/gradebook/gradebook.html:132
+msgid "Students with a result"
+msgstr "Учнів із результатом"
+
+#: templates/people/gradebook/gradebook.html:141
+msgid ""
+"Student average: the mean of the row. Session average: the mean of the students who took it. "
+"Bottom right: the mean of all the cells above."
+msgstr ""
+"Середнє учня — середнє за його рядком. Середнє сесії — середнє за учнями, які її проходили. Унизу "
+"праворуч — середнє за всіма клітинками вище."
+
+#: templates/people/profile/delete.html:3 templates/people/profile/delete.html:14
+#: templates/people/profile/student.html:174 templates/people/roster/student_form.html:45
+msgid "Delete student"
+msgstr "Видалити учня"
+
+#: templates/people/profile/delete.html:7
+msgid "Delete this student?"
+msgstr "Видалити цього учня?"
+
+#: templates/people/profile/delete.html:11
+msgid "No attempts are linked to this student. Only the roster entry and its notes are removed."
+msgstr ""
+"До цього учня не прив’язано жодної спроби. Буде видалено лише запис у списку класу та нотатки."
+
+#: templates/people/profile/delete.html:18
+msgid "%(n)s attempt is linked to this student. Choose what happens to it."
+msgid_plural "%(n)s attempts are linked to this student. Choose what happens to them."
+msgstr[0] "До цього учня прив’язана %(n)s спроба. Оберіть, що з нею зробити."
+msgstr[1] "До цього учня прив’язано %(n)s спроби. Оберіть, що з ними зробити."
+msgstr[2] "До цього учня прив’язано %(n)s спроб. Оберіть, що з ними зробити."
+
+#: templates/people/profile/delete.html:21
+msgid "Keep the results"
+msgstr "Зберегти результати"
+
+#: templates/people/profile/delete.html:22
+msgid ""
+"Delete the student, keep the results: the attempts stay in their sessions, unlinked. What the "
+"student typed (their name) is kept as it was, and the session results do not change."
+msgstr ""
+"Видалити учня, зберегти результати: спроби залишаються у своїх сесіях, але без прив’язки до учня. "
+"Те, що учень ввів сам (його ім’я), зберігається як було, а результати сесій не змінюються."
+
+#: templates/people/profile/delete.html:25
+msgid "Delete student, keep results"
+msgstr "Видалити учня, зберегти результати"
+
+#: templates/people/profile/delete.html:30
+msgid "Delete everything"
+msgstr "Видалити все"
+
+#: templates/people/profile/delete.html:31
+msgid ""
+"Delete the student and all their linked attempts: %(n)s attempt and its answers will be removed "
+"from the sessions for good."
+msgid_plural ""
+"Delete the student and all their linked attempts: %(n)s attempts and their answers will be removed"
+" from the sessions for good."
+msgstr[0] ""
+"Видалити учня та всі його прив’язані спроби: %(n)s спробу з її відповідями буде остаточно вилучено"
+" із сесій."
+msgstr[1] ""
+"Видалити учня та всі його прив’язані спроби: %(n)s спроби з їхніми відповідями буде остаточно "
+"вилучено із сесій."
+msgstr[2] ""
+"Видалити учня та всі його прив’язані спроби: %(n)s спроб з їхніми відповідями буде остаточно "
+"вилучено із сесій."
+
+#: templates/people/profile/delete.html:33
+msgid "Attempts from sessions of another teacher are only unlinked, never deleted."
+msgstr "Спроби із сесій іншого вчителя лише відв’язуються, але ніколи не видаляються."
+
+#: templates/people/profile/delete.html:37
+msgid "Delete student and attempts"
+msgstr "Видалити учня та спроби"
+
+#: templates/people/profile/student.html:7
+msgid "Back to students"
+msgstr "До списку учнів"
+
+#: apps/people/forms.py:74 apps/people/views_profile.py:168 apps/reports/student_pdf.py:87
+#: templates/people/profile/student.html:16 templates/people/roster/groups.html:20
+#: templates/people/roster/groups.html:30 templates/people/roster/import.html:41
+#: templates/people/roster/import_preview.html:40 templates/people/roster/import_preview.html:55
+#: templates/people/roster/students.html:22 templates/people/roster/students.html:41
+#: templates/people/roster/students.html:51
+msgid "Group"
+msgstr "Група"
+
+#: apps/people/forms.py:73 apps/people/forms.py:136 apps/reports/student_pdf.py:80
+#: templates/people/profile/student.html:17
+msgid "No group"
+msgstr "Без групи"
+
+#: templates/people/profile/student.html:21
+msgid "Active student"
+msgstr "Активний учень"
+
+#: templates/people/profile/student.html:21
+msgid "Inactive student"
+msgstr "Неактивний учень"
+
+#: apps/people/forms.py:82 apps/people/models.py:44 templates/people/profile/student.html:24
+#: templates/people/roster/group.html:35 templates/people/roster/group.html:44
+#: templates/people/roster/pins_list.html:22 templates/people/roster/pins_list.html:29
+msgid "PIN"
+msgstr "PIN-код"
+
+#: templates/people/profile/student.html:25
+msgid "No PIN"
+msgstr "Без PIN-коду"
+
+#: apps/reports/student_pdf.py:99 templates/people/profile/student.html:31
+msgid "Averages"
+msgstr "Середні результати"
+
+#: apps/reports/student_pdf.py:112 templates/people/profile/student.html:35
+msgid "Overall average"
+msgstr "Загальне середнє"
+
+#: templates/people/profile/student.html:36 templates/people/profile/student.html:70
+#: templates/people/profile/student.html:105 templates/reports/attempt.html:34
+msgid "Provisional"
+msgstr "Попередньо"
+
+#: templates/people/profile/student.html:39
+msgid "Counted attempts"
+msgstr "Враховані спроби"
+
+#: templates/people/profile/student.html:44 templates/reports/session.html:27
+msgid "Waiting for review"
+msgstr "Очікують перевірки"
+
+#: apps/reports/pdf.py:181 apps/reports/student_pdf.py:194 templates/people/profile/student.html:51
+msgid "Provisional: some answers still need review."
+msgstr "Попередній результат: деякі відповіді ще потребують перевірки."
+
+#: templates/people/profile/student.html:51
+msgid "The averages marked as provisional will change once the open answers are graded."
+msgstr "Середні, позначені як попередні, зміняться, щойно відкриті відповіді буде оцінено."
+
+#: apps/reports/student_pdf.py:147 templates/people/profile/student.html:61
+#: templates/people/profile/student.html:71
+msgid "Best"
+msgstr "Найкращий"
+
+#: apps/reports/student_pdf.py:147 templates/people/profile/student.html:62
+#: templates/people/profile/student.html:72
+msgid "Latest"
+msgstr "Останній"
+
+#: templates/people/profile/student.html:78
+msgid ""
+"Only finished attempts with a score count; voided attempts never do. Each average is the mean of "
+"the percent of those attempts, and the overall average is the mean of all of them (not of the "
+"project averages)."
+msgstr ""
+"Враховуються лише завершені спроби з балами; скасовані спроби не враховуються ніколи. Кожне "
+"середнє — це середній відсоток цих спроб, а загальне середнє — середнє всіх них (а не середнє "
+"проєктних середніх)."
+
+#: apps/reports/student_pdf.py:102 templates/people/profile/student.html:80
+msgid "No finished results yet."
+msgstr "Завершених результатів ще немає."
+
+#: apps/reports/student_pdf.py:158 templates/people/profile/student.html:85
+msgid "History"
+msgstr "Історія"
+
+#: apps/people/views_profile.py:173 apps/reports/student_pdf.py:177
+#: templates/people/profile/student.html:90 templates/people/profile/student.html:101
+#: templates/people/profile/student.html:124 templates/people/profile/student.html:132
+msgid "Date"
+msgstr "Дата"
+
+#: templates/people/profile/student.html:113
+msgid "No finished results are linked to this student yet."
+msgstr "До цього учня ще не прив’язано завершених результатів."
+
+#: templates/people/profile/student.html:114
+msgid "Open a session for the group, or use “Link to students” on a session’s results page."
+msgstr ""
+"Відкрийте сесію для групи або скористайтеся «Прив’язати до учнів» на сторінці результатів сесії."
+
+#: apps/delivery/models.py:51 apps/reports/views.py:69 templates/people/profile/student.html:134
+msgid "Voided"
+msgstr "Скасовано"
+
+#: apps/reports/data.py:95 templates/people/profile/student.html:134
+msgid "Not graded"
+msgstr "Без оцінювання"
+
+#: apps/people/forms.py:83 apps/people/models.py:45 apps/people/views_profile.py:34
+#: templates/people/profile/student.html:144 templates/people/profile/student.html:148
+msgid "Notes"
+msgstr "Нотатки"
+
+#: templates/people/profile/student.html:151
+msgid "Plain text, up to %(n)s characters. Only you (and administrators) can see your notes."
+msgstr "Простий текст, до %(n)s символів. Ваші нотатки бачите лише ви (та адміністратори)."
+
+#: templates/people/profile/student.html:153
+msgid "Save notes"
+msgstr "Зберегти нотатки"
+
+#: templates/people/profile/student.html:158
+msgid "Download"
+msgstr "Завантажити"
+
+#: templates/people/profile/student.html:162 templates/reports/_pdf_form.html:24
+msgid "Paper"
+msgstr "Папір"
+
+#: templates/people/profile/student.html:167 templates/reports/_pdf_form.html:3
+#: templates/reports/_pdf_form.html:37
+msgid "Download PDF"
+msgstr "Завантажити PDF"
+
+#: templates/people/profile/student.html:170
+msgid ""
+"The CSV lists every linked attempt with its status; the PDF is a printable summary of the counted "
+"ones."
+msgstr "У CSV є кожна прив’язана спроба з її статусом; PDF — підсумок для друку з урахованих спроб."
+
+#: templates/people/profile/student.html:175
+msgid ""
+"Remove this student from your roster. You choose what happens to their attempts on the next page."
+msgstr ""
+"Видалити цього учня зі списку. Що станеться з його спробами, ви оберете на наступній сторінці."
+
+#: templates/people/profile/student.html:176
+msgid "Delete student…"
+msgstr "Видалити учня…"
+
+#: templates/people/roster/_tabs.html:3 templates/people/roster/groups.html:3
+#: templates/people/roster/groups.html:9
+msgid "Groups"
+msgstr "Групи"
+
+#: templates/people/roster/_tabs.html:4 templates/people/roster/students.html:3
+#: templates/people/roster/students.html:9
+msgid "Students"
+msgstr "Учні"
+
+#: templates/people/roster/_tabs.html:5 templates/people/roster/groups.html:12
+#: templates/people/roster/groups.html:44 templates/people/roster/import.html:3
+#: templates/people/roster/import.html:9 templates/people/roster/students.html:12
+#: templates/people/roster/students.html:75
+msgid "Import students"
+msgstr "Імпорт учнів"
+
+#: templates/people/roster/group.html:10 templates/people/roster/groups.html:30
+msgid "archived"
+msgstr "в архіві"
+
+#: templates/people/roster/group.html:12
+msgid "Teacher: %(owner)s"
+msgstr "Вчитель: %(owner)s"
+
+#: templates/people/roster/group.html:15 templates/people/roster/group.html:55
+#: templates/people/roster/student_form.html:3 templates/people/roster/student_form.html:9
+#: templates/people/roster/students.html:11 templates/people/roster/students.html:74
+msgid "Add student"
+msgstr "Додати учня"
+
+#: templates/people/roster/group.html:16 templates/people/roster/group.html:56
+msgid "Import into this group"
+msgstr "Імпортувати в цю групу"
+
+#: templates/people/roster/group.html:21
+msgid "%(n)s active student"
+msgid_plural "%(n)s active students"
+msgstr[0] "%(n)s активний учень"
+msgstr[1] "%(n)s активні учні"
+msgstr[2] "%(n)s активних учнів"
+
+#: templates/people/roster/group.html:22
+msgid "%(n)s has left"
+msgid_plural "%(n)s have left"
+msgstr[0] "%(n)s вибув"
+msgstr[1] "%(n)s вибули"
+msgstr[2] "%(n)s вибули"
+
+#: templates/people/roster/group.html:26 templates/people/roster/group_form.html:3
+msgid "Edit group"
+msgstr "Редагувати групу"
+
+#: templates/people/roster/group.html:27 templates/people/roster/group_delete.html:3
+#: templates/people/roster/group_delete.html:43
+msgid "Delete group"
+msgstr "Видалити групу"
+
+#: templates/people/roster/group.html:45 templates/people/roster/students.html:53
+msgid "Left the class"
+msgstr "Вибув із класу"
+
+#: templates/people/roster/group.html:63
+msgid "PINs"
+msgstr "PIN-коди"
+
+#: templates/people/roster/group.html:64
+msgid ""
+"A PIN is a short code each student types after picking their name in a group session. It keeps "
+"classmates from answering for each other."
+msgstr ""
+"PIN — це короткий код, який учень вводить після вибору свого імені в груповій сесії. Він не дає "
+"однокласникам відповідати один за одного."
+
+#: templates/people/roster/group.html:65
+msgid "%(n)s active student has a PIN."
+msgid_plural "%(n)s active students have a PIN."
+msgstr[0] "%(n)s активний учень має PIN."
+msgstr[1] "%(n)s активні учні мають PIN."
+msgstr[2] "%(n)s активних учнів мають PIN."
+
+#: templates/people/roster/group.html:71
+msgid "Generate a PIN for %(n)s student without one"
+msgid_plural "Generate PINs for %(n)s students without one"
+msgstr[0] "Створити PIN для %(n)s учня без PIN"
+msgstr[1] "Створити PIN для %(n)s учнів без PIN"
+msgstr[2] "Створити PIN для %(n)s учнів без PIN"
+
+#: templates/people/roster/group.html:78 templates/people/roster/pins_confirm.html:14
+msgid "Regenerate all PINs"
+msgstr "Створити всі PIN заново"
+
+#: templates/people/roster/group.html:81
+msgid "Printable PIN list"
+msgstr "Список PIN для друку"
+
+#: templates/people/roster/group.html:87
+msgid "Start a session for this group"
+msgstr "Запустити сесію для цієї групи"
+
+#: templates/people/roster/group.html:88
+msgid ""
+"Open a session from a published test and choose this group in the session form. Students then pick"
+" their name from the class list, and their results land on their profile."
+msgstr ""
+"Відкрийте сесію з опублікованого тесту й виберіть цю групу у формі сесії. Тоді учні вибиратимуть "
+"своє ім’я зі списку класу, а їхні результати потраплятимуть у профіль."
+
+#: templates/people/roster/group.html:92
+msgid "%(n)s session is tied to this group"
+msgid_plural "%(n)s sessions are tied to this group"
+msgstr[0] "%(n)s сесія прив’язана до цієї групи"
+msgstr[1] "%(n)s сесії прив’язані до цієї групи"
+msgstr[2] "%(n)s сесій прив’язані до цієї групи"
+
+#: templates/people/roster/group_delete.html:7
+msgid "Delete this group?"
+msgstr "Видалити цю групу?"
+
+#: templates/people/roster/group_delete.html:15
+msgid "What happens to its %(n)s student?"
+msgid_plural "What happens to its %(n)s students?"
+msgstr[0] "Що буде з %(n)s учнем цієї групи?"
+msgstr[1] "Що буде з %(n)s учнями цієї групи?"
+msgstr[2] "Що буде з %(n)s учнями цієї групи?"
+
+#: templates/people/roster/group_delete.html:18
+msgid "Keep the students. They stay in your list without a group."
+msgstr "Залишити учнів. Вони залишаться у вашому списку без групи."
+
+#: templates/people/roster/group_delete.html:22
+msgid "Delete the students too."
+msgstr "Видалити також учнів."
+
+#: templates/people/roster/group_delete.html:27
+msgid "The group has no students."
+msgstr "У групі немає учнів."
+
+#: templates/people/roster/group_delete.html:32
+msgid ""
+"%(n)s attempt is linked to these students. Attempts are never deleted: if the students are "
+"deleted, the attempt is only unlinked from them and keeps its result and the name that was typed."
+msgid_plural ""
+"%(n)s attempts are linked to these students. Attempts are never deleted: if the students are "
+"deleted, the attempts are only unlinked from them and keep their results and the names that were "
+"typed."
+msgstr[0] ""
+"%(n)s спробу пов’язано з цими учнями. Спроби ніколи не видаляються: якщо учнів видалено, спробу "
+"лише від’єднують від учнів, і вона зберігає результат та введене ім’я."
+msgstr[1] ""
+"%(n)s спроби пов’язано з цими учнями. Спроби ніколи не видаляються: якщо учнів видалено, спроби "
+"лише від’єднують від учнів, і вони зберігають результати та введені імена."
+msgstr[2] ""
+"%(n)s спроб пов’язано з цими учнями. Спроби ніколи не видаляються: якщо учнів видалено, спроби "
+"лише від’єднують від учнів, і вони зберігають результати та введені імена."
+
+#: templates/people/roster/group_delete.html:34
+msgid "No attempts are linked to these students. Attempts are never deleted with a group."
+msgstr "З цими учнями не пов’язано жодної спроби. Спроби ніколи не видаляються разом із групою."
+
+#: templates/people/roster/group_delete.html:37
+msgid ""
+"%(n)s session is tied to this group. It stays, but students will enter a free name instead of "
+"picking from a class list."
+msgid_plural ""
+"%(n)s sessions are tied to this group. They stay, but students will enter a free name instead of "
+"picking from a class list."
+msgstr[0] ""
+"%(n)s сесію прив’язано до цієї групи. Вона залишиться, але учні вводитимуть довільне ім’я замість "
+"вибору зі списку класу."
+msgstr[1] ""
+"%(n)s сесії прив’язано до цієї групи. Вони залишаться, але учні вводитимуть довільне ім’я замість "
+"вибору зі списку класу."
+msgstr[2] ""
+"%(n)s сесій прив’язано до цієї групи. Вони залишаться, але учні вводитимуть довільне ім’я замість "
+"вибору зі списку класу."
+
+#: templates/people/roster/group_form.html:3 templates/people/roster/group_form.html:9
+#: templates/people/roster/groups.html:11 templates/people/roster/groups.html:43
+msgid "New group"
+msgstr "Нова група"
+
+#: templates/people/roster/group_form.html:9
+msgid "Edit group %(name)s"
+msgstr "Редагування групи %(name)s"
+
+#: apps/accounts/models.py:9 templates/people/roster/groups.html:21
+#: templates/people/roster/groups.html:31 templates/people/roster/students.html:42
+#: templates/people/roster/students.html:52
+msgid "Teacher"
+msgstr "Вчитель"
+
+#: templates/people/roster/groups.html:22 templates/people/roster/groups.html:32
+msgid "Active students"
+msgstr "Активні учні"
+
+#: templates/people/roster/groups.html:23 templates/people/roster/groups.html:33
+msgid "Last session"
+msgstr "Остання сесія"
+
+#: templates/people/roster/groups.html:33
+msgid "none yet"
+msgstr "ще немає"
+
+#: templates/people/roster/groups.html:34
+msgid "Open group"
+msgstr "Відкрити групу"
+
+#: templates/people/roster/groups.html:41
+msgid "No groups."
+msgstr "Груп немає."
+
+#: templates/people/roster/groups.html:41
+msgid "No groups yet. Create one, or paste a class list to create groups and students in one go."
+msgstr "Груп ще немає. Створіть групу або вставте список класу, щоб створити групи й учнів одразу."
+
+#: templates/people/roster/groups.html:50
+msgid "%(n)s student without a group"
+msgid_plural "%(n)s students without a group"
+msgstr[0] "%(n)s учень без групи"
+msgstr[1] "%(n)s учні без групи"
+msgstr[2] "%(n)s учнів без групи"
+
+#: templates/people/roster/groups.html:52
+msgid "%(n)s student in total"
+msgid_plural "%(n)s students in total"
+msgstr[0] "Усього %(n)s учень"
+msgstr[1] "Усього %(n)s учні"
+msgstr[2] "Усього %(n)s учнів"
+
+#: templates/people/roster/groups.html:55
+msgid "Hide archived groups"
+msgstr "Сховати архівні групи"
+
+#: templates/people/roster/groups.html:55
+msgid "Show %(n)s archived group"
+msgid_plural "Show %(n)s archived groups"
+msgstr[0] "Показати %(n)s архівну групу"
+msgstr[1] "Показати %(n)s архівні групи"
+msgstr[2] "Показати %(n)s архівних груп"
+
+#: apps/people/forms.py:129 templates/people/roster/import.html:17
+msgid "Paste a list"
+msgstr "Вставте список"
+
+#: templates/people/roster/import.html:18
+msgid ""
+"One name per line. To put a student into a group, add the group after a semicolon, a comma or a "
+"tab. List numbers and bullets are ignored."
+msgstr ""
+"Одне ім’я в рядку. Щоб додати учня до групи, допишіть групу після крапки з комою, коми або "
+"табуляції. Номери й маркери списку ігноруються."
+
+#: templates/people/roster/import.html:19
+msgid "Example"
+msgstr "Приклад"
+
+#: templates/people/roster/import.html:31
+msgid "Or upload a file"
+msgstr "Або завантажте файл"
+
+#: templates/people/roster/import.html:32
+msgid ""
+"A CSV or Excel (.xlsx) file, up to 2 MB and %(rows)s rows. A header row with columns such as Name,"
+" Surname, First name or Group (ПІБ, Прізвище, Ім'я, Клас) is recognised. For Excel files the first"
+" sheet with data is read."
+msgstr ""
+"Файл CSV або Excel (.xlsx), до 2 МБ і до %(rows)s рядків. Рядок заголовків зі стовпцями на кшталт "
+"Name, Surname, First name або Group (ПІБ, Прізвище, Ім'я, Клас) розпізнається. З файлів Excel "
+"читається перший аркуш, що містить дані."
+
+#: templates/people/roster/import.html:34
+msgid "CSV or XLSX file"
+msgstr "Файл CSV або XLSX"
+
+#: templates/people/roster/import.html:42
+msgid "Applies to the rows that have no group of their own."
+msgstr "Застосовується до рядків, у яких немає власної групи."
+
+#: templates/people/roster/import.html:48
+msgid "Check the list"
+msgstr "Перевірити список"
+
+#: templates/people/roster/import.html:51
+msgid ""
+"Nothing is saved yet. You will see every row, with duplicates marked, before anything is added."
+msgstr ""
+"Поки що нічого не збережено. Ви побачите кожен рядок, із позначеними дублікатами, перш ніж щось "
+"буде додано."
+
+#: templates/people/roster/import_preview.html:3 templates/people/roster/import_preview.html:9
+msgid "Check the import"
+msgstr "Перевірка імпорту"
+
+#: templates/people/roster/import_preview.html:10
+msgid "Edit the list"
+msgstr "Змінити список"
+
+#: templates/people/roster/import_preview.html:10
+msgid "Start again"
+msgstr "Почати спочатку"
+
+#: templates/people/roster/import_preview.html:14
+msgid "%(n)s new"
+msgid_plural "%(n)s new"
+msgstr[0] "%(n)s новий"
+msgstr[1] "%(n)s нові"
+msgstr[2] "%(n)s нових"
+
+#: templates/people/roster/import_preview.html:15
+msgid "%(n)s duplicate"
+msgid_plural "%(n)s duplicates"
+msgstr[0] "%(n)s дублікат"
+msgstr[1] "%(n)s дублікати"
+msgstr[2] "%(n)s дублікатів"
+
+#: templates/people/roster/import_preview.html:16
+msgid "%(n)s not valid"
+msgid_plural "%(n)s not valid"
+msgstr[0] "%(n)s некоректний"
+msgstr[1] "%(n)s некоректні"
+msgstr[2] "%(n)s некоректних"
+
+#: templates/people/roster/import_preview.html:19
+msgid "Rows without a group go into %(name)s."
+msgstr "Рядки без групи потраплять до групи %(name)s."
+
+#: templates/people/roster/import_preview.html:19
+msgid "Rows without a group go into the new group %(name)s."
+msgstr "Рядки без групи потраплять до нової групи %(name)s."
+
+#: templates/people/roster/import_preview.html:21
+msgid "This group will be created:"
+msgid_plural "These groups will be created:"
+msgstr[0] "Буде створено цю групу:"
+msgstr[1] "Буде створено ці групи:"
+msgstr[2] "Буде створено ці групи:"
+
+#: templates/people/roster/import_preview.html:31
+msgid ""
+"This list is long, so rows cannot be unticked one by one. Every valid row is added; use the "
+"duplicate switch below to leave duplicates out."
+msgstr ""
+"Список довгий, тому рядки не можна знімати по одному. Додається кожен коректний рядок; щоб "
+"пропустити дублікати, скористайтеся перемикачем нижче."
+
+#: templates/people/roster/import_preview.html:37 templates/people/roster/import_preview.html:48
+msgid "Add"
+msgstr "Додати"
+
+#: templates/people/roster/import_preview.html:41 templates/people/roster/import_preview.html:56
+#: templates/people/roster/import_preview.html:94 templates/people/roster/import_preview.html:102
+msgid "Check"
+msgstr "Перевірка"
+
+#: templates/people/roster/import_preview.html:49
+msgid "Not valid, cannot be added"
+msgstr "Некоректний, додати не можна"
+
+#: templates/people/roster/import_preview.html:50
+msgid "Add %(name)s"
+msgstr "Додати: %(name)s"
+
+#: templates/people/roster/import_preview.html:55
+msgid "new group"
+msgstr "нова група"
+
+#: templates/people/roster/import_preview.html:58 templates/people/roster/import_preview.html:102
+msgid "Not valid"
+msgstr "Некоректний"
+
+#: templates/people/roster/import_preview.html:60
+msgid "Possible duplicate"
+msgstr "Можливий дублікат"
+
+#: templates/people/roster/import_preview.html:60
+msgid "same person as %(other)s"
+msgstr "та сама людина, що й %(other)s"
+
+#: templates/people/roster/import_preview.html:60 templates/people/roster/student_form.html:16
+msgid "same words in a different order"
+msgstr "ті самі слова в іншому порядку"
+
+#: templates/people/roster/import_preview.html:62
+msgid "New"
+msgstr "Новий"
+
+#: templates/people/roster/import_preview.html:73
+msgid "Skip duplicates"
+msgstr "Пропустити дублікати"
+
+#: templates/people/roster/import_preview.html:75
+msgid ""
+"Duplicates are left out. Untick this to add them as well (for example two different students with "
+"the same name)."
+msgstr ""
+"Дублікати не додаються. Зніміть позначку, щоб додати й їх (наприклад, двох різних учнів з "
+"однаковим іменем)."
+
+#: templates/people/roster/import_preview.html:79
+msgid "Add the ticked students"
+msgstr "Додати позначених учнів"
+
+#: templates/people/roster/import_preview.html:79
+msgid "Add the students"
+msgstr "Додати учнів"
+
+#: templates/people/roster/import_preview.html:85
+msgid "Nothing in this list can be added."
+msgstr "Із цього списку нічого не можна додати."
+
+#: templates/people/roster/import_preview.html:86
+msgid "Back"
+msgstr "Назад"
+
+#: templates/people/roster/pins_confirm.html:3
+msgid "Regenerate PINs"
+msgstr "Створення PIN заново"
+
+#: templates/people/roster/pins_confirm.html:7
+msgid "Regenerate all PINs?"
+msgstr "Створити всі PIN заново?"
+
+#: templates/people/roster/pins_confirm.html:9
+msgid ""
+"%(n)s active student already has a PIN. Every active student gets a new one and the old PIN stops "
+"working. Hand out the new list again."
+msgid_plural ""
+"%(n)s active students already have a PIN. Every active student gets a new one and the old PINs "
+"stop working. Hand out the new list again."
+msgstr[0] ""
+"%(n)s активний учень уже має PIN. Кожен активний учень отримає новий, а старий PIN перестане "
+"діяти. Роздайте новий список ще раз."
+msgstr[1] ""
+"%(n)s активні учні вже мають PIN. Кожен активний учень отримає новий, а старі PIN перестануть "
+"діяти. Роздайте новий список ще раз."
+msgstr[2] ""
+"%(n)s активних учнів уже мають PIN. Кожен активний учень отримає новий, а старі PIN перестануть "
+"діяти. Роздайте новий список ще раз."
+
+#: templates/people/roster/pins_list.html:3
+msgid "PINs for %(name)s"
+msgstr "PIN-коди: %(name)s"
+
+#: templates/people/roster/pins_list.html:8
+msgid "PIN list"
+msgstr "Список PIN"
+
+#: templates/people/roster/pins_list.html:11
+msgid ""
+"Print this page (Ctrl+P) or show it to students one by one. Keep it private: a PIN confirms who is"
+" taking the test."
+msgstr ""
+"Надрукуйте цю сторінку (Ctrl+P) або показуйте учням по одному. Тримайте її в таємниці: PIN "
+"підтверджує, хто складає тест."
+
+#: templates/people/roster/pins_list.html:13
+msgid "%(n)s student has no PIN yet. Generate PINs on the group page first."
+msgid_plural "%(n)s students have no PIN yet. Generate PINs on the group page first."
+msgstr[0] "%(n)s учень ще не має PIN. Спершу створіть PIN на сторінці групи."
+msgstr[1] "%(n)s учні ще не мають PIN. Спершу створіть PIN на сторінці групи."
+msgstr[2] "%(n)s учнів ще не мають PIN. Спершу створіть PIN на сторінці групи."
+
+#: templates/people/roster/pins_list.html:35
+msgid "This group has no active students."
+msgstr "У цій групі немає активних учнів."
+
+#: templates/people/roster/student_form.html:3
+msgid "Edit student"
+msgstr "Редагування учня"
+
+#: templates/people/roster/student_form.html:9
+msgid "Edit %(name)s"
+msgstr "Редагування: %(name)s"
+
+#: templates/people/roster/student_form.html:13
+msgid "This looks like a student you already have:"
+msgid_plural "This looks like students you already have:"
+msgstr[0] "Схоже, цей учень у вас уже є:"
+msgstr[1] "Схоже, ці учні у вас уже є:"
+msgstr[2] "Схоже, ці учні у вас уже є:"
+
+#: templates/people/roster/student_form.html:19
+msgid "Change the name, or save anyway if these are different people."
+msgstr "Змініть ім’я або збережіть усе одно, якщо це різні люди."
+
+#: templates/people/roster/student_form.html:19
+msgid "Change the name, or add anyway if these are different people."
+msgstr "Змініть ім’я або додайте все одно, якщо це різні люди."
+
+#: templates/people/roster/student_form.html:34
+msgid "Save anyway"
+msgstr "Зберегти все одно"
+
+#: templates/people/roster/student_form.html:34
+msgid "Add anyway"
+msgstr "Додати все одно"
+
+#: templates/people/roster/student_form.html:35
+msgid "Check again"
+msgstr "Перевірити ще раз"
+
+#: templates/people/roster/student_form.html:45
+msgid "Open the profile"
+msgstr "Відкрити профіль"
+
+#: templates/people/roster/students.html:18
+msgid "Search by name"
+msgstr "Пошук за іменем"
+
+#: templates/people/roster/students.html:24
+msgid "All groups"
+msgstr "Усі групи"
+
+#: templates/people/roster/students.html:25
+msgid "Without a group"
+msgstr "Без групи"
+
+#: templates/people/roster/students.html:31
+msgid "Clear"
+msgstr "Скинути"
+
+#: templates/people/roster/students.html:60
+msgid "Pages"
+msgstr "Сторінки"
+
+#: templates/people/roster/students.html:61
+msgid "Previous"
+msgstr "Попередня"
+
+#: templates/people/roster/students.html:62
+msgid "Page %(n)s of %(total)s"
+msgstr "Сторінка %(n)s з %(total)s"
+
+#: templates/people/roster/students.html:63
+msgid "Next"
+msgstr "Наступна"
+
+#: templates/people/roster/students.html:69
+msgid "No student matches this search."
+msgstr "Жоден учень не відповідає пошуку."
+
+#: templates/people/roster/students.html:70
+msgid "Clear the search"
+msgstr "Скинути пошук"
+
+#: templates/people/roster/students.html:72
+msgid "No students yet. Add them one by one, or paste a class list."
+msgstr "Учнів ще немає. Додайте їх по одному або вставте список класу."
+
+#: templates/registration/login.html:3 templates/registration/login.html:24
+msgid "Log in"
+msgstr "Увійти"
+
+#: templates/registration/login.html:27 templates/registration/register.html:3
+#: templates/registration/register.html:7
+msgid "Register as a teacher"
+msgstr "Зареєструватися як вчитель"
+
+#: templates/registration/login.html:29
 msgid ""
 "Students do not need an account. Enter the session code on the <a href=\"%(landing_url)s\">start "
 "page</a>."
@@ -1307,13 +3269,27 @@ msgstr ""
 "Учням не потрібен обліковий запис. Введіть код сесії на <a href=\"%(landing_url)s\">початковій "
 "сторінці</a>."
 
+#: templates/registration/register.html:9
+msgid "Too many wrong invite codes. Wait about ten minutes and try again, or ask an admin for help."
+msgstr ""
+"Забагато неправильних кодів запрошення. Зачекайте близько десяти хвилин і спробуйте ще раз або "
+"зверніться до адміністратора."
+
+#: templates/registration/register.html:11
+msgid "Ask your administrator for the invite code."
+msgstr "Попросіть код запрошення в адміністратора."
+
+#: templates/registration/register.html:18
+msgid "Create my account"
+msgstr "Створити мій обліковий запис"
+
+#: templates/registration/register.html:21
+msgid "I already have an account"
+msgstr "У мене вже є обліковий запис"
+
 #: templates/reports/_pdf_form.html:3
 msgid "Download all as PDF"
 msgstr "Завантажити все як PDF"
-
-#: templates/reports/_pdf_form.html:3 templates/reports/_pdf_form.html:37
-msgid "Download PDF"
-msgstr "Завантажити PDF"
 
 #: templates/reports/_pdf_form.html:8
 msgid "Which sheets"
@@ -1323,7 +3299,7 @@ msgstr "Які аркуші"
 msgid "Finished"
 msgstr "Завершені"
 
-#: apps/delivery/models.py:79 apps/reports/data.py:93 apps/reports/views.py:68
+#: apps/delivery/models.py:90 apps/reports/data.py:93 apps/reports/views.py:68
 #: templates/reports/_pdf_form.html:11
 msgid "Needs review"
 msgstr "Потребує перевірки"
@@ -1343,10 +3319,6 @@ msgstr "Стисло: лише вибрані відповіді"
 #: templates/reports/_pdf_form.html:20
 msgid "Full: every option, chosen and correct ones marked"
 msgstr "Повно: усі варіанти, з позначками вибраних і правильних"
-
-#: templates/reports/_pdf_form.html:24
-msgid "Paper"
-msgstr "Папір"
 
 #: templates/reports/_pdf_form.html:30
 msgid "Show correct answers"
@@ -1384,15 +3356,6 @@ msgstr "сесія"
 msgid "Attempt"
 msgstr "Спроба"
 
-#: apps/reports/pdf.py:170 apps/reports/views.py:184 templates/reports/attempt.html:32
-#: templates/reports/session.html:73 templates/reports/session.html:86
-msgid "Score"
-msgstr "Бали"
-
-#: templates/reports/attempt.html:34
-msgid "Provisional"
-msgstr "Попередньо"
-
 #: templates/reports/attempt.html:34
 msgid "%(n)s answer still needs review"
 msgid_plural "%(n)s answers still need review"
@@ -1425,90 +3388,66 @@ msgstr "Критерії оцінювання"
 msgid "Comment"
 msgstr "Коментар"
 
-#: templates/reports/attempt.html:89
-msgid "Save"
-msgstr "Зберегти"
-
-#: templates/reports/session.html:14
-msgid "Download CSV"
-msgstr "Завантажити CSV"
-
-#: templates/reports/session.html:15
-msgid "Session page"
-msgstr "Сторінка сесії"
-
-#: templates/reports/session.html:20
+#: templates/reports/session.html:21
 msgid "Summary"
 msgstr "Підсумок"
 
-#: templates/reports/session.html:24
-msgid "Average"
-msgstr "Середнє"
-
-#: templates/reports/session.html:25
+#: templates/reports/session.html:26
 msgid "Median"
 msgstr "Медіана"
 
-#: templates/reports/session.html:26
-msgid "Waiting for review"
-msgstr "Очікують перевірки"
-
-#: templates/reports/session.html:30
+#: templates/reports/session.html:31
 msgid "%(n)s answer waits for review"
 msgid_plural "%(n)s answers wait for review"
 msgstr[0] "%(n)s відповідь очікує перевірки"
 msgstr[1] "%(n)s відповіді очікують перевірки"
 msgstr[2] "%(n)s відповідей очікують перевірки"
 
-#: templates/reports/session.html:31
+#: templates/reports/session.html:32
 msgid "%(n)s attempt"
 msgid_plural "%(n)s attempts"
 msgstr[0] "%(n)s спроба"
 msgstr[1] "%(n)s спроби"
 msgstr[2] "%(n)s спроб"
 
-#: templates/reports/session.html:32
+#: templates/reports/session.html:33
 msgid "Start reviewing"
 msgstr "Почати перевірку"
 
-#: templates/reports/session.html:34
+#: templates/reports/session.html:35
 msgid "Grading is disabled for this test: answers are collected but not scored."
 msgstr "Для цього тесту оцінювання вимкнено: відповіді збираються, але не оцінюються."
 
-#: templates/reports/session.html:39
+#: templates/reports/session.html:40
 msgid "Score distribution"
 msgstr "Розподіл балів"
 
-#: templates/reports/session.html:58
+#: templates/reports/session.html:59
 msgid "Show"
 msgstr "Показати"
 
-#: templates/reports/session.html:63
-msgid "Apply"
-msgstr "Застосувати"
-
-#: apps/reports/views.py:182 templates/reports/session.html:70 templates/reports/session.html:83
+#: apps/reports/views.py:182 templates/reports/session.html:71 templates/reports/session.html:84
 msgid "Started"
 msgstr "Розпочато"
 
-#: templates/reports/session.html:76 templates/reports/session.html:89
+#: templates/reports/session.html:77 templates/reports/session.html:90
 msgctxt "action"
 msgid "Open"
 msgstr "Відкрити"
 
-#: templates/reports/session.html:84
+#: templates/reports/session.html:85
 msgid "needs review"
 msgstr "потребує перевірки"
 
-#: apps/reports/pdf.py:318 templates/reports/session.html:95
+#: apps/reports/pdf.py:318 templates/reports/session.html:96
 msgid "No attempts yet."
 msgstr "Спроб ще немає."
 
-#: apps/delivery/taker_views.py:371 apps/reports/data.py:90 apps/reports/pdf.py:219
-#: templates/reports/session.html:107 templates/reports/session.html:116
+#: apps/delivery/taker_views.py:415 apps/reports/data.py:90 apps/reports/pdf.py:219
+#: templates/reports/session.html:108 templates/reports/session.html:117
 msgid "Correct"
 msgstr "Правильно"
 
-#: templates/reports/session.html:108 templates/reports/session.html:117
+#: templates/reports/session.html:109 templates/reports/session.html:118
 msgid "Most chosen wrong option"
 msgstr "Найчастіший неправильний варіант"

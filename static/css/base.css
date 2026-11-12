@@ -249,8 +249,7 @@ a:hover {
 
 /* Buttons */
 
-.btn,
-button.btn {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
