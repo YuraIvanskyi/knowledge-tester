@@ -1,0 +1,218 @@
+/* People: groups, students, PIN sheets and the import preview. Uses tokens from base.css. */
+
+[hidden] {
+  display: none !important;
+}
+
+/* Sub navigation (Groups | Students | Import) */
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+.subnav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+.subnav a:hover {
+  text-decoration: underline;
+}
+.subnav a[aria-current="page"] {
+  font-weight: 700;
+  border-bottom-color: var(--accent);
+}
+
+/* `button.btn` in base.css outranks .btn-primary and .btn-danger: restore them for <button> */
+button.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+button.btn-danger {
+  background: var(--surface);
+  border-color: var(--bad);
+  color: var(--bad);
+}
+button.btn-danger:hover {
+  background: var(--bad-bg);
+}
+
+.row-center {
+  justify-content: center;
+}
+.note {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.facts {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+}
+.panel h2 {
+  font-size: var(--fs-lg);
+}
+
+/* Tables */
+
+.table td,
+.table th {
+  overflow-wrap: anywhere;
+}
+.row-inactive td {
+  color: var(--muted);
+}
+.table tr.row-duplicate td {
+  background: var(--warn-bg);
+}
+.table tr.row-invalid td {
+  background: var(--bad-bg);
+}
+.actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
+  justify-content: flex-end;
+}
+@media (max-width: 639px) {
+  /* Tap targets of at least 44px for links inside the stacked rows */
+  .table td a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .table .col-num {
+    display: none;
+  }
+  .table td::before {
+    flex: none;
+  }
+  .table td > span {
+    min-width: 0;
+  }
+}
+.tap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.tap input[disabled] {
+  cursor: not-allowed;
+}
+
+/* Forms */
+
+.filter-form {
+  display: grid;
+  gap: 0 var(--space-3);
+  align-items: end;
+}
+.filter-form .field,
+.filter-actions {
+  margin-bottom: var(--space-3);
+}
+@media (min-width: 640px) {
+  .filter-form {
+    grid-template-columns: 2fr 1fr auto;
+  }
+}
+.example {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+textarea[name="text"] {
+  min-height: 12rem;
+}
+.choice-row {
+  margin-bottom: var(--space-4);
+}
+.pager {
+  justify-content: center;
+}
+
+/* PIN sheet */
+
+.table td.mono::before {
+  font-family: var(--font);
+  letter-spacing: normal;
+}
+.pin-table .pin {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+@media print {
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --text: #000;
+    --muted: #333;
+    --border: #888;
+    --accent: #000;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+  html,
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 12pt;
+    min-height: 0;
+  }
+  .topbar,
+  .site-footer,
+  .skip-link,
+  .messages,
+  .subnav,
+  .no-print,
+  .sticky-bar {
+    display: none !important;
+  }
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+  .pin-sheet {
+    break-after: page;
+  }
+  .pin-table {
+    border: 1px solid #000;
+  }
+  .pin-table th,
+  .pin-table td {
+    border-bottom: 1px solid #888;
+    padding: 6pt 8pt;
+  }
+  .pin-table tr {
+    break-inside: avoid;
+  }
+  .pin-table .pin {
+    font-size: 16pt;
+  }
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Students" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="students" %}
+  <div class="page-head">
+    <h1>{% trans "Students" %}</h1>
+    <div class="row">
+      <a class="btn btn-primary" href="{% url 'people:student_create' %}">{% trans "Add student" %}</a>
+      <a class="btn" href="{% url 'people:import' %}">{% trans "Import students" %}</a>
+    </div>
+  </div>
+
+  <form method="get" class="filter-form" role="search">
+    <div class="field">
+      <label for="id_q">{% trans "Search by name" %}</label>
+      <input type="search" id="id_q" name="q" value="{{ q }}" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="id_group">{% trans "Group" %}</label>
+      <select id="id_group" name="group">
+        <option value=""{% if not selected_group %} selected{% endif %}>{% trans "All groups" %}</option>
+        <option value="none"{% if selected_group == "none" %} selected{% endif %}>{% trans "Without a group" %}</option>
+        {% for g in groups %}<option value="{{ g.pk }}"{% if selected_group == g.pk|stringformat:"d" %} selected{% endif %}>{{ g.name }}{% if show_owner %} ({{ g.owner }}){% endif %}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="row filter-actions">
+      <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
+      {% if filtered %}<a class="btn" href="{% url 'people:students' %}">{% trans "Clear" %}</a>{% endif %}
+    </div>
+  </form>
+
+  {% if page.object_list %}
+  <p class="muted">{% blocktrans count n=page.paginator.count %}{{ n }} student{% plural %}{{ n }} students{% endblocktrans %}</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Student" %}</th>
+        <th scope="col">{% trans "Group" %}</th>
+        {% if show_owner %}<th scope="col">{% trans "Teacher" %}</th>{% endif %}
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in page.object_list %}
+      <tr{% if not s.is_active %} class="row-inactive"{% endif %}>
+        <td data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
+        <td data-label="{% trans 'Group' %}">{% if s.group %}<a href="{% url 'people:group' s.group_id %}">{{ s.group.name }}</a>{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</td>
+        {% if show_owner %}<td data-label="{% trans 'Teacher' %}">{{ s.owner }}</td>{% endif %}
+        <td data-label="{% trans 'Status' %}">{% if s.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="muted">{% trans "Left the class" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Actions' %}"><a href="{% url 'people:student_edit' s.pk %}">{% trans "Edit" %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if page.paginator.num_pages > 1 %}
+  <nav class="row pager" aria-label="{% trans 'Pages' %}">
+    {% if page.has_previous %}<a class="btn" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">{% trans "Previous" %}</a>{% endif %}
+    <span class="muted">{% blocktrans with n=page.number total=page.paginator.num_pages %}Page {{ n }} of {{ total }}{% endblocktrans %}</span>
+    {% if page.has_next %}<a class="btn" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">{% trans "Next" %}</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="empty">
+    {% if filtered %}
+    <p>{% trans "No student matches this search." %}</p>
+    <a class="btn" href="{% url 'people:students' %}">{% trans "Clear the search" %}</a>
+    {% else %}
+    <p>{% trans "No students yet. Add them one by one, or paste a class list." %}</p>
+    <div class="row row-center">
+      <a class="btn btn-primary" href="{% url 'people:student_create' %}">{% trans "Add student" %}</a>
+      <a class="btn" href="{% url 'people:import' %}">{% trans "Import students" %}</a>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

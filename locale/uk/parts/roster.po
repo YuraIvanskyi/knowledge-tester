@@ -1,0 +1,696 @@
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "People"
+msgstr "Люди"
+
+msgid "%(n)s student"
+msgid_plural "%(n)s students"
+msgstr[0] "%(n)s учень"
+msgstr[1] "%(n)s учні"
+msgstr[2] "%(n)s учнів"
+
+msgid "Student"
+msgstr "Учень"
+
+msgid "Search"
+msgstr "Шукати"
+
+msgid "Active"
+msgstr "Активний"
+
+msgid "Gradebook"
+msgstr "Журнал оцінок"
+
+msgid "Back to the group"
+msgstr "Назад до групи"
+
+msgid "This group has no students yet."
+msgstr "У цій групі ще немає учнів."
+
+msgid "Delete student"
+msgstr "Видалити учня"
+
+msgid "Group"
+msgstr "Група"
+
+msgid "No group"
+msgstr "Без групи"
+
+msgid "PIN"
+msgstr "PIN"
+
+msgid "Notes"
+msgstr "Нотатки"
+
+msgid "Groups"
+msgstr "Групи"
+
+msgid "Students"
+msgstr "Учні"
+
+msgid "Import students"
+msgstr "Імпорт учнів"
+
+msgid "archived"
+msgstr "в архіві"
+
+msgid "Teacher: %(owner)s"
+msgstr "Вчитель: %(owner)s"
+
+msgid "Add student"
+msgstr "Додати учня"
+
+msgid "Import into this group"
+msgstr "Імпортувати в цю групу"
+
+msgid "%(n)s active student"
+msgid_plural "%(n)s active students"
+msgstr[0] "%(n)s активний учень"
+msgstr[1] "%(n)s активні учні"
+msgstr[2] "%(n)s активних учнів"
+
+msgid "%(n)s has left"
+msgid_plural "%(n)s have left"
+msgstr[0] "%(n)s вибув"
+msgstr[1] "%(n)s вибули"
+msgstr[2] "%(n)s вибули"
+
+msgid "Edit group"
+msgstr "Редагувати групу"
+
+msgid "Delete group"
+msgstr "Видалити групу"
+
+msgid "Left the class"
+msgstr "Вибув із класу"
+
+msgid "PINs"
+msgstr "PIN-коди"
+
+msgid ""
+"A PIN is a short code each student types after picking their name in a group"
+" session. It keeps classmates from answering for each other."
+msgstr ""
+"PIN — це короткий код, який учень вводить після вибору свого імені в "
+"груповій сесії. Він не дає однокласникам відповідати один за одного."
+
+msgid "%(n)s active student has a PIN."
+msgid_plural "%(n)s active students have a PIN."
+msgstr[0] "%(n)s активний учень має PIN."
+msgstr[1] "%(n)s активні учні мають PIN."
+msgstr[2] "%(n)s активних учнів мають PIN."
+
+msgid "Generate a PIN for %(n)s student without one"
+msgid_plural "Generate PINs for %(n)s students without one"
+msgstr[0] "Створити PIN для %(n)s учня без PIN"
+msgstr[1] "Створити PIN для %(n)s учнів без PIN"
+msgstr[2] "Створити PIN для %(n)s учнів без PIN"
+
+msgid "Regenerate all PINs"
+msgstr "Створити всі PIN заново"
+
+msgid "Printable PIN list"
+msgstr "Список PIN для друку"
+
+msgid "Start a session for this group"
+msgstr "Запустити сесію для цієї групи"
+
+msgid ""
+"Open a session from a published test and choose this group in the session "
+"form. Students then pick their name from the class list, and their results "
+"land on their profile."
+msgstr ""
+"Відкрийте сесію з опублікованого тесту й виберіть цю групу у формі сесії. "
+"Тоді учні вибиратимуть своє ім’я зі списку класу, а їхні результати "
+"потраплятимуть у профіль."
+
+msgid "%(n)s session is tied to this group"
+msgid_plural "%(n)s sessions are tied to this group"
+msgstr[0] "%(n)s сесія прив’язана до цієї групи"
+msgstr[1] "%(n)s сесії прив’язані до цієї групи"
+msgstr[2] "%(n)s сесій прив’язані до цієї групи"
+
+msgid "Delete this group?"
+msgstr "Видалити цю групу?"
+
+msgid "What happens to its %(n)s student?"
+msgid_plural "What happens to its %(n)s students?"
+msgstr[0] "Що буде з %(n)s учнем цієї групи?"
+msgstr[1] "Що буде з %(n)s учнями цієї групи?"
+msgstr[2] "Що буде з %(n)s учнями цієї групи?"
+
+msgid "Keep the students. They stay in your list without a group."
+msgstr "Залишити учнів. Вони залишаться у вашому списку без групи."
+
+msgid "Delete the students too."
+msgstr "Видалити також учнів."
+
+msgid "The group has no students."
+msgstr "У групі немає учнів."
+
+msgid ""
+"%(n)s attempt is linked to these students. Attempts are never deleted: if "
+"the students are deleted, the attempt is only unlinked from them and keeps "
+"its result and the name that was typed."
+msgid_plural ""
+"%(n)s attempts are linked to these students. Attempts are never deleted: if "
+"the students are deleted, the attempts are only unlinked from them and keep "
+"their results and the names that were typed."
+msgstr[0] ""
+"%(n)s спробу пов’язано з цими учнями. Спроби ніколи не видаляються: якщо "
+"учнів видалено, спробу лише від’єднують від учнів, і вона зберігає результат"
+" та введене ім’я."
+msgstr[1] ""
+"%(n)s спроби пов’язано з цими учнями. Спроби ніколи не видаляються: якщо "
+"учнів видалено, спроби лише від’єднують від учнів, і вони зберігають "
+"результати та введені імена."
+msgstr[2] ""
+"%(n)s спроб пов’язано з цими учнями. Спроби ніколи не видаляються: якщо "
+"учнів видалено, спроби лише від’єднують від учнів, і вони зберігають "
+"результати та введені імена."
+
+msgid ""
+"No attempts are linked to these students. Attempts are never deleted with a "
+"group."
+msgstr ""
+"З цими учнями не пов’язано жодної спроби. Спроби ніколи не видаляються разом"
+" із групою."
+
+msgid ""
+"%(n)s session is tied to this group. It stays, but students will enter a "
+"free name instead of picking from a class list."
+msgid_plural ""
+"%(n)s sessions are tied to this group. They stay, but students will enter a "
+"free name instead of picking from a class list."
+msgstr[0] ""
+"%(n)s сесію прив’язано до цієї групи. Вона залишиться, але учні вводитимуть "
+"довільне ім’я замість вибору зі списку класу."
+msgstr[1] ""
+"%(n)s сесії прив’язано до цієї групи. Вони залишаться, але учні вводитимуть "
+"довільне ім’я замість вибору зі списку класу."
+msgstr[2] ""
+"%(n)s сесій прив’язано до цієї групи. Вони залишаться, але учні вводитимуть "
+"довільне ім’я замість вибору зі списку класу."
+
+msgid "New group"
+msgstr "Нова група"
+
+msgid "Edit group %(name)s"
+msgstr "Редагування групи %(name)s"
+
+msgid "Active students"
+msgstr "Активні учні"
+
+msgid "Last session"
+msgstr "Остання сесія"
+
+msgid "none yet"
+msgstr "ще немає"
+
+msgid "Open group"
+msgstr "Відкрити групу"
+
+msgid "No groups."
+msgstr "Груп немає."
+
+msgid ""
+"No groups yet. Create one, or paste a class list to create groups and "
+"students in one go."
+msgstr ""
+"Груп ще немає. Створіть групу або вставте список класу, щоб створити групи й"
+" учнів одразу."
+
+msgid "%(n)s student without a group"
+msgid_plural "%(n)s students without a group"
+msgstr[0] "%(n)s учень без групи"
+msgstr[1] "%(n)s учні без групи"
+msgstr[2] "%(n)s учнів без групи"
+
+msgid "%(n)s student in total"
+msgid_plural "%(n)s students in total"
+msgstr[0] "Усього %(n)s учень"
+msgstr[1] "Усього %(n)s учні"
+msgstr[2] "Усього %(n)s учнів"
+
+msgid "Hide archived groups"
+msgstr "Сховати архівні групи"
+
+msgid "Show %(n)s archived group"
+msgid_plural "Show %(n)s archived groups"
+msgstr[0] "Показати %(n)s архівну групу"
+msgstr[1] "Показати %(n)s архівні групи"
+msgstr[2] "Показати %(n)s архівних груп"
+
+msgid "Paste a list"
+msgstr "Вставте список"
+
+msgid ""
+"One name per line. To put a student into a group, add the group after a "
+"semicolon, a comma or a tab. List numbers and bullets are ignored."
+msgstr ""
+"Одне ім’я в рядку. Щоб додати учня до групи, допишіть групу після крапки з "
+"комою, коми або табуляції. Номери й маркери списку ігноруються."
+
+msgid "Example"
+msgstr "Приклад"
+
+msgid "Or upload a file"
+msgstr "Або завантажте файл"
+
+msgid ""
+"A CSV or Excel (.xlsx) file, up to 2 MB and %(rows)s rows. A header row with"
+" columns such as Name, Surname, First name or Group (ПІБ, Прізвище, Ім'я, "
+"Клас) is recognised. For Excel files the first sheet with data is read."
+msgstr ""
+"Файл CSV або Excel (.xlsx), до 2 МБ і до %(rows)s рядків. Рядок заголовків "
+"зі стовпцями на кшталт Name, Surname, First name або Group (ПІБ, Прізвище, "
+"Ім'я, Клас) розпізнається. З файлів Excel читається перший аркуш, що містить"
+" дані."
+
+msgid "CSV or XLSX file"
+msgstr "Файл CSV або XLSX"
+
+msgid "Applies to the rows that have no group of their own."
+msgstr "Застосовується до рядків, у яких немає власної групи."
+
+msgid "Check the list"
+msgstr "Перевірити список"
+
+msgid ""
+"Nothing is saved yet. You will see every row, with duplicates marked, before"
+" anything is added."
+msgstr ""
+"Поки що нічого не збережено. Ви побачите кожен рядок, із позначеними "
+"дублікатами, перш ніж щось буде додано."
+
+msgid "Check the import"
+msgstr "Перевірка імпорту"
+
+msgid "Edit the list"
+msgstr "Змінити список"
+
+msgid "Start again"
+msgstr "Почати спочатку"
+
+msgid "%(n)s new"
+msgid_plural "%(n)s new"
+msgstr[0] "%(n)s новий"
+msgstr[1] "%(n)s нові"
+msgstr[2] "%(n)s нових"
+
+msgid "%(n)s duplicate"
+msgid_plural "%(n)s duplicates"
+msgstr[0] "%(n)s дублікат"
+msgstr[1] "%(n)s дублікати"
+msgstr[2] "%(n)s дублікатів"
+
+msgid "%(n)s not valid"
+msgid_plural "%(n)s not valid"
+msgstr[0] "%(n)s некоректний"
+msgstr[1] "%(n)s некоректні"
+msgstr[2] "%(n)s некоректних"
+
+msgid "Rows without a group go into %(name)s."
+msgstr "Рядки без групи потраплять до групи %(name)s."
+
+msgid "Rows without a group go into the new group %(name)s."
+msgstr "Рядки без групи потраплять до нової групи %(name)s."
+
+msgid "This group will be created:"
+msgid_plural "These groups will be created:"
+msgstr[0] "Буде створено цю групу:"
+msgstr[1] "Буде створено ці групи:"
+msgstr[2] "Буде створено ці групи:"
+
+msgid ""
+"This list is long, so rows cannot be unticked one by one. Every valid row is"
+" added; use the duplicate switch below to leave duplicates out."
+msgstr ""
+"Список довгий, тому рядки не можна знімати по одному. Додається кожен "
+"коректний рядок; щоб пропустити дублікати, скористайтеся перемикачем нижче."
+
+msgid "Add"
+msgstr "Додати"
+
+msgid "Check"
+msgstr "Перевірка"
+
+msgid "Not valid, cannot be added"
+msgstr "Некоректний, додати не можна"
+
+msgid "Add %(name)s"
+msgstr "Додати: %(name)s"
+
+msgid "new group"
+msgstr "нова група"
+
+msgid "Not valid"
+msgstr "Некоректний"
+
+msgid "Possible duplicate"
+msgstr "Можливий дублікат"
+
+msgid "same person as %(other)s"
+msgstr "та сама людина, що й %(other)s"
+
+msgid "same words in a different order"
+msgstr "ті самі слова в іншому порядку"
+
+msgid "New"
+msgstr "Новий"
+
+msgid "Skip duplicates"
+msgstr "Пропустити дублікати"
+
+msgid ""
+"Duplicates are left out. Untick this to add them as well (for example two "
+"different students with the same name)."
+msgstr ""
+"Дублікати не додаються. Зніміть позначку, щоб додати й їх (наприклад, двох "
+"різних учнів з однаковим іменем)."
+
+msgid "Add the ticked students"
+msgstr "Додати позначених учнів"
+
+msgid "Add the students"
+msgstr "Додати учнів"
+
+msgid "Nothing in this list can be added."
+msgstr "Із цього списку нічого не можна додати."
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Regenerate PINs"
+msgstr "Створення PIN заново"
+
+msgid "Regenerate all PINs?"
+msgstr "Створити всі PIN заново?"
+
+msgid ""
+"%(n)s active student already has a PIN. Every active student gets a new one "
+"and the old PIN stops working. Hand out the new list again."
+msgid_plural ""
+"%(n)s active students already have a PIN. Every active student gets a new "
+"one and the old PINs stop working. Hand out the new list again."
+msgstr[0] ""
+"%(n)s активний учень уже має PIN. Кожен активний учень отримає новий, а "
+"старий PIN перестане діяти. Роздайте новий список ще раз."
+msgstr[1] ""
+"%(n)s активні учні вже мають PIN. Кожен активний учень отримає новий, а "
+"старі PIN перестануть діяти. Роздайте новий список ще раз."
+msgstr[2] ""
+"%(n)s активних учнів уже мають PIN. Кожен активний учень отримає новий, а "
+"старі PIN перестануть діяти. Роздайте новий список ще раз."
+
+msgid "PINs for %(name)s"
+msgstr "PIN-коди: %(name)s"
+
+msgid "PIN list"
+msgstr "Список PIN"
+
+msgid ""
+"Print this page (Ctrl+P) or show it to students one by one. Keep it private:"
+" a PIN confirms who is taking the test."
+msgstr ""
+"Надрукуйте цю сторінку (Ctrl+P) або показуйте учням по одному. Тримайте її в"
+" таємниці: PIN підтверджує, хто складає тест."
+
+msgid "%(n)s student has no PIN yet. Generate PINs on the group page first."
+msgid_plural ""
+"%(n)s students have no PIN yet. Generate PINs on the group page first."
+msgstr[0] "%(n)s учень ще не має PIN. Спершу створіть PIN на сторінці групи."
+msgstr[1] "%(n)s учні ще не мають PIN. Спершу створіть PIN на сторінці групи."
+msgstr[2] ""
+"%(n)s учнів ще не мають PIN. Спершу створіть PIN на сторінці групи."
+
+msgid "This group has no active students."
+msgstr "У цій групі немає активних учнів."
+
+msgid "Edit student"
+msgstr "Редагування учня"
+
+msgid "Edit %(name)s"
+msgstr "Редагування: %(name)s"
+
+msgid "This looks like a student you already have:"
+msgid_plural "This looks like students you already have:"
+msgstr[0] "Схоже, цей учень у вас уже є:"
+msgstr[1] "Схоже, ці учні у вас уже є:"
+msgstr[2] "Схоже, ці учні у вас уже є:"
+
+msgid "Change the name, or save anyway if these are different people."
+msgstr "Змініть ім’я або збережіть усе одно, якщо це різні люди."
+
+msgid "Change the name, or add anyway if these are different people."
+msgstr "Змініть ім’я або додайте все одно, якщо це різні люди."
+
+msgid "Save anyway"
+msgstr "Зберегти все одно"
+
+msgid "Add anyway"
+msgstr "Додати все одно"
+
+msgid "Check again"
+msgstr "Перевірити ще раз"
+
+msgid "Open the profile"
+msgstr "Відкрити профіль"
+
+msgid "Search by name"
+msgstr "Пошук за іменем"
+
+msgid "All groups"
+msgstr "Усі групи"
+
+msgid "Without a group"
+msgstr "Без групи"
+
+msgid "Clear"
+msgstr "Скинути"
+
+msgid "Pages"
+msgstr "Сторінки"
+
+msgid "Previous"
+msgstr "Попередня"
+
+msgid "Page %(n)s of %(total)s"
+msgstr "Сторінка %(n)s з %(total)s"
+
+msgid "Next"
+msgstr "Наступна"
+
+msgid "No student matches this search."
+msgstr "Жоден учень не відповідає пошуку."
+
+msgid "Clear the search"
+msgstr "Скинути пошук"
+
+msgid "No students yet. Add them one by one, or paste a class list."
+msgstr "Учнів ще немає. Додайте їх по одному або вставте список класу."
+
+msgid "For example 7-A or Physics, evening course."
+msgstr "Наприклад, 7-А або Фізика, вечірні курси."
+
+msgid "Optional, 3 to 8 digits. Used to confirm identity in group sessions."
+msgstr ""
+"Необов’язково, від 3 до 8 цифр. Використовується для підтвердження особи в "
+"групових сесіях."
+
+msgid "Enter a name with letters or digits."
+msgstr "Введіть назву з літерами або цифрами."
+
+msgid "Enter a name with letters."
+msgstr "Введіть ім’я з літерами."
+
+msgid "Group name"
+msgstr "Назва групи"
+
+msgid "Note"
+msgstr "Примітка"
+
+msgid "Archived (hidden from the list; students and results are kept)"
+msgstr "В архіві (прихована зі списку; учні та результати зберігаються)"
+
+msgid "Active (untick when the student has left the class)"
+msgstr "Активний (зніміть позначку, коли учень вибув із класу)"
+
+msgid "Or upload a CSV or XLSX file"
+msgstr "Або завантажте файл CSV чи XLSX"
+
+msgid "Put students without a group into"
+msgstr "Учнів без групи додати до"
+
+msgid "Or into a new group"
+msgstr "Або до нової групи"
+
+msgid "Created when you confirm. Leave empty to use the group above."
+msgstr ""
+"Створюється після підтвердження. Залиште порожнім, щоб використати групу "
+"вище."
+
+msgid "You already have a group with this name."
+msgstr "У вас уже є група з такою назвою."
+
+msgid "The PIN must be 3 to 8 digits."
+msgstr "PIN має складатися з 3–8 цифр."
+
+msgid "Use the text box or a file, not both."
+msgstr "Скористайтеся або текстовим полем, або файлом, але не обома одразу."
+
+msgid "Paste a list of names or choose a file."
+msgstr "Вставте список імен або виберіть файл."
+
+msgid "Choose an existing group or type a new group name, not both."
+msgstr ""
+"Виберіть наявну групу або введіть назву нової, але не обидва варіанти."
+
+msgid "Another student in this group already has this PIN."
+msgstr "Інший учень у цій групі вже має такий PIN."
+
+msgid "the name is empty"
+msgstr "ім’я порожнє"
+
+msgid "the name is too long"
+msgstr "ім’я задовге"
+
+msgid "the name has no letters"
+msgstr "в імені немає літер"
+
+msgid "the group name is too long"
+msgstr "назва групи задовга"
+
+msgid "the group name has no letters or digits"
+msgstr "у назві групи немає літер чи цифр"
+
+msgid ""
+"Too many rows: at most %(max)s students can be imported at a time. Split the"
+" list."
+msgstr ""
+"Забагато рядків: за один раз можна імпортувати не більше ніж %(max)s учнів. "
+"Розділіть список."
+
+msgid "This is not a CSV file. Choose a CSV or XLSX file."
+msgstr "Це не файл CSV. Виберіть файл CSV або XLSX."
+
+msgid "This does not look like a text or CSV file."
+msgstr "Це не схоже на текстовий файл чи CSV."
+
+msgid "Old .xls files are not supported. Save the sheet as .xlsx or CSV."
+msgstr ""
+"Старі файли .xls не підтримуються. Збережіть таблицю як .xlsx або CSV."
+
+msgid "The file could not be read as CSV."
+msgstr "Не вдалося прочитати файл як CSV."
+
+msgid ""
+"Reading Excel files needs the optional xlsx component, which is not "
+"installed. Save the sheet as CSV instead, or ask the administrator to "
+"install the xlsx extra."
+msgstr ""
+"Для читання файлів Excel потрібен необов’язковий компонент xlsx, який не "
+"встановлено. Збережіть таблицю як CSV або попросіть адміністратора "
+"встановити додаток xlsx."
+
+msgid "The file could not be read as an Excel workbook."
+msgstr "Не вдалося прочитати файл як книгу Excel."
+
+msgid "The workbook is too large to read."
+msgstr "Книга завелика для читання."
+
+msgid "The sheet has too many rows."
+msgstr "В аркуші забагато рядків."
+
+msgid "%(name)s (row %(n)s of this list)"
+msgstr "%(name)s (рядок %(n)s цього списку)"
+
+msgid "Choose what happens to the students."
+msgstr "Виберіть, що буде з учнями."
+
+msgid "There is nothing to check. Start with a list."
+msgstr "Нічого перевіряти. Почніть зі списку."
+
+msgid "The chosen group no longer exists. Start again."
+msgstr "Вибраної групи більше немає. Почніть спочатку."
+
+msgid "%(n)s student added."
+msgid_plural "%(n)s students added."
+msgstr[0] "Додано %(n)s учня."
+msgstr[1] "Додано %(n)s учнів."
+msgstr[2] "Додано %(n)s учнів."
+
+msgid "This preview is out of date. Start the import again."
+msgstr "Цей перегляд застарів. Почніть імпорт знову."
+
+msgid "Nothing was added: every row is unticked, a duplicate or not valid."
+msgstr ""
+"Нічого не додано: кожен рядок знято з позначки, є дублікатом або "
+"некоректний."
+
+msgid "Group saved."
+msgstr "Групу збережено."
+
+msgid "Every active student already has a PIN."
+msgstr "Кожен активний учень уже має PIN."
+
+msgid "Student saved."
+msgstr "Учня збережено."
+
+msgid "%(n)s group created."
+msgid_plural "%(n)s groups created."
+msgstr[0] "Створено %(n)s групу."
+msgstr[1] "Створено %(n)s групи."
+msgstr[2] "Створено %(n)s груп."
+
+msgid "%(n)s duplicate skipped."
+msgid_plural "%(n)s duplicates skipped."
+msgstr[0] "Пропущено %(n)s дублікат."
+msgstr[1] "Пропущено %(n)s дублікати."
+msgstr[2] "Пропущено %(n)s дублікатів."
+
+msgid "%(n)s row that is not valid was skipped."
+msgid_plural "%(n)s rows that are not valid were skipped."
+msgstr[0] "Пропущено %(n)s некоректний рядок."
+msgstr[1] "Пропущено %(n)s некоректні рядки."
+msgstr[2] "Пропущено %(n)s некоректних рядків."
+
+msgid "%(n)s row you unticked was skipped."
+msgid_plural "%(n)s rows you unticked were skipped."
+msgstr[0] "Пропущено %(n)s рядок, який ви зняли з позначки."
+msgstr[1] "Пропущено %(n)s рядки, які ви зняли з позначки."
+msgstr[2] "Пропущено %(n)s рядків, які ви зняли з позначки."
+
+msgid "Could not save the list. Please try again."
+msgstr "Не вдалося зберегти список. Спробуйте ще раз."
+
+msgid "Group \"%(name)s\" created."
+msgstr "Групу «%(name)s» створено."
+
+msgid "Choose what to do with the PINs."
+msgstr "Виберіть, що робити з PIN."
+
+msgid "A PIN was set for %(n)s student."
+msgid_plural "PINs were set for %(n)s students."
+msgstr[0] "PIN встановлено для %(n)s учня."
+msgstr[1] "PIN встановлено для %(n)s учнів."
+msgstr[2] "PIN встановлено для %(n)s учнів."
+
+msgid "Student \"%(name)s\" added."
+msgstr "Учня «%(name)s» додано."
+
+msgid "No names were found in this list."
+msgstr "У цьому списку не знайдено жодного імені."
+
+msgid "Group \"%(name)s\" and its %(n)s student were deleted."
+msgid_plural "Group \"%(name)s\" and its %(n)s students were deleted."
+msgstr[0] "Групу «%(name)s» та %(n)s її учня видалено."
+msgstr[1] "Групу «%(name)s» та %(n)s її учнів видалено."
+msgstr[2] "Групу «%(name)s» та %(n)s її учнів видалено."
+
+msgid "Group \"%(name)s\" deleted. Its students are kept without a group."
+msgstr "Групу «%(name)s» видалено. Її учні залишилися без групи."

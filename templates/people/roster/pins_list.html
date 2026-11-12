@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% blocktrans with name=group.name %}PINs for {{ name }}{% endblocktrans %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack pin-sheet">
+  <div class="page-head no-print">
+    <h1>{% trans "PIN list" %}</h1>
+    <a class="btn" href="{% url 'people:group' group.pk %}">{% trans "Back to the group" %}</a>
+  </div>
+  <p class="muted no-print">{% trans "Print this page (Ctrl+P) or show it to students one by one. Keep it private: a PIN confirms who is taking the test." %}</p>
+  {% if n_without_pin %}
+  <p class="alert alert-warn no-print">{% blocktrans count n=n_without_pin %}{{ n }} student has no PIN yet. Generate PINs on the group page first.{% plural %}{{ n }} students have no PIN yet. Generate PINs on the group page first.{% endblocktrans %}</p>
+  {% endif %}
+
+  <h2 class="print-title">{{ group.name }}</h2>
+  {% if students %}
+  <table class="table pin-table">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Student" %}</th>
+        <th scope="col">{% trans "PIN" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td data-label="{% trans 'Student' %}">{{ s.full_name }}</td>
+        <td data-label="{% trans 'PIN' %}" class="mono pin">{% if s.pin %}{{ s.pin }}{% else %}&mdash;{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">{% trans "This group has no active students." %}</p>
+  {% endif %}
+</div>
+{% endblock %}

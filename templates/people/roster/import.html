@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Import students" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="import" %}
+  <div class="page-head">
+    <h1>{% trans "Import students" %}</h1>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="stack" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <section class="panel stack-sm" aria-labelledby="paste-title">
+      <h2 id="paste-title">{% trans "Paste a list" %}</h2>
+      <p class="muted">{% trans "One name per line. To put a student into a group, add the group after a semicolon, a comma or a tab. List numbers and bullets are ignored." %}</p>
+      <pre class="example" aria-label="{% trans 'Example' %}">Іваненко Петро; 7-А
+2) Коваль Дем'ян Олегович; 7-А
+Мельник Олена; 7-Б
+Шевченко Софія</pre>
+      <div class="field">
+        <label for="{{ form.text.id_for_label }}">{{ form.text.label }}</label>
+        {{ form.text }}
+        {{ form.text.errors }}
+      </div>
+    </section>
+
+    <section class="panel stack-sm" aria-labelledby="file-title">
+      <h2 id="file-title">{% trans "Or upload a file" %}</h2>
+      <p class="muted">{% blocktrans with rows=limit_rows %}A CSV or Excel (.xlsx) file, up to 2 MB and {{ rows }} rows. A header row with columns such as Name, Surname, First name or Group (ПІБ, Прізвище, Ім'я, Клас) is recognised. For Excel files the first sheet with data is read.{% endblocktrans %}</p>
+      <div class="field">
+        <label for="{{ form.file.id_for_label }}">{% trans "CSV or XLSX file" %}</label>
+        {{ form.file }}
+        {{ form.file.errors }}
+      </div>
+    </section>
+
+    <section class="panel stack-sm" aria-labelledby="group-title">
+      <h2 id="group-title">{% trans "Group" %}</h2>
+      <p class="muted">{% trans "Applies to the rows that have no group of their own." %}</p>
+      {% include "people/roster/_field.html" with field=form.default_group %}
+      {% include "people/roster/_field.html" with field=form.new_group %}
+    </section>
+
+    <div class="row">
+      <button class="btn btn-primary" type="submit">{% trans "Check the list" %}</button>
+      <a class="btn" href="{% url 'people:groups' %}">{% trans "Cancel" %}</a>
+    </div>
+    <p class="muted">{% trans "Nothing is saved yet. You will see every row, with duplicates marked, before anything is added." %}</p>
+  </form>
+</div>
+{% endblock %}

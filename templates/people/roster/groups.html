@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Groups" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="groups" %}
+  <div class="page-head">
+    <h1>{% trans "Groups" %}</h1>
+    <div class="row">
+      <a class="btn btn-primary" href="{% url 'people:group_create' %}">{% trans "New group" %}</a>
+      <a class="btn" href="{% url 'people:import' %}">{% trans "Import students" %}</a>
+    </div>
+  </div>
+
+  {% if groups %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Group" %}</th>
+        {% if user.is_admin_role %}<th scope="col">{% trans "Teacher" %}</th>{% endif %}
+        <th scope="col" class="num">{% trans "Active students" %}</th>
+        <th scope="col">{% trans "Last session" %}</th>
+        <th scope="col">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in groups %}
+      <tr>
+        <td data-label="{% trans 'Group' %}"><span><a href="{% url 'people:group' g.pk %}">{{ g.name }}</a>{% if g.is_archived %} <span class="muted">({% trans "archived" %})</span>{% endif %}</span></td>
+        {% if user.is_admin_role %}<td data-label="{% trans 'Teacher' %}">{{ g.owner }}</td>{% endif %}
+        <td data-label="{% trans 'Active students' %}" class="num">{{ g.active_count }}</td>
+        <td data-label="{% trans 'Last session' %}">{% if g.last_session %}{{ g.last_session|date:"SHORT_DATE_FORMAT" }}{% else %}<span class="muted">{% trans "none yet" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Actions' %}"><span class="actions"><a href="{% url 'people:group' g.pk %}">{% trans "Open group" %}</a> <a href="{% url 'people:group_edit' g.pk %}">{% trans "Edit" %}</a></span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>{% if show_archived %}{% trans "No groups." %}{% else %}{% trans "No groups yet. Create one, or paste a class list to create groups and students in one go." %}{% endif %}</p>
+    <div class="row row-center">
+      <a class="btn btn-primary" href="{% url 'people:group_create' %}">{% trans "New group" %}</a>
+      <a class="btn" href="{% url 'people:import' %}">{% trans "Import students" %}</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <p class="muted">
+    <a href="{% url 'people:students' %}?group=none">{% blocktrans count n=ungrouped_count %}{{ n }} student without a group{% plural %}{{ n }} students without a group{% endblocktrans %}</a>
+    &middot;
+    <a href="{% url 'people:students' %}">{% blocktrans count n=total_students %}{{ n }} student in total{% plural %}{{ n }} students in total{% endblocktrans %}</a>
+    {% if archived_count %}
+    &middot;
+    {% if show_archived %}<a href="{% url 'people:groups' %}">{% trans "Hide archived groups" %}</a>{% else %}<a href="{% url 'people:groups' %}?archived=1">{% blocktrans count n=archived_count %}Show {{ n }} archived group{% plural %}Show {{ n }} archived groups{% endblocktrans %}</a>{% endif %}
+    {% endif %}
+  </p>
+</div>
+{% endblock %}

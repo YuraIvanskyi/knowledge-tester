@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% if group %}{% trans "Edit group" %}{% else %}{% trans "New group" %}{% endif %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="groups" %}
+  <div class="container-narrow stack">
+    <h1>{% if group %}{% blocktrans with name=title %}Edit group {{ name }}{% endblocktrans %}{% else %}{% trans "New group" %}{% endif %}</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% include "people/roster/_field.html" with field=form.name %}
+      {% include "people/roster/_field.html" with field=form.note %}
+      {% if group %}{% include "people/roster/_checkbox.html" with field=form.is_archived %}{% endif %}
+      <div class="row">
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        <a class="btn" href="{% if group %}{% url 'people:group' group.pk %}{% else %}{% url 'people:groups' %}{% endif %}">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

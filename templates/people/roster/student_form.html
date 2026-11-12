@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% if student %}{% trans "Edit student" %}{% else %}{% trans "Add student" %}{% endif %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="students" %}
+  <div class="container-narrow stack">
+    <h1>{% if student %}{% blocktrans with name=student_name %}Edit {{ name }}{% endblocktrans %}{% else %}{% trans "Add student" %}{% endif %}</h1>
+
+    {% if duplicates %}
+    <div class="alert alert-warn stack-sm" role="alert">
+      <p><strong>{% blocktrans count n=duplicates|length %}This looks like a student you already have:{% plural %}This looks like students you already have:{% endblocktrans %}</strong></p>
+      <ul>
+        {% for d in duplicates %}
+        <li><a href="{% url 'people:student' d.student.pk %}">{{ d.student.full_name }}</a>{% if d.student.group %} ({{ d.student.group.name }}){% endif %}{% if d.kind == "reordered" %} <span class="muted">&ndash; {% trans "same words in a different order" %}</span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      <p>{% if student %}{% trans "Change the name, or save anyway if these are different people." %}{% else %}{% trans "Change the name, or add anyway if these are different people." %}{% endif %}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      {{ form.non_field_errors }}
+      {% include "people/roster/_field.html" with field=form.full_name %}
+      {% include "people/roster/_field.html" with field=form.group %}
+      {% include "people/roster/_field.html" with field=form.pin %}
+      {% include "people/roster/_field.html" with field=form.notes %}
+      {% if student %}{% include "people/roster/_checkbox.html" with field=form.is_active %}{% endif %}
+      <div class="row">
+        {% if duplicates %}
+        <button class="btn btn-primary" type="submit" name="confirm_duplicate" value="1">{% if student %}{% trans "Save anyway" %}{% else %}{% trans "Add anyway" %}{% endif %}</button>
+        <button class="btn" type="submit">{% trans "Check again" %}</button>
+        {% else %}
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        {% if not student %}<button class="btn" type="submit" name="again" value="1">{% trans "Save and add another" %}</button>{% endif %}
+        {% endif %}
+        <a class="btn" href="{{ back_url }}">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+
+    {% if student %}
+    <p class="muted"><a href="{% url 'people:student' student.pk %}">{% trans "Open the profile" %}</a> &middot; <a href="{% url 'people:student_delete' student.pk %}">{% trans "Delete student" %}</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

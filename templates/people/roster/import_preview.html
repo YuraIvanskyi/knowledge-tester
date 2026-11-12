@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Check the import" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="import" %}
+  <div class="page-head">
+    <h1>{% trans "Check the import" %}</h1>
+    <a href="{% url 'people:import' %}{% if can_edit %}?back=1{% endif %}">{% if can_edit %}{% trans "Edit the list" %}{% else %}{% trans "Start again" %}{% endif %}</a>
+  </div>
+
+  <ul class="facts">
+    <li><span class="status-ok">{% blocktrans count n=preview.n_new %}{{ n }} new{% plural %}{{ n }} new{% endblocktrans %}</span></li>
+    <li><span class="status-warn">{% blocktrans count n=preview.n_duplicate %}{{ n }} duplicate{% plural %}{{ n }} duplicates{% endblocktrans %}</span></li>
+    <li><span class="status-bad">{% blocktrans count n=preview.n_invalid %}{{ n }} not valid{% plural %}{{ n }} not valid{% endblocktrans %}</span></li>
+  </ul>
+
+  {% if default_group %}<p class="muted">{% blocktrans with name=default_group.name %}Rows without a group go into {{ name }}.{% endblocktrans %}</p>{% elif new_group_name %}<p class="muted">{% blocktrans with name=new_group_name %}Rows without a group go into the new group {{ name }}.{% endblocktrans %}</p>{% endif %}
+  {% if preview.new_groups %}
+  <p class="muted">{% blocktrans count n=preview.new_groups|length %}This group will be created:{% plural %}These groups will be created:{% endblocktrans %}
+    {% for name in preview.new_groups %}<strong>{{ name }}</strong>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+
+  {% if n_addable %}
+  <form method="post" action="{% url 'people:import_confirm' %}" class="stack">
+    {% csrf_token %}
+    <input type="hidden" name="token" value="{{ token }}">
+
+    {% if not selectable %}
+    <p class="alert alert-warn">{% trans "This list is long, so rows cannot be unticked one by one. Every valid row is added; use the duplicate switch below to leave duplicates out." %}</p>
+    {% endif %}
+
+    <table class="table">
+      <thead>
+        <tr>
+          {% if selectable %}<th scope="col">{% trans "Add" %}</th>{% endif %}
+          <th scope="col" class="num col-num">#</th>
+          <th scope="col">{% trans "Student" %}</th>
+          <th scope="col">{% trans "Group" %}</th>
+          <th scope="col">{% trans "Check" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in preview.rows %}
+        <tr class="row-{{ row.status }}">
+          {% if selectable %}
+          <td data-label="{% trans 'Add' %}">
+            {% if row.is_invalid %}<label class="tap"><input type="checkbox" disabled aria-label="{% trans 'Not valid, cannot be added' %}"></label>
+            {% else %}<label class="tap"><input type="checkbox" name="include" value="{{ row.index }}" checked aria-label="{% blocktrans with name=row.full_name %}Add {{ name }}{% endblocktrans %}"></label>{% endif %}
+          </td>
+          {% endif %}
+          <td data-label="#" class="num col-num">{{ forloop.counter }}</td>
+          <td data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
+          <td data-label="{% trans 'Group' %}"><span>{% if row.group_name %}{{ row.group_name }}{% if row.group_is_new %} <span class="muted">({% trans "new group" %})</span>{% endif %}{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</span></td>
+          <td data-label="{% trans 'Check' %}"><span>
+            {% if row.is_invalid %}
+              <span class="status-bad">{% trans "Not valid" %}</span>: {{ row.problems|join:", " }}
+            {% elif row.is_duplicate %}
+              <span class="status-warn">{% trans "Possible duplicate" %}</span>: {% blocktrans with other=row.duplicate_of %}same person as {{ other }}{% endblocktrans %}{% if row.duplicate_kind == "reordered" %} <span class="muted">({% trans "same words in a different order" %})</span>{% endif %}
+            {% else %}
+              <span class="status-ok">{% trans "New" %}</span>
+            {% endif %}
+          </span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="choice-row">
+      <label class="choice" for="id_skip_duplicates">
+        <input type="checkbox" id="id_skip_duplicates" name="skip_duplicates" value="1" checked>
+        <span>{% trans "Skip duplicates" %}</span>
+      </label>
+      <span class="helptext">{% trans "Duplicates are left out. Untick this to add them as well (for example two different students with the same name)." %}</span>
+    </div>
+
+    <div class="sticky-bar">
+      <button class="btn btn-primary" type="submit">{% if selectable %}{% trans "Add the ticked students" %}{% else %}{% trans "Add the students" %}{% endif %}</button>
+      <a class="btn" href="{% url 'people:groups' %}">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+  {% else %}
+  <div class="empty">
+    <p>{% trans "Nothing in this list can be added." %}</p>
+    <a class="btn btn-primary" href="{% url 'people:import' %}{% if can_edit %}?back=1{% endif %}">{% trans "Back" %}</a>
+  </div>
+  {% if preview.rows %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col" class="num col-num">#</th>
+        <th scope="col">{% trans "Student" %}</th>
+        <th scope="col">{% trans "Check" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in preview.rows %}
+      <tr class="row-{{ row.status }}">
+        <td data-label="#" class="num col-num">{{ forloop.counter }}</td>
+        <td data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
+        <td data-label="{% trans 'Check' %}"><span><span class="status-bad">{% trans "Not valid" %}</span>: {{ row.problems|join:", " }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

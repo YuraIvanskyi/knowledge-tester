@@ -1,0 +1,6 @@
+{% load i18n %}
+<nav class="subnav" aria-label="{% trans 'People' %}">
+  <a href="{% url 'people:groups' %}"{% if current == "groups" %} aria-current="page"{% endif %}>{% trans "Groups" %}</a>
+  <a href="{% url 'people:students' %}"{% if current == "students" %} aria-current="page"{% endif %}>{% trans "Students" %}</a>
+  <a href="{% url 'people:import' %}"{% if current == "import" %} aria-current="page"{% endif %}>{% trans "Import students" %}</a>
+</nav>

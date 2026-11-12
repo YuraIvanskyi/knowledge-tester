@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Regenerate PINs" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Regenerate all PINs?" %}</h1>
+  <p><strong>{{ group.name }}</strong></p>
+  <p class="alert alert-warn">{% blocktrans count n=n_with_pin %}{{ n }} active student already has a PIN. Every active student gets a new one and the old PIN stops working. Hand out the new list again.{% plural %}{{ n }} active students already have a PIN. Every active student gets a new one and the old PINs stop working. Hand out the new list again.{% endblocktrans %}</p>
+  <form method="post" action="{% url 'people:group_pins' group.pk %}" class="row">
+    {% csrf_token %}
+    <input type="hidden" name="mode" value="all">
+    <input type="hidden" name="confirm" value="1">
+    <button class="btn btn-danger" type="submit">{% trans "Regenerate all PINs" %}</button>
+    <a class="btn" href="{% url 'people:group' group.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

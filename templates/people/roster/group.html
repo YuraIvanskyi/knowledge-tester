@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ group.name }} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/people.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "people/roster/_tabs.html" with current="groups" %}
+  <div class="page-head">
+    <div>
+      <h1>{{ group.name }}{% if group.is_archived %} <span class="muted">({% trans "archived" %})</span>{% endif %}</h1>
+      {% if group.note %}<p class="muted note">{{ group.note }}</p>{% endif %}
+      {% if user.is_admin_role %}<p class="muted">{% blocktrans with owner=group.owner %}Teacher: {{ owner }}{% endblocktrans %}</p>{% endif %}
+    </div>
+    <div class="row">
+      <a class="btn btn-primary" href="{% url 'people:student_create' %}?group={{ group.pk }}">{% trans "Add student" %}</a>
+      <a class="btn" href="{% url 'people:import' %}?group={{ group.pk }}">{% trans "Import into this group" %}</a>
+    </div>
+  </div>
+
+  <p class="muted">
+    {% blocktrans count n=n_active %}{{ n }} active student{% plural %}{{ n }} active students{% endblocktrans %}
+    {% if n_inactive %}&middot; {% blocktrans count n=n_inactive %}{{ n }} has left{% plural %}{{ n }} have left{% endblocktrans %}{% endif %}
+  </p>
+  <div class="row">
+    <a class="btn" href="{% url 'people:gradebook' group.pk %}">{% trans "Gradebook" %}</a>
+    <a class="btn" href="{% url 'people:group_edit' group.pk %}">{% trans "Edit group" %}</a>
+    <a class="btn btn-danger" href="{% url 'people:group_delete' group.pk %}">{% trans "Delete group" %}</a>
+  </div>
+
+  {% if students %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Student" %}</th>
+        <th scope="col">{% trans "PIN" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr{% if not s.is_active %} class="row-inactive"{% endif %}>
+        <td data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
+        <td data-label="{% trans 'PIN' %}" class="mono">{% if s.pin %}{{ s.pin }}{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Status' %}">{% if s.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="muted">{% trans "Left the class" %}</span>{% endif %}</td>
+        <td data-label="{% trans 'Actions' %}"><a href="{% url 'people:student_edit' s.pk %}?next={{ request.path|urlencode }}">{% trans "Edit" %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>{% trans "This group has no students yet." %}</p>
+    <div class="row row-center">
+      <a class="btn btn-primary" href="{% url 'people:student_create' %}?group={{ group.pk }}">{% trans "Add student" %}</a>
+      <a class="btn" href="{% url 'people:import' %}?group={{ group.pk }}">{% trans "Import into this group" %}</a>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if n_active %}
+  <section class="panel stack-sm" aria-labelledby="pins-title">
+    <h2 id="pins-title">{% trans "PINs" %}</h2>
+    <p class="muted">{% trans "A PIN is a short code each student types after picking their name in a group session. It keeps classmates from answering for each other." %}
+      {% blocktrans count n=n_with_pin %}{{ n }} active student has a PIN.{% plural %}{{ n }} active students have a PIN.{% endblocktrans %}</p>
+    <div class="row">
+      {% if n_without_pin %}
+      <form method="post" action="{% url 'people:group_pins' group.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="mode" value="missing">
+        <button class="btn btn-primary" type="submit">{% blocktrans count n=n_without_pin %}Generate a PIN for {{ n }} student without one{% plural %}Generate PINs for {{ n }} students without one{% endblocktrans %}</button>
+      </form>
+      {% endif %}
+      {% if n_with_pin %}
+      <form method="post" action="{% url 'people:group_pins' group.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="mode" value="all">
+        <button class="btn" type="submit">{% trans "Regenerate all PINs" %}</button>
+      </form>
+      {% endif %}
+      <a class="btn" href="{% url 'people:group_pins' group.pk %}">{% trans "Printable PIN list" %}</a>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="panel stack-sm" aria-labelledby="session-title">
+    <h2 id="session-title">{% trans "Start a session for this group" %}</h2>
+    <p>{% trans "Open a session from a published test and choose this group in the session form. Students then pick their name from the class list, and their results land on their profile." %}</p>
+    <p class="muted">
+      <a href="{% url 'assessments:list' %}">{% trans "Go to tests" %}</a>
+      &middot; <a href="{% url 'delivery:list' %}">{% trans "All sessions" %}</a>
+      {% if n_sessions %}&middot; {% blocktrans count n=n_sessions %}{{ n }} session is tied to this group{% plural %}{{ n }} sessions are tied to this group{% endblocktrans %}{% endif %}
+    </p>
+  </section>
+</div>
+{% endblock %}
