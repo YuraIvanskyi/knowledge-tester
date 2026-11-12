@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 
 from apps.assessments.models import Assessment
 from apps.delivery.models import Sitting
+from apps.people import access as people_access
 
 RECENT = 5
 
@@ -28,6 +29,8 @@ def dashboard(request):
         "test_count": tests.count(),
         "open_count": open_sittings.count(),
         "session_count": sittings.count(),
+        "group_count": people_access.groups_for(user).filter(is_archived=False).count(),
+        "student_count": people_access.students_for(user).filter(is_active=True).count(),
         "recent_tests": tests.order_by("-updated_at")[:RECENT],
         "open_sessions": open_sittings.annotate(attempt_count=Count("attempts"))[:RECENT],
     }

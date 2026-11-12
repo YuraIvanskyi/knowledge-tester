@@ -2,13 +2,14 @@
 {% load i18n %}
 {% block title %}{% trans "Dashboard" %} - Knowledge Tester{% endblock %}
 {% block content %}
-{% url 'assessments:list' as tests_url %}{% url 'assessments:import' as import_url %}{% url 'delivery:list' as sessions_url %}
+{% url 'assessments:list' as tests_url %}{% url 'assessments:import' as import_url %}{% url 'delivery:list' as sessions_url %}{% url 'people:groups' as people_url %}
 <div class="stack">
   <div class="page-head">
     <h1>{% trans "Dashboard" %}</h1>
     <div class="row">
       {% if import_url %}<a class="btn btn-primary" href="{{ import_url }}">{% trans "Import a test" %}</a>{% endif %}
       {% if sessions_url %}<a class="btn" href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
+      {% if people_url %}<a class="btn" href="{{ people_url }}">{% trans "People" %}</a>{% endif %}
     </div>
   </div>
 
@@ -25,6 +26,9 @@
     {% blocktrans count n=open_count %}{{ n }} open session{% plural %}{{ n }} open sessions{% endblocktrans %}
     &middot;
     {% blocktrans count n=session_count %}{{ n }} session in total{% plural %}{{ n }} sessions in total{% endblocktrans %}
+    {% if people_url %}&middot;
+    {% blocktrans count n=group_count %}{{ n }} group{% plural %}{{ n }} groups{% endblocktrans %},
+    {% blocktrans count n=student_count %}{{ n }} student{% plural %}{{ n }} students{% endblocktrans %}{% endif %}
   </p>
 
   <section class="stack-sm">
