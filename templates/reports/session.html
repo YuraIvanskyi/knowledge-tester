@@ -13,6 +13,7 @@
     <div class="row">
       <a class="btn" href="{% url 'reports:csv' sitting.pk %}">{% trans "Download CSV" %}</a>
       {% if share_url %}<a class="btn" href="{{ share_url }}">{% trans "Session page" %}</a>{% endif %}
+      <a class="btn" href="{% url 'delivery:link' sitting.pk %}">{% trans "Link to students" %}</a>
     </div>
   </div>
 

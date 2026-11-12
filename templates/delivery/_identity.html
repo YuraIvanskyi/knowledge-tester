@@ -1,0 +1,40 @@
+{% load i18n %}
+{% comment %}
+  Who is taking the test. Free-name sessions: the typed fields. Class sessions: a plain list of
+  the class (names only; works without JavaScript, static/js/namepicker.js adds a search box)
+  and, with a PIN, the PIN field. Used by the test page and the Start form.
+{% endcomment %}
+{% if group_mode %}
+  <div class="field name-picker">
+    <label for="student">{% trans "Your name" %}</label>
+    <select id="student" name="student" required autocomplete="off" data-namepicker
+            data-filter-label="{% trans 'Search the class list' %}" data-filter-placeholder="{% trans 'Type part of your name' %}">
+      <option value="">{% trans "Choose your name" %}</option>
+      {% for s in roster %}
+        <option value="{{ s.id }}"{% if s.id == picked %} selected{% endif %}{% if not s.selectable %} disabled{% endif %}>{{ s.name }}{% if not s.selectable %} ({% trans "no PIN yet" %}){% endif %}</option>
+      {% endfor %}
+    </select>
+    {% if not roster %}<span class="help">{% trans "The class list is empty. Ask your teacher." %}</span>{% endif %}
+  </div>
+  {% if pin_mode %}
+    <div class="field">
+      <label for="pin">{% trans "Your personal PIN" %}</label>
+      <input type="password" id="pin" name="pin" maxlength="8" required autocomplete="off" autocapitalize="off" spellcheck="false" value="">
+      <span class="help">{% trans "The PIN your teacher gave you." %}</span>
+    </div>
+  {% endif %}
+{% endif %}
+{% for f in fields %}
+  <div class="field">
+    <label for="tf_{{ f.key }}">{{ f.label }}{% if not f.required %} <span class="muted">({% trans "optional" %})</span>{% endif %}</label>
+    <input type="text" id="tf_{{ f.key }}" name="tf_{{ f.key }}" maxlength="200" autocomplete="off"
+           {% if f.required %}required{% endif %} value="{{ f.value }}">
+  </div>
+{% endfor %}
+{% if sitting.access_code %}
+  <div class="field">
+    <label for="access_code">{% trans "Access code" %}</label>
+    <input type="text" id="access_code" name="access_code" maxlength="32" required autocomplete="off">
+    <span class="help">{% trans "Ask your teacher for the access code." %}</span>
+  </div>
+{% endif %}

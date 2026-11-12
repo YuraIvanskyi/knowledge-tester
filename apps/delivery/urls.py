@@ -1,7 +1,5 @@
 from django.urls import path
 
-from apps.core.stubs import not_implemented as stub
-
 from . import views
 
 app_name = "delivery"
@@ -14,5 +12,5 @@ urlpatterns = [
     path("<int:pk>/close/", views.session_close, name="close"),
     path("<int:pk>/reopen/", views.session_reopen, name="reopen"),
     path("<int:pk>/delete/", views.session_delete, name="delete"),
-    path("<int:pk>/link/", stub, name="link"),
+    path("<int:pk>/link/", views.session_link, name="link"),
 ]

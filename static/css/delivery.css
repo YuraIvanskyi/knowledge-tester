@@ -129,3 +129,51 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+/* Class sessions: pick your name */
+.name-picker .name-filter {
+  margin-bottom: var(--space-2);
+}
+.name-picker select {
+  min-height: 48px;
+}
+
+/* Teacher: create form checkbox row and the linking table */
+.check-field .choice {
+  align-items: flex-start;
+}
+.link-table td {
+  vertical-align: top;
+}
+.link-table select {
+  min-width: 14rem;
+}
+.link-cell {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.link-hint {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.link-table .typed {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 639px) {
+  .link-table td.link-cell-td {
+    display: block;
+    text-align: left;
+  }
+  .link-table td.link-cell-td::before {
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+  .link-table select {
+    min-width: 0;
+    width: 100%;
+  }
+}

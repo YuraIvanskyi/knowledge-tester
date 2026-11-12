@@ -32,7 +32,17 @@
     body.textContent = "";
     data.takers.forEach(function (t) {
       var tr = document.createElement("tr");
-      tr.appendChild(cell(t.name, labels.name));
+      var nameCell = cell("", labels.name);
+      var nameText = document.createElement("span");
+      nameText.textContent = t.name;
+      if (t.group) {
+        var group = document.createElement("span");
+        group.className = "muted";
+        group.textContent = " (" + t.group + ")";
+        nameText.appendChild(group);
+      }
+      nameCell.appendChild(nameText);
+      tr.appendChild(nameCell);
       tr.appendChild(cell(t.status_label, labels.status));
       tr.appendChild(
         cell(t.answered + " " + of + " " + data.total_questions, labels.answered, "num")

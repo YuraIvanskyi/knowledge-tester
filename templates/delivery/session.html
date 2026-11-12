@@ -23,22 +23,10 @@
     {% endif %}
     <form method="post" action="{% url 'taker:session' sitting.code %}" class="stack">
       {% csrf_token %}
-      {% for f in fields %}
-        <div class="field">
-          <label for="tf_{{ f.key }}">{{ f.label }}{% if not f.required %} <span class="muted">({% trans "optional" %})</span>{% endif %}</label>
-          <input type="text" id="tf_{{ f.key }}" name="tf_{{ f.key }}" maxlength="200" autocomplete="off"
-                 {% if f.required %}required{% endif %} value="{{ f.value }}">
-        </div>
-      {% endfor %}
-      {% if sitting.access_code %}
-        <div class="field">
-          <label for="access_code">{% trans "Access code" %}</label>
-          <input type="text" id="access_code" name="access_code" maxlength="32" required autocomplete="off">
-          <span class="help">{% trans "Ask your teacher for the access code." %}</span>
-        </div>
-      {% endif %}
+      {% include "delivery/_identity.html" %}
       <button type="submit" class="btn btn-primary btn-block">{% trans "Start" %}</button>
     </form>
   {% endif %}
 </div>
 {% endblock %}
+{% block scripts %}{% if group_mode and not closed %}<script src="{% static 'js/namepicker.js' %}" defer></script>{% endif %}{% endblock %}

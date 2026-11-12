@@ -1,0 +1,203 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# --- create form (forms.py) ---
+
+msgid "%(name)s (%(n)d student)"
+msgid_plural "%(name)s (%(n)d students)"
+msgstr[0] "%(name)s (%(n)d учень)"
+msgstr[1] "%(name)s (%(n)d учні)"
+msgstr[2] "%(name)s (%(n)d учнів)"
+
+msgid "%(n)d without a PIN"
+msgstr "без PIN-коду: %(n)d"
+
+msgid "Class (group)"
+msgstr "Клас (група)"
+
+msgid "No class: students type their own name"
+msgstr "Без класу: учні вводять ім’я самі"
+
+msgid "Pick a class and students choose their name from its list; their results land on their profile automatically."
+msgstr "Оберіть клас, і учні виберуть своє ім’я зі списку; їхні результати потраплять у профіль автоматично."
+
+msgid "Choose one of your own classes."
+msgstr "Оберіть один зі своїх класів."
+
+msgid "Ask for a personal PIN"
+msgstr "Запитувати особистий PIN-код"
+
+msgid "Students also type the PIN from their card. Students without a PIN cannot be picked in a PIN session."
+msgstr "Учні також вводять PIN-код зі своєї картки. Учнів без PIN-коду не можна вибрати в сесії з PIN-кодом."
+
+msgid "A personal PIN needs a class. Choose a class above, or untick this box."
+msgstr "Для особистого PIN-коду потрібен клас. Оберіть клас вище або зніміть цю позначку."
+
+msgid "You have no classes yet."
+msgstr "У вас ще немає класів."
+
+msgid "Add a class on the People page"
+msgstr "Додайте клас на сторінці «Люди»"
+
+# --- messages after creating a class session (views.py) ---
+
+msgid "This class has no active students yet. Add students before you share the link."
+msgstr "У цьому класі ще немає активних учнів. Додайте учнів, перш ніж ділитися посиланням."
+
+msgid "%(n)d student of this class has no PIN yet and cannot be picked in this session. Generate PINs on the class page."
+msgid_plural "%(n)d students of this class have no PIN yet and cannot be picked in this session. Generate PINs on the class page."
+msgstr[0] "%(n)d учень цього класу ще не має PIN-коду й не може бути вибраний у цій сесії. Створіть PIN-коди на сторінці класу."
+msgstr[1] "%(n)d учні цього класу ще не мають PIN-коду й не можуть бути вибрані в цій сесії. Створіть PIN-коди на сторінці класу."
+msgstr[2] "%(n)d учнів цього класу ще не мають PIN-коду й не можуть бути вибрані в цій сесії. Створіть PIN-коди на сторінці класу."
+
+# --- share page ---
+
+msgid "Class"
+msgstr "Клас"
+
+msgid "%(n)s student"
+msgid_plural "%(n)s students"
+msgstr[0] "%(n)s учень"
+msgstr[1] "%(n)s учні"
+msgstr[2] "%(n)s учнів"
+
+msgid "personal PIN required"
+msgstr "потрібен особистий PIN-код"
+
+msgid "pick your name"
+msgstr "учні вибирають своє ім’я"
+
+msgid "%(n)s student has no PIN yet and cannot be picked in this session."
+msgid_plural "%(n)s students have no PIN yet and cannot be picked in this session."
+msgstr[0] "%(n)s учень ще не має PIN-коду й не може бути вибраний у цій сесії."
+msgstr[1] "%(n)s учні ще не мають PIN-коду й не можуть бути вибрані в цій сесії."
+msgstr[2] "%(n)s учнів ще не мають PIN-коду й не можуть бути вибрані в цій сесії."
+
+msgid "Set PINs on the class page"
+msgstr "Задати PIN-коди на сторінці класу"
+
+msgid "This class has no active students, so nobody can join yet."
+msgstr "У цьому класі немає активних учнів, тож приєднатися поки що нікому."
+
+msgid "Open the class page"
+msgstr "Відкрити сторінку класу"
+
+msgid "%(linked)s of %(joined)s linked to students."
+msgstr "Прив’язано до учнів: %(linked)s із %(joined)s."
+
+msgid "Link to students"
+msgstr "Прив’язати до учнів"
+
+# --- taker pages of a class session ---
+
+msgid "Your name"
+msgstr "Ваше ім’я"
+
+msgid "Search the class list"
+msgstr "Пошук у списку класу"
+
+msgid "Type part of your name"
+msgstr "Введіть частину свого імені"
+
+msgid "Choose your name"
+msgstr "Оберіть своє ім’я"
+
+msgid "no PIN yet"
+msgstr "PIN-коду ще немає"
+
+msgid "The class list is empty. Ask your teacher."
+msgstr "Список класу порожній. Запитайте вчителя."
+
+msgid "Your personal PIN"
+msgstr "Ваш особистий PIN-код"
+
+msgid "The PIN your teacher gave you."
+msgstr "PIN-код, який вам дав учитель."
+
+msgid "Please choose your name from the list."
+msgstr "Будь ласка, оберіть своє ім’я зі списку."
+
+msgid "This name has no PIN yet. Ask your teacher."
+msgstr "Для цього імені ще немає PIN-коду. Запитайте вчителя."
+
+msgid "Too many wrong PINs for this name. Please try again in a few minutes."
+msgstr "Забагато неправильних PIN-кодів для цього імені. Спробуйте ще раз за кілька хвилин."
+
+msgid "Please type your PIN."
+msgstr "Будь ласка, введіть свій PIN-код."
+
+msgid "The PIN is not correct."
+msgstr "PIN-код неправильний."
+
+# --- linking page ---
+
+msgid "same name"
+msgstr "те саме ім’я"
+
+msgid "same words"
+msgstr "ті самі слова"
+
+msgid "similar"
+msgstr "схоже"
+
+msgid "No class"
+msgstr "Без класу"
+
+msgid "One of the chosen students is not available (any more). Nothing was saved. Check the list and try again."
+msgstr "Одного з вибраних учнів недоступно (вже). Нічого не збережено. Перевірте список і спробуйте ще раз."
+
+msgid "Saved: %(n)d attempt updated."
+msgid_plural "Saved: %(n)d attempts updated."
+msgstr[0] "Збережено: оновлено %(n)d спробу."
+msgstr[1] "Збережено: оновлено %(n)d спроби."
+msgstr[2] "Збережено: оновлено %(n)d спроб."
+
+msgid "Nothing to change."
+msgstr "Нічого змінювати."
+
+msgid "Choose the student each attempt belongs to, then save. The name the taker typed is never changed. A student is pre-selected only when the name is the same (or has the same words in another order); other suggestions are hints for you to confirm."
+msgstr "Оберіть учня, якому належить кожна спроба, і збережіть. Ім’я, яке ввів учасник, ніколи не змінюється. Учня вибрано наперед лише тоді, коли ім’я те саме (або має ті самі слова в іншому порядку); решта підказок потребує вашого підтвердження."
+
+msgid "You have no active students yet, so there is nobody to link to."
+msgstr "У вас ще немає активних учнів, тож прив’язувати нема до кого."
+
+msgid "Open the People page"
+msgstr "Відкрити сторінку «Люди»"
+
+msgid "%(linked)s of %(total)s attempts are linked to a student."
+msgstr "Прив’язано до учня: %(linked)s із %(total)s спроб."
+
+msgid "Typed name"
+msgstr "Введене ім’я"
+
+msgid "Linked to"
+msgstr "Прив’язано до"
+
+msgid "Student"
+msgstr "Учень"
+
+msgid "not linked"
+msgstr "не прив’язано"
+
+msgid "Not linked"
+msgstr "Не прив’язано"
+
+msgid "Unlink (no student)"
+msgstr "Відв’язати (без учня)"
+
+msgid "Currently linked"
+msgstr "Зараз прив’язано"
+
+msgid "Suggestions"
+msgstr "Підказки"
+
+msgid "Suggestions:"
+msgstr "Підказки:"
+
+msgid "Apply all"
+msgstr "Застосувати все"
+
+msgid "Nobody has taken this session yet, so there is nothing to link."
+msgstr "Ніхто ще не проходив цю сесію, тож прив’язувати нічого."

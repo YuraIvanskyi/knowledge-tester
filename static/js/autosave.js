@@ -14,6 +14,11 @@
   var unstarted = form.hasAttribute("data-unstarted");
   var timer = null;
   var DELAY = 800;
+  // Details the server refused (wrong PIN, no name picked...): do not send the same ones again
+  // until the taker changes something, so a wrong PIN is not counted once per answer.
+  var rejected = null;
+  var note = document.getElementById("details-note");
+  var DETAILS = 'input[name^="tf_"], input[name="access_code"], input[name="pin"], select[name="student"]';
 
   function questionId(name) {
     return name.indexOf("q_") === 0 ? name.slice(2) : null;
@@ -52,17 +57,33 @@
     var body = { unstarted: true };
     var t = form.querySelector("input[name=attempt_token]");
     if (t) body.attempt_token = t.value;
-    form.querySelectorAll('input[name^="tf_"], input[name="access_code"]').forEach(function (f) {
+    form.querySelectorAll(DETAILS).forEach(function (f) {
       body[f.name] = f.value;
     });
     return body;
   }
 
+  function isDetail(name) {
+    return (
+      name.indexOf("tf_") === 0 || name === "access_code" || name === "pin" || name === "student"
+    );
+  }
+
+  function showNote(errors) {
+    if (!note) return;
+    note.textContent = errors && errors.length ? errors.join(" ") : "";
+    note.hidden = !(errors && errors.length);
+  }
+
   function flush() {
     timer = null;
+    if (preview) pending = {};
+    if (preview || !Object.keys(pending).length) return;
+    var extra = unstarted ? details() : {};
+    var signature = JSON.stringify(extra);
+    if (unstarted && signature === rejected) return; // wait until the details change
     var batch = pending;
     pending = {};
-    if (preview || !Object.keys(batch).length) return;
     fetch(url, {
       method: "POST",
       credentials: "same-origin",
@@ -71,7 +92,7 @@
         "X-CSRFToken": token ? token.value : "",
       },
       body: JSON.stringify(
-        Object.assign({ answers: batch }, unstarted ? details() : {})
+        Object.assign({ answers: batch }, extra)
       ),
     })
       .then(function (r) {
@@ -82,12 +103,16 @@
         }
         return r.json().then(function (d) {
           if (d.started === false) {
-            // Details (name, access code) not valid yet: keep answers, retry when they change.
+            // Details (name, PIN, access code) not valid yet: keep answers, retry when they change.
+            rejected = signature;
+            showNote(d.errors);
             Object.keys(batch).forEach(function (k) {
               if (!(k in pending)) pending[k] = batch[k];
             });
           } else if (d.started) {
             unstarted = false;
+            rejected = null;
+            showNote(null);
             if (d.left !== null && d.left !== undefined && window.ktStartTimer) {
               window.ktStartTimer(d.left);
             }
@@ -107,8 +132,7 @@
     var t = ev.target;
     var qid = t.name ? questionId(t.name) : null;
     if (!qid) {
-      var isDetail = t.name && (t.name.indexOf("tf_") === 0 || t.name === "access_code");
-      if (isDetail && unstarted && Object.keys(pending).length) {
+      if (t.name && isDetail(t.name) && unstarted && Object.keys(pending).length) {
         if (timer) clearTimeout(timer);
         timer = setTimeout(flush, DELAY);
       }

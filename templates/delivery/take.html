@@ -31,20 +31,8 @@
       <input type="hidden" name="unstarted" value="1">
       <input type="hidden" name="attempt_token" value="{{ token }}">
       <div class="stack details">
-        {% for f in fields %}
-          <div class="field">
-            <label for="tf_{{ f.key }}">{{ f.label }}{% if not f.required %} <span class="muted">({% trans "optional" %})</span>{% endif %}</label>
-            <input type="text" id="tf_{{ f.key }}" name="tf_{{ f.key }}" maxlength="200" autocomplete="off"
-                   {% if f.required %}required{% endif %} value="{{ f.value }}">
-          </div>
-        {% endfor %}
-        {% if sitting.access_code %}
-          <div class="field">
-            <label for="access_code">{% trans "Access code" %}</label>
-            <input type="text" id="access_code" name="access_code" maxlength="32" required autocomplete="off">
-            <span class="help">{% trans "Ask your teacher for the access code." %}</span>
-          </div>
-        {% endif %}
+        <p id="details-note" class="alert alert-bad" role="status" hidden></p>
+        {% include "delivery/_identity.html" %}
       </div>
     {% endif %}
     <div class="questions">
@@ -84,5 +72,6 @@
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/autosave.js' %}" defer></script>
+{% if group_mode and unstarted %}<script src="{% static 'js/namepicker.js' %}" defer></script>{% endif %}
 {% if seconds_left is not None or time_limit %}<script src="{% static 'js/timer.js' %}" defer></script>{% endif %}
 {% endblock %}

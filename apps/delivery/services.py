@@ -33,8 +33,13 @@ def generate_code() -> str:
     return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
 
 
-def create_sitting(*, revision, user, title: str, access_code: str = "") -> Sitting:
-    """Create a sitting with a unique code (retries on the rare collision)."""
+def create_sitting(
+    *, revision, user, title: str, access_code: str = "", group=None, use_pin: bool = False
+) -> Sitting:
+    """Create a sitting with a unique code (retries on the rare collision).
+
+    `group` makes it a group-bound session (the caller has checked the group is the user's own);
+    `use_pin` only means something with a group, so it is dropped without one."""
     for _ in range(20):
         try:
             with transaction.atomic():
@@ -43,6 +48,8 @@ def create_sitting(*, revision, user, title: str, access_code: str = "") -> Sitt
                     code=generate_code(),
                     title=title,
                     access_code=access_code,
+                    group=group,
+                    use_pin=bool(use_pin and group is not None),
                     created_by=user,
                 )
         except IntegrityError:
@@ -105,11 +112,12 @@ def shuffled_orders(test: dict, seed: str) -> tuple[list[str], dict[str, list[st
     return order, option_orders
 
 
-def start_attempt(sitting: Sitting, taker: dict, token=None) -> Attempt:
+def start_attempt(sitting: Sitting, taker: dict, token=None, student=None) -> Attempt:
     """Create an attempt. `token` lets the page that was shown to the taker (and shuffled with
-    that token) become the attempt without re-shuffling; ignored if it is already taken."""
+    that token) become the attempt without re-shuffling; ignored if it is already taken.
+    `student` is the roster student picked in a group-bound session."""
     test = sitting.revision.test
-    attempt = Attempt(sitting=sitting, taker=taker)
+    attempt = Attempt(sitting=sitting, taker=taker, student=student)
     if token is not None and not Attempt.objects.filter(token=token).exists():
         attempt.token = token
     attempt.question_order, attempt.option_orders = shuffled_orders(test, str(attempt.token))
@@ -242,6 +250,37 @@ def delete_sitting(sitting: Sitting) -> int:
     return count
 
 
+# --- linking attempts to students (KT-604) ----------------------------------------------------
+
+
+class LinkError(ValueError):
+    """A chosen student is not one the teacher may link to (stale page or tampering)."""
+
+
+def apply_links(attempts, choices: dict[int, int | None], pool: dict[int, object]) -> int:
+    """Set `Attempt.student` for many attempts at once, all or nothing.
+
+    `choices` maps attempt pk -> student pk (None = unlink). `pool` maps student pk -> Student
+    for the students the teacher may link to (the session owner's active students). An attempt
+    that keeps the student it already has is always fine, even if that student is not in the
+    pool any more. Attempts not in `attempts` are ignored. `Attempt.taker` is never touched.
+    Returns the number of attempts changed."""
+    by_pk = {a.pk: a for a in attempts}
+    changes = []
+    for attempt_pk, student_pk in choices.items():
+        attempt = by_pk.get(attempt_pk)
+        if attempt is None or student_pk == attempt.student_id:
+            continue
+        if student_pk is not None and student_pk not in pool:
+            raise LinkError(student_pk)
+        changes.append((attempt, student_pk))
+    with transaction.atomic():
+        for attempt, student_pk in changes:
+            attempt.student = pool[student_pk] if student_pk is not None else None
+            attempt.save(update_fields=["student"])
+    return len(changes)
+
+
 # --- teacher live stats ------------------------------------------------------------------------
 
 
@@ -251,11 +290,13 @@ def session_stats(sitting: Sitting) -> dict:
     test = sitting.revision.test
     fields = taker_fields(test)
     total = len(test.get("questions", []))
-    attempts = sitting.attempts.exclude(status=Attempt.Status.VOIDED).annotate(
-        answered=Count("answers", filter=Q(answers__value__isnull=False))
+    attempts = (
+        sitting.attempts.exclude(status=Attempt.Status.VOIDED)
+        .select_related("student__group")
+        .annotate(answered=Count("answers", filter=Q(answers__value__isnull=False)))
     )
     takers = []
-    in_progress = submitted = 0
+    in_progress = submitted = linked = 0
     for attempt in attempts:
         if attempt.status == Attempt.Status.IN_PROGRESS:
             in_progress += 1
@@ -267,10 +308,16 @@ def session_stats(sitting: Sitting) -> dict:
                 "status": attempt.status,
                 "status_label": str(attempt.get_status_display()),
                 "answered": attempt.answered,
+                # the roster class of a linked student, shown next to the name
+                "group": attempt.student.group.name
+                if attempt.student_id and attempt.student.group_id
+                else "",
             }
         )
+        linked += 1 if attempt.student_id else 0
     return {
         "joined": len(takers),
+        "linked": linked,
         "in_progress": in_progress,
         "submitted": submitted,
         "total_questions": total,

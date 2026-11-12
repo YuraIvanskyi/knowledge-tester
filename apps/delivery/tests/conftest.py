@@ -168,3 +168,61 @@ def _reports_urls_available(settings):
 def start(client, sitting, name="Ann Lee", **extra):
     data = {"tf_name": name, **extra}
     return client.post(f"/s/{sitting.code}/", data)
+
+
+# --- class sessions (KT-603 / KT-604) ----------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def _fresh_cache():
+    """The PIN throttle lives in the cache: every test starts with no recorded failures."""
+    from django.core.cache import cache
+
+    cache.clear()
+    yield
+    cache.clear()
+
+
+def make_student(owner, group, name, pin="", **extra):
+    from apps.people.models import Student
+
+    return Student.objects.create(owner=owner, group=group, full_name=name, pin=pin, **extra)
+
+
+@pytest.fixture
+def group(teacher):
+    from apps.people.models import Group
+
+    return Group.objects.create(owner=teacher, name="7-A")
+
+
+@pytest.fixture
+def pupils(teacher, group):
+    """Ann (PIN 5829), Bob (PIN 7314), Cleo (no PIN), Dan (left the class), one other class."""
+    from apps.people.models import Group
+
+    other_group = Group.objects.create(owner=teacher, name="7-B")
+    return {
+        "ann": make_student(teacher, group, "Ann Lee", pin="5829", notes="SECRET-NOTE"),
+        "bob": make_student(teacher, group, "Bob Ray", pin="7314"),
+        "cleo": make_student(teacher, group, "Cleo Fox"),
+        "dan": make_student(teacher, group, "Dan Gone", pin="9065", is_active=False),
+        "eve": make_student(teacher, other_group, "Eve Stone", pin="1357"),
+    }
+
+
+@pytest.fixture
+def group_sitting(teacher, revision, group, pupils):
+    return services.create_sitting(revision=revision, user=teacher, title="7-A", group=group)
+
+
+@pytest.fixture
+def pin_sitting(teacher, revision, group, pupils):
+    return services.create_sitting(
+        revision=revision, user=teacher, title="7-A", group=group, use_pin=True
+    )
+
+
+def pick(client, sitting, student, **extra):
+    """POST the Start form of a class session (the no-JavaScript path)."""
+    return client.post(f"/s/{sitting.code}/", {"student": student.pk, **extra})

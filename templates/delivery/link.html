@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Link to students" %}: {{ sitting.title|default:sitting.code }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="page-head">
+    <div>
+      <h1>{% trans "Link to students" %}</h1>
+      <p class="muted">{{ sitting.title|default:sitting.code }} &middot; <span class="mono">{{ sitting.code }}</span></p>
+    </div>
+    <div class="row">
+      <a class="btn" href="{% url 'delivery:share' sitting.pk %}">{% trans "Session page" %}</a>
+      <a class="btn" href="{% url 'reports:session' sitting.pk %}">{% trans "Results" %}</a>
+    </div>
+  </div>
+
+  {% if error %}<p class="alert alert-bad" role="alert">{{ error }}</p>{% endif %}
+
+  <p>{% trans "Choose the student each attempt belongs to, then save. The name the taker typed is never changed. A student is pre-selected only when the name is the same (or has the same words in another order); other suggestions are hints for you to confirm." %}</p>
+
+  {% if no_students %}
+    <p class="alert alert-warn" role="note">{% trans "You have no active students yet, so there is nobody to link to." %} <a href="{% url 'people:groups' %}">{% trans "Open the People page" %}</a></p>
+  {% endif %}
+
+  {% if rows %}
+    <p class="muted">{% blocktrans with linked=linked total=total %}{{ linked }} of {{ total }} attempts are linked to a student.{% endblocktrans %}</p>
+    <form method="post" class="stack">
+      {% csrf_token %}
+      <table class="table link-table">
+        <thead>
+          <tr>
+            <th scope="col">{% trans "Typed name" %}</th>
+            <th scope="col">{% trans "Status" %}</th>
+            <th scope="col" class="num">{% trans "Score" %}</th>
+            <th scope="col">{% trans "Linked to" %}</th>
+            <th scope="col">{% trans "Student" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            {% with a=row.attempt %}
+            <tr>
+              <td data-label="{% trans 'Typed name' %}" class="typed"><label for="student_{{ a.pk }}">{{ row.typed }}</label></td>
+              <td data-label="{% trans 'Status' %}">{{ a.get_status_display }}</td>
+              <td data-label="{% trans 'Score' %}" class="num">{% if a.score is not None %}{{ a.score|floatformat:"-2" }} / {{ a.max_score|floatformat:"-2" }}{% if a.pending_reviews %} <span class="muted">{% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
+              <td data-label="{% trans 'Linked to' %}">{% if row.student %}<span>{{ row.student.full_name }}{% if row.student.group %} <span class="muted">({{ row.student.group.name }})</span>{% endif %}</span>{% else %}<span class="muted">{% trans "not linked" %}</span>{% endif %}</td>
+              <td data-label="{% trans 'Student' %}" class="link-cell-td">
+                <div class="link-cell">
+                  <select id="student_{{ a.pk }}" name="student_{{ a.pk }}">
+                    <option value="">{% if row.student %}{% trans "Unlink (no student)" %}{% else %}{% trans "Not linked" %}{% endif %}</option>
+                    {% if row.current_extra %}
+                      <optgroup label="{% trans 'Currently linked' %}"><option value="{{ row.current_extra.pk }}" selected>{{ row.current_extra.full_name }}</option></optgroup>
+                    {% endif %}
+                    {% if row.suggestions %}
+                      <optgroup label="{% trans 'Suggestions' %}">
+                        {% for s in row.suggestions %}<option value="{{ s.student.pk }}"{% if s.student.pk == row.selected %} selected{% endif %}>{{ s.student.full_name }}{% if s.student.group %}, {{ s.student.group.name }}{% endif %} ({{ s.percent }} %)</option>{% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% for g in option_groups %}
+                      <optgroup label="{{ g.label }}">
+                        {% for st in g.students %}<option value="{{ st.pk }}"{% if st.pk == row.selected and st.pk not in row.suggested_pks %} selected{% endif %}>{{ st.full_name }}</option>{% endfor %}
+                      </optgroup>
+                    {% endfor %}
+                  </select>
+                  {% if row.suggestions %}
+                    <p class="link-hint">{% trans "Suggestions:" %}
+                      {% for s in row.suggestions %}{{ s.student.full_name }} ({{ s.label }}, {{ s.percent }} %){% if not forloop.last %}; {% endif %}{% endfor %}
+                    </p>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="row">
+        <button type="submit" class="btn btn-primary">{% trans "Apply all" %}</button>
+        <a class="btn" href="{% url 'delivery:share' sitting.pk %}">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+  {% else %}
+    <div class="empty">
+      <p>{% trans "Nobody has taken this session yet, so there is nothing to link." %}</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
-from . import services
+from . import roster, services
 from .models import Attempt, Sitting
 
 COOKIE_MAX_AGE = 60 * 60 * 24 * 3
@@ -24,7 +24,9 @@ FIELD_PREFIX = "tf_"
 
 def _get_sitting(code: str) -> Sitting:
     try:
-        return Sitting.objects.select_related("revision").get(code=services.normalize_code(code))
+        return Sitting.objects.select_related("revision", "group").get(
+            code=services.normalize_code(code)
+        )
     except Sitting.DoesNotExist:
         raise Http404 from None
 
@@ -123,6 +125,28 @@ def _parse_token(raw) -> uuid.UUID | None:
         return None
 
 
+def _identity_context(sitting, test, data) -> dict:
+    """Who-are-you part of the landing page, shared by the test page and the Start form.
+
+    Free-name sessions ask the typed fields as before. Group-bound sessions replace the typed
+    `name` field by the class list (names only, see apps.delivery.roster) and, with a PIN, ask
+    for it; every other taker field is still asked. `data` is what was posted (or {})."""
+    group_mode = roster.is_group_bound(sitting)
+    fields = [
+        {**f, "value": data.get(FIELD_PREFIX + f["key"], "")}
+        for f in services.taker_fields(test)
+        if not (group_mode and f["key"] == "name")
+    ]
+    context = {"fields": fields, "group_mode": group_mode}
+    if group_mode:
+        context.update(
+            roster=roster.picker_options(sitting),
+            picked=roster.parse_student_id(data.get("student")),
+            pin_mode=sitting.use_pin,
+        )
+    return context
+
+
 def _render_unstarted(request, sitting, test, errors=None, data=None, token=None, preview=None):
     """The test itself as the landing page: identity fields on top, questions below.
     The attempt is created on the first autosave or on submit, using this page's token."""
@@ -136,15 +160,12 @@ def _render_unstarted(request, sitting, test, errors=None, data=None, token=None
         raw = getlist(f"q_{qid}") if q["type"] in services.CHOICE_TYPES else data.get(f"q_{qid}")
         values[qid] = services.clean_value(q, raw)
     questions = _build_questions(stub, test, values)
-    fields = [
-        {**f, "value": data.get(FIELD_PREFIX + f["key"], "")} for f in services.taker_fields(test)
-    ]
     context = {
+        **_identity_context(sitting, test, data),
         "sitting": sitting,
         "test": test,
         "unstarted": True,
         "token": token,
-        "fields": fields,
         "errors": errors or [],
         "questions": questions,
         "total": len(questions),
@@ -183,21 +204,39 @@ def enter(request):
 
 
 def _start_errors(data, sitting: Sitting, test: dict, fields: list[dict]):
-    """Validate identity fields + access code from a QueryDict or plain dict."""
+    """Validate identity fields + access code from a QueryDict or plain dict.
+
+    The one place every way of starting an attempt goes through (Start form, first autosave,
+    first submit). Returns (errors, taker values, picked student or None). In a group-bound
+    session the student comes from the class list (never a typed name), the PIN is checked when
+    required, and `max_attempts` is counted per student."""
     errors, taker = [], {}
+    group_mode = roster.is_group_bound(sitting)
     if sitting.access_code and (
         (data.get("access_code") or "").strip().casefold() != sitting.access_code.strip().casefold()
     ):
         errors.append(_("The access code is not correct."))
     for field in fields:
+        if group_mode and field["key"] == "name":
+            continue  # the picked student's name is used instead
         value = " ".join(str(data.get(FIELD_PREFIX + field["key"]) or "").split())[:200]
         if field.get("required", False) and not value:
             errors.append(_("Please fill in: %(field)s.") % {"field": field["label"]})
         taker[field["key"]] = value
+    if group_mode:
+        student = None
+        if not errors:  # the PIN is only compared (and counted) once everything else is fine
+            entry = roster.check_entry(sitting, data, max_attempts=_max_attempts(test))
+            student, errors = entry.student, entry.errors
+        elif roster.find_student(sitting, data.get("student")) is None:
+            errors.append(_("Please choose your name from the list."))
+        if student is not None:
+            taker = {"name": student.full_name, **taker}
+        return errors, taker, (student if not errors else None)
     used = services.attempts_used(sitting, taker.get("name", ""))
     if not errors and used >= _max_attempts(test):
         errors.append(_("You have already taken this test."))
-    return errors, taker
+    return errors, taker, None
 
 
 def session(request, code: str):
@@ -210,15 +249,18 @@ def session(request, code: str):
         services.enforce_deadline(attempt)
         if not attempt.is_finished:
             return redirect("taker:take", code=sitting.code)
-        if closed or _max_attempts(test) <= 1:
+        # In a class session the identity is the picked student, not the browser: the next
+        # student at a shared computer must be able to pick their own name.
+        one_try = _max_attempts(test) <= 1 and not roster.is_group_bound(sitting)
+        if closed or one_try:
             return redirect("taker:done", code=sitting.code)
 
     fields = services.taker_fields(test)
     posted = request.POST if request.method == "POST" else {}
     context = {
+        **_identity_context(sitting, test, posted),
         "sitting": sitting,
         "test": test,
-        "fields": [{**f, "value": posted.get(FIELD_PREFIX + f["key"], "")} for f in fields],
         "question_count": len(test.get("questions", [])),
         "time_limit": services.time_limit_minutes(test),
         "closed": closed,
@@ -229,11 +271,11 @@ def session(request, code: str):
     if closed or request.method != "POST":
         return render(request, "delivery/session.html", context)
 
-    errors, taker = _start_errors(request.POST, sitting, test, fields)
+    errors, taker, student = _start_errors(request.POST, sitting, test, fields)
     if errors:
         context["errors"] = errors
         return render(request, "delivery/session.html", context)
-    new_attempt = services.start_attempt(sitting, taker)
+    new_attempt = services.start_attempt(sitting, taker, student=student)
     return _set_cookie(redirect("taker:take", code=sitting.code), sitting, new_attempt)
 
 
@@ -270,11 +312,11 @@ def save(request, code: str):
         if not payload.get("unstarted") or sitting.status == Sitting.Status.CLOSED:
             return JsonResponse({"error": "no attempt"}, status=403)
         test = sitting.revision.test
-        errors, taker = _start_errors(payload, sitting, test, services.taker_fields(test))
+        errors, taker, student = _start_errors(payload, sitting, test, services.taker_fields(test))
         if errors:
             return JsonResponse({"started": False, "errors": errors})
         attempt = services.start_attempt(
-            sitting, taker, token=_parse_token(payload.get("attempt_token"))
+            sitting, taker, token=_parse_token(payload.get("attempt_token")), student=student
         )
         created = True
 
@@ -323,12 +365,14 @@ def submit(request, code: str):
             return redirect("taker:done", code=sitting.code)
         if not request.POST.get("unstarted") or sitting.status == Sitting.Status.CLOSED:
             return redirect("taker:session", code=sitting.code)
-        errors, taker = _start_errors(request.POST, sitting, test, services.taker_fields(test))
+        errors, taker, student = _start_errors(
+            request.POST, sitting, test, services.taker_fields(test)
+        )
         if errors:
             return _render_unstarted(
                 request, sitting, test, errors=errors, data=request.POST, token=token
             )
-        attempt = services.start_attempt(sitting, taker, token=token)
+        attempt = services.start_attempt(sitting, taker, token=token, student=student)
         created = True
 
     def reply(response):
