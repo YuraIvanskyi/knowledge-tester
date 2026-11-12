@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static i18n report_extras %}
+{% block title %}{% trans "Gradebook" %}: {{ group.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/gradebook.css' %}">{% endblock %}
+{% block content %}
+<div class="stack gradebook">
+  <div class="page-head">
+    <div>
+      <h1>{% trans "Gradebook" %}: {{ group.name }}</h1>
+      <p class="muted">
+        {% blocktranslate count n=student_count %}{{ n }} student{% plural %}{{ n }} students{% endblocktranslate %}
+        &middot;
+        {% blocktranslate count n=session_count %}{{ n }} session{% plural %}{{ n }} sessions{% endblocktranslate %}
+      </p>
+    </div>
+    <div class="row gb-actions">
+      <a class="btn" href="{% url 'people:group' group.pk %}">{% trans "Back to the group" %}</a>
+      {% if not book.is_empty %}<a class="btn" href="{{ csv_url }}">{% trans "Download CSV" %}</a>{% endif %}
+    </div>
+  </div>
+
+  <form method="get" class="row gb-filter" aria-label="{% trans 'Filter the sessions' %}">
+    <div class="field">
+      <label for="gb-project">{% trans "Project" %}</label>
+      <select id="gb-project" name="project">
+        <option value="">{% trans "All projects" %}</option>
+        {% for p in projects %}<option value="{{ p.pk }}"{% if project and project.pk == p.pk %} selected{% endif %}>{{ p.title }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="gb-since">{% trans "Sessions since" %}</label>
+      <input id="gb-since" type="date" name="since" value="{% if since %}{{ since|date:'Y-m-d' }}{% endif %}">
+    </div>
+    <div class="field gb-filter-buttons">
+      <button class="btn" type="submit">{% trans "Apply" %}</button>
+      {% if project or since %}<a class="btn btn-link" href="{% url 'people:gradebook' group.pk %}">{% trans "Reset" %}</a>{% endif %}
+    </div>
+  </form>
+
+  {% if not book.rows %}
+    <div class="empty">
+      <p>{% trans "This group has no students yet." %}</p>
+      <a class="btn btn-primary" href="{% url 'people:group' group.pk %}">{% trans "Add students" %}</a>
+    </div>
+  {% elif not book.columns %}
+    <div class="empty">
+      {% if project or since %}
+        <p>{% trans "No sessions match this filter." %}</p>
+        <a class="btn" href="{% url 'people:gradebook' group.pk %}">{% trans "Reset" %}</a>
+      {% else %}
+        <p>{% trans "No sessions for this group yet. Open a session for the group, or link results to its students, and they appear here." %}</p>
+        <div class="row gb-empty-actions">
+          <a class="btn btn-primary" href="{% url 'assessments:list' %}">{% trans "Start a session" %}</a>
+          <a class="btn" href="{% url 'people:group' group.pk %}">{% trans "Back to the group" %}</a>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="muted">{% trans "Each cell is the percent of the student's best finished attempt in that session. Attempts that are still running or were voided do not count." %}</p>
+
+    <ul class="gb-legend plain" aria-label="{% trans 'Legend' %}">
+      {% for band, text in legend %}<li><span class="status-{{ band }}">{{ text }}</span></li>{% endfor %}
+      <li><span class="mono">*</span> {% trans "provisional: some answers still wait for review" %}</li>
+      {% if book.has_grades %}<li><span class="mono">4</span> {% trans "the grade of the best attempt, as set by the test" %}</li>{% endif %}
+      {% if book.has_multiple %}<li><span class="mono">&times;2</span> {% trans "the student took the session more than once; the best attempt is shown" %}</li>{% endif %}
+      <li><span class="mono">&mdash;</span> {% trans "no result" %}</li>
+    </ul>
+
+    <p class="muted gb-hint">{% trans "Swipe sideways to see all sessions. The names stay in place." %}</p>
+
+    <div class="gb-scroll" role="region" tabindex="0" aria-label="{% trans 'Gradebook table' %}">
+      <table class="gb-table">
+        <caption class="visually-hidden">{% trans "Gradebook" %}: {{ group.name }}</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="gb-corner">{% trans "Student" %}</th>
+            {% for col in book.columns %}
+            <th scope="col" class="gb-col">
+              <a class="gb-col-title" href="{% url 'reports:session' col.sitting_id %}" title="{{ col.title }} ({% trans 'Code' %}: {{ col.code }})">{{ col.title }}</a>
+              {% if col.subtitle %}<span class="gb-sub gb-test">{{ col.subtitle }}</span>{% endif %}
+              <span class="gb-sub">{{ col.date|date:"d.m.Y" }}{% if not col.bound %} &middot; {% trans "linked" %}{% endif %}</span>
+            </th>
+            {% endfor %}
+            <th scope="col" class="gb-avg">{% trans "Average" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in book.rows %}
+          <tr>
+            <th scope="row" class="gb-name">
+              <a href="{% url 'people:student' row.student.pk %}">{{ row.student.full_name }}</a>
+              {% if not row.student.is_active %}<span class="gb-sub">{% trans "inactive" %}</span>{% endif %}
+            </th>
+            {% for cell in row.cells %}
+            {% if cell %}
+            <td class="gb-cell gb-cell-{{ cell.band }}">
+              <a class="gb-link status-{{ cell.band }}" href="{% url 'reports:attempt' cell.attempt_id %}">
+                <span class="gb-pct">{{ cell.percent|numd }}&nbsp;%{% if cell.provisional %}<span class="gb-flag" aria-hidden="true">*</span>{% endif %}</span>
+                {% if cell.show_grade %}<span class="gb-sub">{{ cell.grade|grade_text }}</span>{% endif %}
+                {% if cell.attempts > 1 %}<span class="gb-sub" aria-hidden="true">&times;{{ cell.attempts }}</span>{% endif %}
+                <span class="visually-hidden">
+                  {% if cell.band == 'ok' %}{% trans "good" %}{% elif cell.band == 'warn' %}{% trans "fair" %}{% else %}{% trans "weak" %}{% endif %}{% if cell.provisional %}, {% trans "provisional" %}{% endif %}{% if cell.attempts > 1 %}, {% blocktranslate count n=cell.attempts %}best of {{ n }} attempt{% plural %}best of {{ n }} attempts{% endblocktranslate %}{% endif %}
+                </span>
+              </a>
+            </td>
+            {% else %}
+            <td class="gb-cell gb-empty-cell"><span class="muted" aria-hidden="true">&mdash;</span><span class="visually-hidden">{% trans "no result" %}</span></td>
+            {% endif %}
+            {% endfor %}
+            <td class="gb-cell gb-avg">
+              {% if row.average is not None %}<strong>{{ row.average|numd }}&nbsp;%</strong>{% if row.provisional %}<span class="gb-flag" aria-hidden="true">*</span><span class="visually-hidden">, {% trans "provisional" %}</span>{% endif %}
+              {% else %}<span class="muted" aria-hidden="true">&mdash;</span><span class="visually-hidden">{% trans "no result" %}</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" class="gb-name">{% trans "Average" %}</th>
+            {% for col in book.columns %}
+            <td class="gb-cell">
+              {% if col.average is not None %}<strong>{{ col.average|numd }}&nbsp;%</strong>{% if col.provisional %}<span class="gb-flag" aria-hidden="true">*</span><span class="visually-hidden">, {% trans "provisional" %}</span>{% endif %}
+              {% else %}<span class="muted" aria-hidden="true">&mdash;</span><span class="visually-hidden">{% trans "no result" %}</span>{% endif %}
+            </td>
+            {% endfor %}
+            <td class="gb-cell gb-avg">
+              {% if book.overall_average is not None %}<strong>{{ book.overall_average|numd }}&nbsp;%</strong>{% if book.overall_provisional %}<span class="gb-flag" aria-hidden="true">*</span><span class="visually-hidden">, {% trans "provisional" %}</span>{% endif %}
+              {% else %}<span class="muted" aria-hidden="true">&mdash;</span><span class="visually-hidden">{% trans "no result" %}</span>{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="gb-name">{% trans "Students with a result" %}</th>
+            {% for col in book.columns %}
+            <td class="gb-cell">{{ col.takers }}&nbsp;/&nbsp;{{ student_count }}</td>
+            {% endfor %}
+            <td class="gb-cell gb-avg"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="muted gb-note">{% trans "Student average: the mean of the row. Session average: the mean of the students who took it. Bottom right: the mean of all the cells above." %}</p>
+  {% endif %}
+</div>
+{% endblock %}

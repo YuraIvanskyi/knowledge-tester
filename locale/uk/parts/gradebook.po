@@ -1,0 +1,133 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Gradebook"
+msgstr "Журнал оцінок"
+
+msgid "%(n)s student"
+msgid_plural "%(n)s students"
+msgstr[0] "%(n)s учень"
+msgstr[1] "%(n)s учні"
+msgstr[2] "%(n)s учнів"
+
+msgid "%(n)s session"
+msgid_plural "%(n)s sessions"
+msgstr[0] "%(n)s сесія"
+msgstr[1] "%(n)s сесії"
+msgstr[2] "%(n)s сесій"
+
+msgid "Back to the group"
+msgstr "Назад до групи"
+
+msgid "Download CSV"
+msgstr "Завантажити CSV"
+
+msgid "Filter the sessions"
+msgstr "Фільтр сесій"
+
+msgid "Project"
+msgstr "Проєкт"
+
+msgid "All projects"
+msgstr "Усі проєкти"
+
+msgid "Sessions since"
+msgstr "Сесії від дати"
+
+msgid "Apply"
+msgstr "Застосувати"
+
+msgid "Reset"
+msgstr "Скинути"
+
+msgid "This group has no students yet."
+msgstr "У цій групі ще немає учнів."
+
+msgid "Add students"
+msgstr "Додати учнів"
+
+msgid "No sessions match this filter."
+msgstr "Жодна сесія не відповідає фільтру."
+
+msgid "No sessions for this group yet. Open a session for the group, or link results to its students, and they appear here."
+msgstr "Для цієї групи ще немає сесій. Відкрийте сесію для групи або прив’яжіть результати до її учнів, і вони з’являться тут."
+
+msgid "Start a session"
+msgstr "Розпочати сесію"
+
+msgid "Each cell is the percent of the student's best finished attempt in that session. Attempts that are still running or were voided do not count."
+msgstr "У кожній клітинці — відсоток найкращої завершеної спроби учня в цій сесії. Спроби, що ще тривають або скасовані, не враховуються."
+
+msgid "Legend"
+msgstr "Умовні позначки"
+
+msgid "%(n)s %% and above: good"
+msgstr "%(n)s %% і вище: добре"
+
+msgid "%(low)s %% to below %(high)s %%: fair"
+msgstr "від %(low)s %% до %(high)s %% (не включно): задовільно"
+
+msgid "below %(n)s %%: weak"
+msgstr "нижче %(n)s %%: слабко"
+
+msgid "provisional: some answers still wait for review"
+msgstr "попередньо: деякі відповіді ще чекають на перевірку"
+
+msgid "the grade of the best attempt, as set by the test"
+msgstr "оцінка найкращої спроби за шкалою тесту"
+
+msgid "the student took the session more than once; the best attempt is shown"
+msgstr "учень проходив сесію кілька разів; показано найкращу спробу"
+
+msgid "no result"
+msgstr "немає результату"
+
+msgid "Swipe sideways to see all sessions. The names stay in place."
+msgstr "Проведіть пальцем убік, щоб побачити всі сесії. Імена залишаються на місці."
+
+msgid "Gradebook table"
+msgstr "Таблиця журналу оцінок"
+
+msgid "Student"
+msgstr "Учень"
+
+msgid "Code"
+msgstr "Код"
+
+msgid "linked"
+msgstr "прив’язана"
+
+msgid "Average"
+msgstr "Середнє"
+
+msgid "inactive"
+msgstr "неактивний"
+
+msgid "good"
+msgstr "добре"
+
+msgid "fair"
+msgstr "задовільно"
+
+msgid "weak"
+msgstr "слабко"
+
+msgid "provisional"
+msgstr "попередньо"
+
+msgid "best of %(n)s attempt"
+msgid_plural "best of %(n)s attempts"
+msgstr[0] "найкраща з %(n)s спроби"
+msgstr[1] "найкраща з %(n)s спроб"
+msgstr[2] "найкраща з %(n)s спроб"
+
+msgid "Students with a result"
+msgstr "Учнів із результатом"
+
+msgid "Student average: the mean of the row. Session average: the mean of the students who took it. Bottom right: the mean of all the cells above."
+msgstr "Середнє учня — середнє за його рядком. Середнє сесії — середнє за учнями, які її проходили. Унизу праворуч — середнє за всіма клітинками вище."
+
+msgid "* Provisional: some answers still wait for review, so the number may change."
+msgstr "* Попередньо: деякі відповіді ще чекають на перевірку, тому число може змінитися."
