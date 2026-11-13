@@ -606,3 +606,11 @@ def test_next_parameter_only_redirects_to_this_site(client_for, teacher, mine, m
     assert inside["Location"] == reverse("people:students")
     outside = client.post(url, {**data, "next": "https://evil.example/phish"})
     assert outside["Location"] == reverse("people:group", args=[mine.pk])
+
+
+@pytest.mark.parametrize("junk", ["²", "①", "١٢٣٤٥٦٧٨٩٠١٢٣٤٥٦٧٨٩٠", "-1", "1.5", " 3"])
+@pytest.mark.parametrize("name", ["people:student_create", "people:students"])
+def test_odd_group_values_in_the_query_are_ignored_not_a_500(teacher_client, mine, name, junk):
+    """str.isdigit() accepts "²" and "①", which int() then rejects."""
+    response = teacher_client.get(reverse(name), {"group": junk})
+    assert response.status_code == 200

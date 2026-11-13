@@ -42,6 +42,21 @@ class LoginView(DjangoLoginView):
     template_name = "registration/login.html"
     redirect_authenticated_user = True
 
+    def post(self, request, *args, **kwargs):
+        if services.LOGIN_PER_CLIENT.blocked(services.client_ident(request)):
+            form = self.get_form()
+            form.add_error(None, _("Too many failed sign-in attempts. Wait a few minutes."))
+            return self.render_to_response(self.get_context_data(form=form), status=429)
+        return super().post(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        services.LOGIN_PER_CLIENT.hit(services.client_ident(self.request))
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        services.LOGIN_PER_CLIENT.clear(services.client_ident(self.request))
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:

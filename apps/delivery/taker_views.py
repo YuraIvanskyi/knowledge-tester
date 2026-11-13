@@ -49,6 +49,18 @@ def _get_attempt(request, sitting: Sitting) -> Attempt | None:
     return Attempt.objects.filter(sitting=sitting, token=token).first()
 
 
+def _attempt_of_page(request, sitting: Sitting, page_token) -> tuple[Attempt | None, bool]:
+    """The attempt of this browser: its cookie, or else the attempt whose token the posting page
+    carries (that token becomes the cookie, so it is the same secret). The fallback covers a
+    request that leaves before the Set-Cookie of the first one has arrived. Returns
+    (attempt or None, True when it was found by the page token and the cookie must be set)."""
+    attempt = _get_attempt(request, sitting)
+    if attempt is None and page_token is not None:
+        attempt = Attempt.objects.filter(sitting=sitting, token=page_token).first()
+        return attempt, attempt is not None
+    return attempt, False
+
+
 def _set_cookie(response, sitting: Sitting, attempt: Attempt):
     response.set_cookie(
         _cookie_name(sitting),
@@ -288,8 +300,10 @@ def session(request, code: str):
         "previous": attempt,
         "cancelled": cancelled,
     }
-    if not closed and request.method != "POST":
+    if not closed and request.method != "POST" and not sitting.access_code:
         return _render_unstarted(request, sitting, test, cancelled=cancelled)
+    # With an access code the questions stay hidden until it has been entered: the Start form
+    # below (identity + code, no questions) is the landing page, and posting it starts the attempt.
     if closed or request.method != "POST":
         return render(request, "delivery/session.html", context)
 
@@ -320,7 +334,6 @@ def save(request, code: str):
     Before the attempt exists (the test page is the landing page), a payload with
     "unstarted": true plus the tf_* fields starts it as soon as the details are valid."""
     sitting = _get_sitting(code)
-    attempt = _get_attempt(request, sitting)
     try:
         payload = json.loads(request.body or b"{}")
         answers = payload["answers"]
@@ -328,8 +341,10 @@ def save(request, code: str):
             raise ValueError
     except (ValueError, KeyError, TypeError):
         return JsonResponse({"error": "bad request"}, status=400)
+    attempt, created = _attempt_of_page(
+        request, sitting, _parse_token(payload.get("attempt_token"))
+    )
 
-    created = False
     if attempt is None or (attempt.is_finished and payload.get("unstarted")):
         if not payload.get("unstarted") or sitting.status == Sitting.Status.CLOSED:
             return JsonResponse({"error": "no attempt"}, status=403)
@@ -374,9 +389,8 @@ def _posted_values(request, test: dict) -> dict[str, object]:
 def submit(request, code: str):
     sitting = _get_sitting(code)
     test = sitting.revision.test
-    attempt = _get_attempt(request, sitting)
     token = _parse_token(request.POST.get("attempt_token"))
-    created = False
+    attempt, created = _attempt_of_page(request, sitting, token)
 
     if attempt is not None and token is not None and attempt.token == token:
         pass  # the attempt shown on this page (autosave started it, or a repeated submit)

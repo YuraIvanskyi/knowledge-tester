@@ -114,18 +114,34 @@ def shuffled_orders(test: dict, seed: str) -> tuple[list[str], dict[str, list[st
 
 def start_attempt(sitting: Sitting, taker: dict, token=None, student=None) -> Attempt:
     """Create an attempt. `token` lets the page that was shown to the taker (and shuffled with
-    that token) become the attempt without re-shuffling; ignored if it is already taken.
-    `student` is the roster student picked in a group-bound session."""
+    that token) become the attempt without re-shuffling. Starting twice with the same token (a
+    repeated autosave that overtook the first response, a double tap) returns the attempt that
+    already exists instead of making a second one. A token that belongs to another session is
+    ignored. `student` is the roster student picked in a group-bound session."""
+    if token is not None:
+        existing = Attempt.objects.filter(token=token).first()
+        if existing is not None:
+            if existing.sitting_id == sitting.pk:
+                return existing
+            token = None  # somebody else's token: shuffle with a fresh one
     test = sitting.revision.test
     attempt = Attempt(sitting=sitting, taker=taker, student=student)
-    if token is not None and not Attempt.objects.filter(token=token).exists():
+    if token is not None:
         attempt.token = token
     attempt.question_order, attempt.option_orders = shuffled_orders(test, str(attempt.token))
-    attempt.save()
     minutes = time_limit_minutes(test)
-    if minutes:
-        attempt.deadline_at = attempt.started_at + timedelta(minutes=minutes)
-        attempt.save(update_fields=["deadline_at"])
+    try:
+        with transaction.atomic():
+            attempt.save()
+            if minutes:
+                attempt.deadline_at = attempt.started_at + timedelta(minutes=minutes)
+                attempt.save(update_fields=["deadline_at"])
+    except IntegrityError:
+        # Two requests with one token hit the insert together: the loser takes the winner's.
+        winner = Attempt.objects.filter(token=attempt.token, sitting=sitting).first()
+        if winner is None:
+            raise
+        return winner
     return attempt
 
 
@@ -195,14 +211,16 @@ def grade(attempt: Attempt) -> None:
 
 def finalize(attempt: Attempt, status: str = Attempt.Status.SUBMITTED) -> bool:
     """Finish an in-progress attempt exactly once and grade it. Returns True if it changed."""
-    now = timezone.now()
-    changed = Attempt.objects.filter(pk=attempt.pk, status=Attempt.Status.IN_PROGRESS).update(
-        status=status, submitted_at=now
-    )
-    attempt.refresh_from_db()
-    if changed:
-        grade(attempt)
+    # One transaction for the flip and the grading: a second request that loses the race waits for
+    # the write lock, then sees an attempt that is already graded (the done page needs the score).
+    with transaction.atomic():
+        changed = Attempt.objects.filter(pk=attempt.pk, status=Attempt.Status.IN_PROGRESS).update(
+            status=status, submitted_at=timezone.now()
+        )
         attempt.refresh_from_db()
+        if changed:
+            grade(attempt)
+            attempt.refresh_from_db()
     return bool(changed)
 
 

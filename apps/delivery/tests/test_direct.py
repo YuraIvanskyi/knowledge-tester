@@ -2,6 +2,7 @@
 
 import json
 import re
+import uuid
 
 import pytest
 
@@ -148,7 +149,7 @@ def test_access_code_required_on_direct_page(client, untimed):
     untimed.save()
     html = client.get(f"/s/{untimed.code}/").content.decode()
     assert 'name="access_code"' in html
-    token = token_of(html)
+    token = str(uuid.uuid4())  # the code-gated landing page has no questions and no token
     data = {
         "unstarted": "1",
         "attempt_token": token,
@@ -162,3 +163,25 @@ def test_access_code_required_on_direct_page(client, untimed):
     assert not Attempt.objects.exists()
     r = client.post(f"/s/{untimed.code}/submit/", {**data, "access_code": "OPEN-sesame"})
     assert r["Location"] == f"/s/{untimed.code}/done/"
+
+
+def test_access_code_hides_the_questions_until_it_is_entered(client, untimed):
+    untimed.access_code = "open-sesame"
+    untimed.save()
+    html = client.get(f"/s/{untimed.code}/").content.decode()
+    assert 'name="access_code"' in html
+    assert "Which fraction equals 0.5?" not in html  # a question of the test
+    assert 'name="q_q1"' not in html
+    # a wrong code shows the same gate, still without questions
+    wrong = client.post(f"/s/{untimed.code}/", {"tf_name": "Ann", "access_code": "nope"})
+    assert "access code is not correct" in wrong.content.decode()
+    assert "Which fraction equals 0.5?" not in wrong.content.decode()
+    assert not Attempt.objects.exists()
+    # the right code starts the attempt and leads to the questions
+    right = client.post(f"/s/{untimed.code}/", {"tf_name": "Ann", "access_code": "OPEN-sesame"})
+    assert right.status_code == 302 and right["Location"] == f"/s/{untimed.code}/take/"
+    assert "Which fraction equals 0.5?" in client.get(right["Location"]).content.decode()
+
+
+def test_without_an_access_code_the_questions_are_on_the_landing_page(client, untimed):
+    assert "Which fraction equals 0.5?" in client.get(f"/s/{untimed.code}/").content.decode()

@@ -114,6 +114,10 @@ def client_ident(request) -> str:
     return request.META.get("REMOTE_ADDR") or "unknown"
 
 
+# Wrong passwords at the login page: 10 per client per 5 minutes. Per client, not per account:
+# a per-account lock would let any student on the network lock the teacher out.
+LOGIN_PER_CLIENT = Throttle("login", limit=10, window=5 * 60)
+
 # Wrong invite codes: 5 per client per 10 minutes, and 60 per hour across all clients.
 REGISTER_PER_CLIENT = Throttle("register", limit=5, window=10 * 60)
 REGISTER_GLOBAL = Throttle("register-all", limit=60, window=60 * 60)

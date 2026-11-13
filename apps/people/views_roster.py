@@ -38,7 +38,7 @@ MAX_CHECKBOX_ROWS = 800
 def _query_group(request, name: str = "group") -> Group | None:
     """A group named in the query string, only if the user may manage it (else ignored)."""
     value = request.GET.get(name, "")
-    if not value.isdigit():
+    if not value.isdecimal() or len(value) > 18:  # isdigit() admits "²", which int() rejects
         return None
     return groups_for(request.user).filter(pk=int(value)).first()
 
@@ -257,7 +257,11 @@ def student_list(request):
     if group_filter == "none":
         qs = qs.filter(group__isnull=True)
         selected_group = "none"
-    elif group_filter.isdigit() and any(g.pk == int(group_filter) for g in my_groups):
+    elif (
+        group_filter.isdecimal()
+        and len(group_filter) <= 18
+        and any(g.pk == int(group_filter) for g in my_groups)
+    ):
         qs = qs.filter(group_id=int(group_filter))
         selected_group = group_filter
     for token in normalize_name(query).split():
@@ -532,7 +536,9 @@ def import_confirm(request):
     rows = _stored_rows(data)
     selected = None
     if len(rows) <= MAX_CHECKBOX_ROWS:
-        selected = {int(v) for v in request.POST.getlist("include") if v.isdigit()}
+        selected = {
+            int(v) for v in request.POST.getlist("include") if v.isdecimal() and len(v) <= 18
+        }
     preview_url = f"{reverse('people:import')}?step=preview"
     try:
         result = services.apply_import(

@@ -1,3 +1,4 @@
+from django.test import Client
 from django.urls import reverse
 
 
@@ -36,3 +37,44 @@ def test_logout_is_post_only(teacher_client):
 
 def test_superuser_gets_admin_role(admin_user):
     assert admin_user.is_admin_role
+
+
+# --- throttle on wrong passwords --------------------------------------------------------------
+
+
+def _wrong(client, username="teacher"):
+    return client.post(reverse("accounts:login"), {"username": username, "password": "nope"})
+
+
+def test_login_is_blocked_after_ten_wrong_passwords(client, teacher, password):
+    for _ in range(10):
+        assert _wrong(client).status_code == 200
+    response = _wrong(client)
+    assert response.status_code == 429
+    assert "Too many failed sign-in attempts" in response.content.decode()
+    # even the right password is refused while the block lasts
+    right = client.post(reverse("accounts:login"), {"username": "teacher", "password": password})
+    assert right.status_code == 429
+    assert "_auth_user_id" not in client.session
+
+
+def test_the_block_is_per_client_not_per_account(client, teacher, password):
+    for _ in range(10):
+        _wrong(client)
+    other = Client(REMOTE_ADDR="10.0.0.7")  # another phone on the LAN
+    response = other.post(reverse("accounts:login"), {"username": "teacher", "password": password})
+    assert response.status_code == 302
+
+
+def test_a_good_login_resets_the_count(client, teacher, password):
+    for _ in range(9):
+        _wrong(client)
+    assert (
+        client.post(
+            reverse("accounts:login"), {"username": "teacher", "password": password}
+        ).status_code
+        == 302
+    )
+    client.logout()
+    for _ in range(9):
+        assert _wrong(client).status_code == 200
