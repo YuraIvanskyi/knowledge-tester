@@ -2,9 +2,7 @@
 $ErrorActionPreference = "Continue"
 Set-Location (Split-Path -Parent $PSScriptRoot)
 
-if (-not $env:UV_PROJECT_ENVIRONMENT) {
-    $env:UV_PROJECT_ENVIRONMENT = Join-Path $env:LOCALAPPDATA "KnowledgeTester\venv"
-}
+# The environment is the repo-local .venv (uv default). To keep it elsewhere, e.g. outside a OneDrive folder, set UV_PROJECT_ENVIRONMENT.
 
 $steps = @(
     @{ Name = "ruff check";          Args = @("ruff", "check", ".") },

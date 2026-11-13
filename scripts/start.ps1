@@ -5,10 +5,7 @@ param([int]$Port = 8000)
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path -Parent $PSScriptRoot)
 
-# Keep the virtual environment outside OneDrive (thousands of small files would be synced).
-if (-not $env:UV_PROJECT_ENVIRONMENT) {
-    $env:UV_PROJECT_ENVIRONMENT = Join-Path $env:LOCALAPPDATA "KnowledgeTester\venv"
-}
+# The environment is the repo-local .venv (uv default). To keep it elsewhere, e.g. outside a OneDrive folder, set UV_PROJECT_ENVIRONMENT.
 
 python -m uv sync
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

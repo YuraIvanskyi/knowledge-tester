@@ -1,45 +1,95 @@
 {
+  // Cross-platform: no hard-coded paths. Python tasks use the interpreter selected in VS Code
+  // (the workspace .venv created by `uv sync`). `uv` itself must be on PATH (https://docs.astral.sh/uv/).
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "sandbox: migrate + seed_demo",
-      "type": "shell",
-      "command": "& \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\python.exe\" manage.py migrate -v0; if ($?) { & \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\python.exe\" manage.py seed_demo }",
+      "label": "uv sync (creates .venv)",
+      "type": "process",
+      "command": "uv",
+      "args": ["sync", "--extra", "xlsx"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "sandbox: migrate",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["manage.py", "migrate", "-v0"],
       "options": {
         "cwd": "${workspaceFolder}",
-        "env": { "KT_DATA_DIR": "${userHome}\\AppData\\Local\\KnowledgeTester-sandbox" },
-        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+        "env": { "KT_DATA_DIR": "${userHome}/.knowledge-tester-sandbox" }
+      },
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "sandbox: migrate + seed_demo",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["manage.py", "seed_demo"],
+      "dependsOn": ["sandbox: migrate"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "KT_DATA_DIR": "${userHome}/.knowledge-tester-sandbox" }
       },
       "presentation": { "reveal": "silent", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Sandbox: reset (delete throw-away data dir)",
-      "type": "shell",
-      "command": "Remove-Item -Recurse -Force \"$env:LOCALAPPDATA\\KnowledgeTester-sandbox\" -ErrorAction SilentlyContinue; 'Sandbox data removed.'",
-      "options": {
-        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
-      },
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": [
+        "-c",
+        "import shutil, sys; shutil.rmtree(sys.argv[1], ignore_errors=True); print('Sandbox data removed.')",
+        "${userHome}/.knowledge-tester-sandbox"
+      ],
       "problemMatcher": []
     },
     {
-      "label": "uv sync (venv outside OneDrive)",
-      "type": "shell",
-      "command": "python -m uv sync",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": { "UV_PROJECT_ENVIRONMENT": "${userHome}\\AppData\\Local\\KnowledgeTester\\venv" }
-      },
+      "label": "ruff: check",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "ruff", "check", "."],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "ruff: format",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "ruff", "format", "."],
+      "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     },
     {
       "label": "ruff: check + format",
-      "type": "shell",
-      "command": "& \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\ruff.exe\" check . ; & \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\ruff.exe\" format .",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
-      },
+      "dependsOn": ["ruff: check", "ruff: format"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "ruff: format --check",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "ruff", "format", "--check", "."],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "pytest",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "pytest"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Quality gate: ruff + pytest",
+      "dependsOn": ["ruff: check", "ruff: format --check", "pytest"],
+      "dependsOrder": "sequence",
+      "group": "test",
       "problemMatcher": []
     }
   ]

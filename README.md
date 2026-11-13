@@ -11,10 +11,9 @@ Planning, architecture and progress live in [idea/](idea/). Start with [idea/pla
 
 ## Setup
 
-Keep the virtual environment **outside OneDrive**, otherwise thousands of package files get synced:
+`uv sync` creates the virtual environment in `.venv` inside the repository (git-ignored); VS Code picks it up automatically. If the repository lives in a OneDrive folder, keep the environment outside it instead, otherwise thousands of package files get synced: set `UV_PROJECT_ENVIRONMENT` (for example to `$env:LOCALAPPDATA\KnowledgeTester\venv`, `setx` makes it permanent) and select that interpreter in VS Code.
 
 ```powershell
-$env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\KnowledgeTester\venv"   # setx to make it permanent
 python -m uv sync --extra xlsx                  # the xlsx extra (openpyxl) enables XLSX roster import
 python -m uv run manage.py migrate
 python -m uv run manage.py seed_demo      # demo users: teacher/teacher and admin/admin

@@ -1,14 +1,16 @@
 {
-  // Manual-tryout launchers. The interpreter is the uv venv kept OUTSIDE OneDrive.
-  // "Real" data dir: %LOCALAPPDATA%\KnowledgeTester. "Sandbox" data dir: %LOCALAPPDATA%\KnowledgeTester-sandbox
-  // (throw-away copy, safe to experiment with; use "Sandbox: reset" to wipe it).
+  // Manual-tryout launchers. Work on any clone and OS: the interpreter is the one selected in VS Code
+  // (Python: Select Interpreter), which auto-detects the workspace .venv created by `uv sync`.
+  // "Real" data dir: the app default (%LOCALAPPDATA%\KnowledgeTester on Windows,
+  // ~/.local/share/knowledge-tester elsewhere, or KT_DATA_DIR).
+  // "Sandbox" data dir: ~/.knowledge-tester-sandbox (throw-away; wipe it with the "Sandbox: reset" task).
+  // The quality gate is the task "Quality gate: ruff + pytest" (Terminal > Run Task).
   "version": "0.2.0",
   "configurations": [
     {
       "name": "Dev server (runserver, debug, real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["runserver", "127.0.0.1:8000"],
       "django": true,
@@ -19,7 +21,6 @@
       "name": "LAN server for phones (serve, real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["serve", "--port", "8000"],
       "console": "integratedTerminal",
@@ -30,12 +31,11 @@
       "name": "Sandbox: seed + dev server (debug)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["runserver", "127.0.0.1:8001"],
       "django": true,
       "console": "integratedTerminal",
-      "env": { "KT_DATA_DIR": "${userHome}/AppData/Local/KnowledgeTester-sandbox" },
+      "env": { "KT_DATA_DIR": "${userHome}/.knowledge-tester-sandbox" },
       "preLaunchTask": "sandbox: migrate + seed_demo",
       "justMyCode": true
     },
@@ -43,12 +43,11 @@
       "name": "Sandbox: seed + LAN server for phones",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["serve", "--port", "8001"],
       "console": "integratedTerminal",
       "subProcess": true,
-      "env": { "KT_DATA_DIR": "${userHome}/AppData/Local/KnowledgeTester-sandbox" },
+      "env": { "KT_DATA_DIR": "${userHome}/.knowledge-tester-sandbox" },
       "preLaunchTask": "sandbox: migrate + seed_demo",
       "justMyCode": true
     },
@@ -56,7 +55,6 @@
       "name": "Migrate (real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["migrate"],
       "console": "integratedTerminal"
@@ -65,7 +63,6 @@
       "name": "Seed demo users + sample test (real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["seed_demo"],
       "console": "integratedTerminal"
@@ -74,7 +71,6 @@
       "name": "Create superuser (real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["createsuperuser"],
       "console": "integratedTerminal"
@@ -83,7 +79,6 @@
       "name": "Import test from JSON file (asks for path, real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": [
         "import_test",
@@ -99,7 +94,6 @@
       "name": "Export JSON Schema (schema/test.v1.schema.json)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["export_schema"],
       "console": "integratedTerminal"
@@ -108,7 +102,6 @@
       "name": "Django shell (real data)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "program": "${workspaceFolder}/manage.py",
       "args": ["shell"],
       "console": "integratedTerminal"
@@ -117,7 +110,6 @@
       "name": "Tests: all (pytest)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "module": "pytest",
       "args": ["-x", "-q"],
       "cwd": "${workspaceFolder}",
@@ -128,19 +120,11 @@
       "name": "Tests: current file",
       "type": "debugpy",
       "request": "launch",
-      "python": "${userHome}/AppData/Local/KnowledgeTester/venv/Scripts/python.exe",
       "module": "pytest",
       "args": ["${file}", "-x", "-q"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "justMyCode": false
-    },
-    {
-      "name": "Quality gate: ruff + pytest (scripts/check.ps1)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "powershell -ExecutionPolicy Bypass -File scripts/check.ps1",
-      "cwd": "${workspaceFolder}"
     }
   ],
   "inputs": [
