@@ -55,6 +55,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -144,6 +148,7 @@ a:hover {
 }
 .container-narrow {
   max-width: 28rem;
+  margin-inline: auto;
 }
 .stack > * + * {
   margin-top: var(--space-4);
@@ -240,11 +245,73 @@ a:hover {
 .nav form {
   margin: 0;
 }
+.topbar-user {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-3);
+}
+.topbar-user form {
+  margin: 0;
+}
+.topbar-user button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.topbar-user button:hover {
+  text-decoration: underline;
+}
+.user-name {
+  display: none;
+  color: var(--muted);
+}
+@media (min-width: 900px) {
+  .user-name {
+    display: inline;
+  }
+}
+/* Phones: brand and log out on the first row, the section links on their own row below */
 @media (max-width: 639px) {
+  .topbar-user {
+    order: 2;
+  }
   .nav {
+    order: 3;
     flex: 1 0 100%;
     border-top: 1px solid var(--border);
   }
+}
+
+/* Sub navigation under the top bar (People, Manage): plain links, tall enough to tap */
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+.subnav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+.subnav a:hover {
+  text-decoration: underline;
+}
+.subnav a[aria-current="page"] {
+  font-weight: 700;
+  border-bottom-color: var(--accent);
 }
 
 /* Buttons */
@@ -305,6 +372,25 @@ a:hover {
 .btn[disabled],
 .btn[aria-disabled="true"] {
   opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Tap targets: a standalone text link, and a small box (checkbox, radio) wrapped in a label */
+
+.link-tap {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.tap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.tap input[disabled] {
   cursor: not-allowed;
 }
 
@@ -464,6 +550,50 @@ legend {
   .table td:not([data-label])::before {
     content: none;
   }
+
+  /* Card pattern. One td names the row (cell-title), one holds the links (cell-actions), and
+     a compact table lets the remaining cells flow on one wrapped line of "Label: value".
+     These cells flow as inline text (not flex) so a value made of several parts wraps as text. */
+  .table td.cell-title,
+  .table td.cell-actions {
+    display: block;
+    text-align: left;
+  }
+  .table td.cell-title::before,
+  .table td.cell-actions::before {
+    content: none;
+  }
+  .table td.cell-title {
+    font-weight: 600;
+    padding-top: var(--space-2);
+  }
+  .table.table-compact tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-4);
+    padding-inline: var(--space-3);
+  }
+  .table.table-compact td {
+    display: block;
+    width: auto;
+    padding-inline: 0;
+    text-align: left;
+  }
+  .table.table-compact td[data-label]::before {
+    content: attr(data-label) ":";
+    display: inline;
+    margin-inline-end: var(--space-1);
+  }
+  .table.table-compact td.cell-title,
+  .table.table-compact td.cell-actions {
+    width: 100%;
+    flex-basis: 100%;
+  }
+  .table.table-compact td.cell-title::before,
+  .table.table-compact td.cell-actions::before {
+    content: none;
+  }
 }
 
 /* Text helpers and status */
@@ -496,7 +626,7 @@ legend {
 }
 
 .alert {
-  margin: 0 0 var(--space-4);
+  margin-bottom: var(--space-4);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -594,6 +724,7 @@ legend {
 }
 .lang-switch button {
   min-height: 44px;
+  min-width: 44px;
   padding: 0;
   background: none;
   border: 0;

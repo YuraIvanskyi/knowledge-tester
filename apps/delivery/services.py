@@ -206,6 +206,19 @@ def finalize(attempt: Attempt, status: str = Attempt.Status.SUBMITTED) -> bool:
     return bool(changed)
 
 
+def void_attempt(attempt: Attempt) -> bool:
+    """Cancel an attempt (teacher action). Returns True if it changed.
+
+    Only the status changes: answers and the score stay for the teacher, and everything that
+    counts results (gradebook, profile, results, name-based attempt limits) already skips
+    voided attempts."""
+    if attempt.status == Attempt.Status.VOIDED:
+        return False
+    attempt.status = Attempt.Status.VOIDED
+    attempt.save(update_fields=["status"])
+    return True
+
+
 def is_past_deadline(attempt: Attempt, grace: timedelta = timedelta(0)) -> bool:
     return bool(attempt.deadline_at and timezone.now() > attempt.deadline_at + grace)
 

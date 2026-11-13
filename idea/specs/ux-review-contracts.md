@@ -1,6 +1,6 @@
 # UX review wave: plan and shared contracts
 
-- Status: Ready to implement (written 2026-11-13)
+- Status: Wave 0 done (2026-11-13); workstreams A to E in progress
 - Expands: [plan.md §17](../plan.md#17-uiux-guidelines), §12.3, §12.6, §13.1, §13.2 · Tasks: UX-01 to UX-18
 - Read first: [prototype-contracts.md](prototype-contracts.md) (UI vocabulary, CSP, offline, i18n, ownership) and [people-contracts.md](people-contracts.md) (data rules). This file only adds what is new.
 
@@ -79,9 +79,11 @@ Today every cell of a stacked row is its own "label … value" line, which is wh
 
 | Class | On | Effect below 640 px |
 |---|---|---|
-| `cell-title` | the `td` that names the row (test, student, session) | No `data-label` text, left aligned, weight 600, full width: the card's heading |
-| `cell-actions` | the `td` holding links or buttons | No label, left aligned, full width, wraps (`flex-wrap: wrap`, gap `--space-2` / `--space-4`) |
-| `table-compact` | the `table` | The remaining labelled cells flow as one wrapped line of "Label: value" pairs instead of one line each |
+| `cell-title` | the `td` that names the row (test, student, session) | No `data-label` text, left aligned, weight 600, full width, flows as inline text: the card's heading |
+| `cell-actions` | the `td` holding links or buttons | No label, left aligned, full width, flows as inline text (links wrap with their " · " separators) |
+| `table-compact` | the `table` (together with `.table`) | The remaining labelled cells flow as one wrapped line of "Label: value" pairs instead of one line each |
+
+Checked on the real sessions table at 390 px (three sessions): no sideways scroll, 865 px tall.
 
 Desktop rendering does not change. Rules for templates: every stacked table gets exactly one `cell-title`; action cells get `cell-actions`; add `table-compact` wherever the other cells are short (numbers, dates, statuses). A cell that can hold long text (a question, a note) stays a normal labelled cell.
 

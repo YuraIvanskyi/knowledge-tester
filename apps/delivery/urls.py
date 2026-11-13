@@ -1,11 +1,14 @@
 from django.urls import path
 
+from apps.core.stubs import not_implemented
+
 from . import views
 
 app_name = "delivery"
 
 urlpatterns = [
     path("", views.session_list, name="list"),
+    path("new/", not_implemented, name="pick"),  # UX-06, workstream B
     path("new/<int:revision_pk>/", views.session_create, name="create"),
     path("<int:pk>/", views.session_share, name="share"),
     path("<int:pk>/stats/", views.session_stats, name="stats"),
