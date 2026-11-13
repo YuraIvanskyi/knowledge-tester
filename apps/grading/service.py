@@ -6,7 +6,7 @@ from django.db import transaction
 
 from apps.delivery.models import Answer
 
-from .engine import NEEDS_REVIEW, grade_answer, grade_test
+from .engine import NEEDS_REVIEW, grade_test
 
 
 @transaction.atomic
@@ -39,12 +39,12 @@ def grade_attempt(attempt) -> None:
     result = grade_test(test, values, manual)
 
     changed = []
-    for qid, question in questions.items():
+    for qid in questions:
         answer = existing[qid]
-        auto = grade_answer(question, answer.value)
         if not grading_enabled:
             new_score, new_status = None, result.per_question[qid].status
         else:
+            auto = result.auto[qid]
             new_score = auto.points
             new_status = auto.status
             if auto.status == NEEDS_REVIEW and answer.manual_score is not None:

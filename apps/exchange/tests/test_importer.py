@@ -283,3 +283,45 @@ def test_importing_a_normalised_document_changes_nothing():
     again = import_document(copy.deepcopy(normalised))
     assert again.document == normalised
     assert again.report.warnings == []
+
+
+# --- hostile numbers and types: an error in the report, never an exception ----------------------
+
+
+@pytest.mark.parametrize("points", [float("inf"), float("-inf"), float("nan"), 1e308, 1e9])
+def test_absurd_points_are_reported_not_raised(points):
+    result = import_document(doc(single(points=points)))
+    assert not result.ok
+    assert any("points" in issue.path for issue in result.report.errors)
+
+
+@pytest.mark.parametrize("text", ['{"weight": NaN}', '{"weight": Infinity}'])
+def test_option_weight_must_be_a_real_number(text):
+    weight = json.loads(text)["weight"]
+    q = {
+        "type": "multiple_choice",
+        "text": "Q?",
+        "scoring": "per_option",
+        "options": [{"text": "A", "correct": True, "weight": weight}, {"text": "B"}],
+    }
+    assert not import_document(doc(q)).ok
+
+
+def test_tolerance_must_be_finite():
+    q = {"type": "short_answer", "text": "Q?", "mode": "number", "accept": ["1"]}
+    q["tolerance"] = float("inf")
+    assert not import_document(doc(q)).ok
+
+
+@pytest.mark.parametrize("bad_type", [["single_choice"], {"a": 1}, 7, None])
+def test_a_question_type_that_is_not_a_string_is_an_error(bad_type):
+    q = single()
+    q["type"] = bad_type
+    result = import_document(doc(q))
+    assert not result.ok
+    assert any("type" in issue.path for issue in result.report.errors)
+
+
+def test_the_json_text_form_of_infinity_is_also_handled():
+    text = json.dumps(doc(single())).replace('"text": "Q?"', '"text": "Q?", "points": Infinity')
+    assert not import_document(text).ok

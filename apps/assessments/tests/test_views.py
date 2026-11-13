@@ -338,3 +338,13 @@ def test_list_query_count_does_not_grow_with_tests(client_a, teacher_a, test_a):
     with CaptureQueriesContext(connection) as many:
         client_a.get(url)
     assert len(many) == len(few)
+
+
+@pytest.mark.parametrize("junk", ["abc", "²", "①", "-1", "1.5", "9" * 40])
+def test_a_junk_project_id_falls_back_to_the_default_project(client, teacher, junk):
+    """Posting project=abc used to reach the ORM as a non-number and return a 500."""
+    client.force_login(teacher)
+    response = client.post(
+        reverse("assessments:create"), {"title": "My test", "project": junk, "new_project": ""}
+    )
+    assert response.status_code == 302

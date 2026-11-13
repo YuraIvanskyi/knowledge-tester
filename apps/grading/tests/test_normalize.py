@@ -83,3 +83,9 @@ def test_lookalike_makes_mixed_script_equal():
 )
 def test_parse_number(raw, expected):
     assert parse_number(raw) == expected
+
+
+@pytest.mark.parametrize("variant", ["м´ята", "м’ята", "мʼята", "м`ята", "м′ята", "м'ята"])
+def test_every_apostrophe_variant_matches_the_plain_one(variant):
+    """The acute accent U+00B4 used to be split by NFKC before it reached the apostrophe table."""
+    assert normalize_text(variant) == normalize_text("м'ята")

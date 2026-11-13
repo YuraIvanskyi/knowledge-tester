@@ -49,9 +49,8 @@ def create(request):
             if new_project:
                 project = Project.objects.create(owner=request.user, title=new_project[:200])
             else:
-                project = (
-                    projects.filter(pk=request.POST.get("project") or 0).first() or default_project
-                )
+                project = services.chosen_project(projects, request.POST.get("project"))
+                project = project or default_project
             language = translation.get_language() or django_settings.LANGUAGE_CODE
             document = editing.blank_document(title[:200], language.split("-")[0])
             assessment = services.create_assessment(project, document)

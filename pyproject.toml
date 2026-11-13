@@ -51,3 +51,7 @@ DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py"]
 testpaths = ["apps", "tests"]
 addopts = "-q"
+filterwarnings = [
+    # WhiteNoise warns that collectstatic has not run; tests do not serve static files.
+    "ignore:No directory at:UserWarning",
+]

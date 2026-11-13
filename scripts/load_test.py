@@ -109,12 +109,24 @@ def form_fields(page: str) -> dict:
     return fields
 
 
+def run_student(index: int, args, start_gate: threading.Barrier) -> None:
+    """One thread: a crash is recorded as an error, and never leaves the others at the barrier."""
+    try:
+        student(index, args, start_gate)
+    except threading.BrokenBarrierError:
+        pass  # somebody else failed before the start; that failure is already recorded
+    except Exception as exc:  # noqa: BLE001 - a load test reports everything
+        start_gate.abort()
+        fail(f"student {index}: {type(exc).__name__}: {exc}")
+
+
 def student(index: int, args, start_gate: threading.Barrier) -> None:
     client = Client(args.base)
     rng = random.Random(index)
     code = args.code
     status, page, _ = client.request("GET test page", f"/s/{code}/")
     if status != 200:
+        start_gate.abort()  # the others would wait for this student forever
         return
     token = re.search(r'name="attempt_token"[^>]*value="([^"]+)"', page)
     if not token:
@@ -188,7 +200,9 @@ def main() -> int:
         poller = threading.Thread(target=teacher_poll, args=(args, stop), daemon=True)
         poller.start()
     started = time.perf_counter()
-    threads = [threading.Thread(target=student, args=(i, args, gate)) for i in range(args.students)]
+    threads = [
+        threading.Thread(target=run_student, args=(i, args, gate)) for i in range(args.students)
+    ]
     for t in threads:
         t.start()
     for t in threads:

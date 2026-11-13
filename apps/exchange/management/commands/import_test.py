@@ -34,7 +34,9 @@ class Command(BaseCommand):
         if not result.ok:
             raise CommandError("Import failed, nothing was created.")
 
-        proj, _ = Project.objects.get_or_create(owner=owner, title=project)
+        # Titles are not unique (the web form can make two): use the first open one.
+        proj = Project.objects.filter(owner=owner, title=project, is_archived=False).first()
+        proj = proj or Project.objects.create(owner=owner, title=project)
         assessment = create_assessment(proj, result.document)
         self.stdout.write(
             self.style.SUCCESS(

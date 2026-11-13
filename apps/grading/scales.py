@@ -58,22 +58,27 @@ def grade_label(
     max_score: Decimal,
     percent: Decimal | None,
 ) -> str:
-    """Return the grade label for a result. Empty string if nothing is gradable."""
+    """Return the grade label for a result. Empty string if nothing is gradable.
+
+    `percent` is the rounded value for display; the band is decided from score / max_score."""
     if percent is None or max_score <= 0:
         return ""
     grading = grading or {}
     scale = grading.get("scale") or "percent"
+    # Bands are compared with the exact percentage: the rounded one (shown to people) would put
+    # 10/12 = 83.33 % just under the 83.333... start of mark 11, and 49.96 % over a 50 % pass mark.
+    exact = score * 100 / max_score
     thresholds = grading.get("thresholds")
 
     if scale == "points":
         return f"{fmt_number(score)} / {fmt_number(max_score)}"
     if scale == "pass_fail":
         pass_percent = Decimal(str(grading.get("pass_percent", DEFAULT_PASS_PERCENT)))
-        return "Pass" if percent >= pass_percent else "Fail"
+        return "Pass" if exact >= pass_percent else "Fail"
     if scale == "ua_12":
-        return pick_label(percent, ua_12_thresholds())
+        return pick_label(exact, ua_12_thresholds())
     if scale == "five_point":
-        return pick_label(percent, thresholds or DEFAULT_FIVE_POINT)
+        return pick_label(exact, thresholds or DEFAULT_FIVE_POINT)
     if scale == "custom":
-        return pick_label(percent, thresholds) if thresholds else f"{percent} %"
+        return pick_label(exact, thresholds) if thresholds else f"{percent} %"
     return f"{percent} %"  # "percent" and anything unknown

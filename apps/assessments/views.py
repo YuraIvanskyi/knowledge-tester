@@ -130,7 +130,7 @@ def _target_project(request, projects):
     new_title = request.POST.get("new_project", "").strip()
     if new_title:
         return Project.objects.create(owner=request.user, title=new_title[:200])
-    chosen = projects.filter(pk=request.POST.get("project") or 0).first()
+    chosen = services.chosen_project(projects, request.POST.get("project"))
     return chosen or services.ensure_default_project(request.user)
 
 

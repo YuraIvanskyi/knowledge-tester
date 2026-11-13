@@ -10,6 +10,7 @@ from decimal import Decimal, InvalidOperation
 _APOSTROPHES = dict.fromkeys("’ʼ‘ʹ′´`ʻ՚＇", "'")
 _DASHES = dict.fromkeys("‐‑‒–—―−⁃", "-")
 _QUOTES = dict.fromkeys("“”„‟«»″〝〞", '"')
+_APOSTROPHE_TABLE = str.maketrans(_APOSTROPHES)
 _DASH_TABLE = str.maketrans(_DASHES)
 _UNIFY = str.maketrans({**_APOSTROPHES, **_DASHES, **_QUOTES})
 
@@ -41,7 +42,8 @@ def normalize_text(value: object, *, case_sensitive: bool = False, lookalike: bo
     """Normalise a short answer for comparison. Order follows plan §9.3."""
     if value is None:
         return ""
-    text = unicodedata.normalize("NFKC", str(value))  # 1. NFKC
+    # Apostrophes first: NFKC would turn the acute accent U+00B4 into "space + combining accent".
+    text = unicodedata.normalize("NFKC", str(value).translate(_APOSTROPHE_TABLE))  # 1. NFKC
     text = _WS.sub(" ", text).strip()  # 2. trim + collapse whitespace
     if not case_sensitive:  # 3. casefold
         text = text.casefold()

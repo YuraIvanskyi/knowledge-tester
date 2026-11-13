@@ -35,6 +35,9 @@ class TestResult:
     grade: str
     pending_reviews: int
     per_question: dict[str, AnswerResult] = field(default_factory=dict)
+    # The automatic result of each question before a reviewer's score is applied (only when
+    # grading is enabled). Lets callers store auto and manual scores without grading twice.
+    auto: dict[str, AnswerResult] = field(default_factory=dict)
 
     @property
     def provisional(self) -> bool:
@@ -192,6 +195,7 @@ def grade_test(
     enabled = grading.get("enabled", True)
 
     per_question: dict[str, AnswerResult] = {}
+    auto: dict[str, AnswerResult] = {}
     for question in test.get("questions", []):
         qid = str(question["id"])
         value = answers.get(qid)
@@ -199,7 +203,7 @@ def grade_test(
             status = UNANSWERED if _is_blank(question, value) else GRADED
             per_question[qid] = AnswerResult(ZERO, ZERO, status)
             continue
-        result = grade_answer(question, value)
+        result = auto[qid] = grade_answer(question, value)
         per_question[qid] = apply_manual(result, manual_scores.get(qid))
 
     if not enabled:
@@ -212,4 +216,4 @@ def grade_test(
     if max_score > 0:
         percent = (score / max_score * 100).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
     grade = grade_label(grading, score, max_score, percent)
-    return TestResult(q2(score), q2(max_score), percent, grade, pending, per_question)
+    return TestResult(q2(score), q2(max_score), percent, grade, pending, per_question, auto)

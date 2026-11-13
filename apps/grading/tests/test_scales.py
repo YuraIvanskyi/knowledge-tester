@@ -72,4 +72,29 @@ from apps.grading.scales import grade_label
     ],
 )
 def test_grade_label(grading, score, max_score, percent, expected):
+    if grading and grading.get("scale") in BANDED and percent is not None:
+        # The band follows score / max_score, so make the pair agree with the percent of the row.
+        score, max_score = percent * 10, D(1000)
     assert grade_label(grading, score, max_score, percent) == expected
+
+
+BANDED = {"pass_fail", "ua_12", "five_point", "custom"}
+
+
+@pytest.mark.parametrize(
+    ("score", "mark"),
+    [(1, "2"), (2, "3"), (4, "5"), (7, "8"), (10, "11"), (11, "12"), (12, "12"), (0, "1")],
+)
+def test_ua_12_marks_start_exactly_on_twelfths(score, mark):
+    """1/12 = 8.333...% is where mark 2 starts. Rounded to 8.3 it used to fall one band short."""
+    percent = (D(score) / 12 * 100).quantize(D("0.1"))
+    assert grade_label({"scale": "ua_12"}, D(score), D(12), percent) == mark
+
+
+def test_a_rounded_percent_never_decides_the_band():
+    # 49.96 % displays as 50.0 but has not reached a 50 % pass mark
+    percent = (D("49.96")).quantize(D("0.1"))
+    assert percent == D("50.0")
+    assert grade_label({"scale": "pass_fail"}, D("49.96"), D(100), percent) == "Fail"
+    # and 83.33 % reaches the 83.333.. start of mark 11 only at 10/12, not at 83.3 of 100
+    assert grade_label({"scale": "ua_12"}, D("83.3"), D(100), D("83.3")) == "10"

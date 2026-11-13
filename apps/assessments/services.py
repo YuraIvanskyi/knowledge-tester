@@ -127,3 +127,12 @@ def publish(assessment: Assessment, user) -> tuple[Revision | None, str | None, 
             update_fields=["document", "status", "has_unpublished_changes", "updated_at"]
         )
     return revision, None, created
+
+
+def chosen_project(projects, raw):
+    """The project a form posted by id, from the queryset the user may use; None if the value is
+    missing, not a number ("abc", "²": int() would raise) or not theirs."""
+    value = str(raw or "")
+    if not value.isdecimal() or len(value) > 18:
+        return None
+    return projects.filter(pk=int(value)).first()

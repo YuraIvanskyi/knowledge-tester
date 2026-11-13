@@ -37,3 +37,21 @@ def test_export_schema_command(settings, tmp_path):
     schema = json.loads((tmp_path / "schema" / "test.v1.schema.json").read_text(encoding="utf-8"))
     assert schema["$schema"].endswith("2020-12/schema")
     assert "format" in schema["properties"]
+
+
+def test_import_test_survives_two_projects_with_the_same_title(tmp_path, django_user_model):
+    from django.core.management import call_command
+
+    from apps.assessments.models import Assessment, Project
+
+    owner = django_user_model.objects.create_user("t", password="pw")
+    Project.objects.create(owner=owner, title="Same")
+    Project.objects.create(owner=owner, title="Same")  # the web form allows this
+    path = tmp_path / "test.json"
+    path.write_text(
+        '{"format": "knowledge-tester/test", "version": 1, "test": {"title": "X", "questions": '
+        '[{"type": "open", "text": "Q?"}]}}',
+        encoding="utf-8",
+    )
+    call_command("import_test", str(path), "--user", "t", "--project", "Same")
+    assert Assessment.objects.count() == 1

@@ -49,7 +49,7 @@ class Option(_Base):
     id: str | None = Field(None, min_length=1, max_length=40)
     text: str = Field(min_length=1, max_length=1000)
     correct: bool = False
-    weight: float | None = None
+    weight: float | None = Field(None, allow_inf_nan=False, ge=-1_000_000, le=1_000_000)
 
     _coerce_id = field_validator("id", mode="before")(_id_to_str)
 
@@ -58,18 +58,18 @@ class Question(_Base):
     id: str | None = Field(None, min_length=1, max_length=40)
     type: QuestionType
     text: str = Field(min_length=1, max_length=5000)
-    points: float = Field(1, ge=0)
+    points: float = Field(1, ge=0, le=1_000_000, allow_inf_nan=False)
     required: bool = False
     hint: str | None = None
     image: str | None = None
     options: list[Option] | None = None
     scoring: ScoringMode | None = None
-    penalty: float | None = Field(None, ge=0, le=1)
+    penalty: float | None = Field(None, ge=0, le=1, allow_inf_nan=False)
     n: int | None = Field(None, ge=1)
     mode: ShortAnswerMode | None = None
     accept: list[str] | None = None
     case_sensitive: bool | None = None
-    tolerance: float | None = Field(None, ge=0)
+    tolerance: float | None = Field(None, ge=0, le=1e12, allow_inf_nan=False)
     review_unmatched: bool | None = None
     rubric: str | None = None
 
@@ -116,7 +116,7 @@ class TakerField(_Base):
 
 
 class Threshold(_Base):
-    min_percent: float = Field(ge=0, le=100)
+    min_percent: float = Field(ge=0, le=100, allow_inf_nan=False)
     label: str = Field(min_length=1, max_length=40)
 
     @field_validator("label", mode="before")
@@ -128,7 +128,7 @@ class Threshold(_Base):
 class Grading(_Base):
     enabled: bool = True
     scale: GradeScale = "percent"
-    pass_percent: float = Field(50, ge=0, le=100)
+    pass_percent: float = Field(50, ge=0, le=100, allow_inf_nan=False)
     thresholds: list[Threshold] | None = None
 
 

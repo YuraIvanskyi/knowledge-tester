@@ -26,10 +26,13 @@ def _load_config(data_dir: Path) -> dict:
     """Read kt.toml; generate and persist a SECRET_KEY on first run."""
     path = data_dir / "kt.toml"
     config = tomllib.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-    if "secret_key" not in config:
+    if "secret_key" not in config and not os.environ.get("KT_SECRET_KEY"):
         config["secret_key"] = secrets.token_urlsafe(50)
+        # A hand-edited file may not end in a newline: appending would glue the key to its line.
+        existing = path.read_bytes() if path.exists() else b""
+        glue = "\n" if existing and not existing.endswith(b"\n") else ""
         with path.open("a", encoding="utf-8", newline="\n") as fh:
-            fh.write(f'secret_key = "{config["secret_key"]}"\n')
+            fh.write(f'{glue}secret_key = "{config["secret_key"]}"\n')
     return config
 
 

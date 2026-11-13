@@ -157,7 +157,11 @@ def _warn_unknown_fields(raw: dict, report: ValidationReport) -> None:
         path = f"test.questions[{i}]"
         qtype = q.get("type")
         known = set(Question.model_fields)
-        used = COMMON_QUESTION_FIELDS | TYPE_FIELDS[qtype] if qtype in TYPE_FIELDS else known
+        used = (
+            COMMON_QUESTION_FIELDS | TYPE_FIELDS[qtype]
+            if isinstance(qtype, str) and qtype in TYPE_FIELDS
+            else known
+        )
         for key in q:
             if key not in known:
                 report.warn(f"{path}.{key}", "unknown field, ignored." + _hint(str(key), used))
