@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave is ready to start · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built, integration gate open · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -47,16 +47,16 @@ This board is the single source of truth for status. The task content lives in [
 
 ### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
 
-Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. Wave 0 first, then the five workstreams in parallel; `must` items first inside each.
+Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. All five workstreams are built and committed; the integration gate is still open (see "Open" below).
 
-- [ ] Wave 0: skeleton (base.css and base.html fixes, phone card pattern, `void_attempt`, reserved URLs, `sessions.css` split) · M
-- [ ] WS A, student test page: UX-01 confirm before submitting unanswered, UX-03 save status and timer warning, UX-05 one-row bottom bar, UX-10 class-session form *(should)*, UX-15 wrapped question titles *(should)* · M
-- [ ] WS B, teacher sessions: UX-02 confirm close, UX-04 sessions list on phones, UX-06 session chooser, UX-16 share screen *(should)* · M
-- [ ] WS C, results and review: UX-01 cancel an attempt, UX-07 one Save per sheet, UX-17 results polish *(should)* · M
-- [ ] WS D, tests and dashboard: UX-06 "Open session" on tests and dashboard, UX-08 question rows *(should)* · M
-- [ ] WS E, people and admin: UX-06 group page button, UX-09 sub-tabs *(should)*, UX-14 gradebook alignment *(should)* · S
-- [ ] Shared: UX-11 phone cards in every stacked table *(should)*, UX-18 tap targets, titles, plurals *(could)* · S
-- [ ] Integration: translations, end-to-end pass, README, log · S
+- [x] Wave 0: skeleton (base.css and base.html fixes, phone card pattern, `void_attempt`, reserved URLs, `sessions.css` split) · 2026-11-13
+- [x] WS D, tests and dashboard: UX-06 (tests part), UX-08 · 2026-11-13
+- [x] WS C, results and review: UX-01 (cancel attempt), UX-07, UX-17 · 2026-11-13
+- [x] WS E, people and admin: UX-06 (group part), UX-09, UX-14, UX-11 · 2026-11-13
+- [x] WS B, teacher sessions: UX-02, UX-04, UX-06 (sessions part), UX-16 · 2026-11-13
+- [x] WS A, student test page: UX-01 (taker part), UX-03, UX-05, UX-10, UX-15 · 2026-11-13
+- [~] Integration: translations merged and compiled (772 entries, `check` clean), ruff clean; **open:** full `pytest` run hangs, end-to-end pass not run yet, README and log entry for the wave
+- [ ] Left over: tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly), Delete test / Export JSON to the page bottom (about 55 px on phones)
 
 ### Phase 0
 

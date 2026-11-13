@@ -4,6 +4,19 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-13: UX review wave (UX-01 to UX-18), built; integration gate open
+
+- **Method:** a UI/UX review driven through headless Edge over CDP at 390 and 1280 px (`scripts/ui_shots.mjs`), then a contracts doc ([specs/ux-review-contracts.md](specs/ux-review-contracts.md)), a frozen Wave 0 skeleton (commit c39a7bc) and five parallel workstreams with disjoint file ownership, committed one by one (D aff1c83, C 0abb19d, E 94d1783, B fc8d6a7, A 506bf7c).
+- **Built:** confirm before submitting unanswered questions (server-side, the timer's auto-submit never asks); cancel an attempt, after which the student can retake; confirm before closing a session while students work; save status, offline strip and a one-minute timer warning; one-row bottom bar; one Save per review sheet with "save and go to the next"; session chooser (`delivery:pick`, `?group=`) and "Open session" on the test page, tests list, dashboard and group page; presentation mode for the share screen; phone card pattern (`cell-title`, `cell-actions`, `table-compact`) on the long tables; lean header (admin: two rows on a phone, one from 700 px).
+- **Measured at 390 px (Ukrainian, demo data):** test page 4,088 -> 2,380 px; session results 4,906 -> 2,893 px; import preview (13 rows) 2,985 -> 1,741 px; share screen (8 takers) 2,100 -> 1,245 px; sessions list no longer scrolls sideways (425 -> 390 px); taker bottom bar about 105 -> 61 px; admin header 133 -> 90 px.
+- **Learned:** `runserver --noreload` caches templates, so restart after template edits; Git Bash heredocs collapse the backslashes of JS regexes (write such scripts with the Write tool); headless Edge follows the system theme, which is dark here; a full-page capture draws sticky bars mid-page.
+- **Open (stopped here on request):**
+  1. The full `pytest` run did not finish (28 minutes against about 80 s; killed). Each workstream passed its own tests (`apps/delivery`, `apps/reports`, `apps/assessments apps/core`, `apps/people apps/accounts`, plus `tests/`). Find the hanging test with `pytest -v --timeout` or by running the apps one by one; suspects are the new submit-confirmation and close-confirmation paths and the `tests/test_offline_*` files. Wave 0 alone passed the full suite in the normal time.
+  2. The end-to-end pass of section 10 of the contracts is not run. A script exists in the scratchpad (`e2e.mjs`), not in the repo; it covers dashboard -> chooser -> class session -> half-empty submit -> panel -> cancel -> retake -> close with one student working -> review with "save and next". One thing to confirm there: workstream C saw an attempt stay "in progress" after a scripted final submit; it is probably the new unanswered-questions step, unconfirmed.
+  3. Visual re-check of the Manage settings and create/edit pages after the final CSS changes (E did not).
+  4. README (navigation, cancel attempt, close confirmation) and the contracts doc status line.
+- **Next:** unblock the full suite, run the end-to-end pass, fix what it finds, then update README.
+
 ## 2026-11-12: Phase 6, People (KT-601 to KT-606)
 
 - **Method:** first a frozen skeleton (the `apps.people` models `Group` and `Student`, `Attempt.student`, `Sitting.group` and `use_pin`, `accounts.SystemSettings`, ownership helpers in `apps/people/access.py`, name normalisation in `names.py`, reserved URL names pointing at a 501 stub) and a contract ([specs/people-contracts.md](specs/people-contracts.md)); then five agents in parallel with disjoint file ownership, each verifying its part on a live server with its own data folder. Translations were written as fragments in `locale/uk/parts/` and merged once (735 catalog entries, `i18n.py check` clean).
