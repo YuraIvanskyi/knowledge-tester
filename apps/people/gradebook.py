@@ -25,6 +25,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
+from apps.core.text import uk_sort_key
 from apps.delivery.models import Attempt, Sitting
 
 from .models import Group, Student
@@ -37,15 +38,10 @@ ONE_DECIMAL = Decimal("0.1")
 OK_FROM = Decimal(60)
 WARN_FROM = Decimal(40)
 
-# Ukrainian alphabet order (code-point order puts і, ї, є, ґ after я).
-_UK_ALPHABET = "абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"
-_UK_ORDER = {ch: 0x400 + i for i, ch in enumerate(_UK_ALPHABET)}
 
-
-def alpha_key(name: str) -> tuple[int, ...]:
+def alpha_key(name: str) -> tuple:
     """Sort key that orders names the way a Ukrainian class list is ordered."""
-    text = normalize_name(name)
-    return tuple(_UK_ORDER.get(ch, ord(ch) if ord(ch) < 0x400 else 0x1000 + ord(ch)) for ch in text)
+    return uk_sort_key(normalize_name(name))
 
 
 def band(percent: Decimal) -> str:

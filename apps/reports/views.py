@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -11,6 +12,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
 
+from apps.core.text import csv_safe
 from apps.delivery import services
 from apps.delivery.models import Answer, Attempt, Sitting
 from apps.grading.service import grade_attempt
@@ -109,6 +111,11 @@ def _save_review(request, attempt: Attempt, rows: list[data.SheetRow]) -> tuple[
 
     An empty points field leaves the answer as it is. A bad row is reported and does not stop
     the others; what the teacher typed is kept for the next render."""
+    with transaction.atomic():  # a failing regrade must not leave scores stored but not counted
+        return _save_review_rows(request, attempt, rows)
+
+
+def _save_review_rows(request, attempt: Attempt, rows) -> tuple[int, dict]:
     saved = 0
     errors: dict[str, tuple[str, str, str]] = {}
     for row in rows:
@@ -244,10 +251,23 @@ def _taker_rows(test: dict, attempt: Attempt) -> list[tuple[str, str]]:
     return rows
 
 
-def _csv_safe(value: object) -> str:
-    """Neutralise spreadsheet formula injection in taker-supplied text."""
-    text = "" if value is None else str(value)
-    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
+def _csv_taker_fields(test: dict, attempts: list[Attempt]) -> list[dict]:
+    """The taker columns of the CSV: the test's own fields, then a Name column if the test does
+    not ask for one but people were identified by name (a class session stores the picked
+    student's name), then any other key the attempts carry. Same rule as the PDF sheets."""
+    fields = [dict(f) for f in test.get("taker_fields") or []]
+    known = {f["key"] for f in fields}
+    carried: list[str] = []
+    for a in attempts:
+        for key in a.taker or {}:
+            if key not in known and key not in carried:
+                carried.append(key)
+    if "name" in carried:
+        carried.remove("name")
+        fields.insert(0, {"key": "name", "label": _("Name")})
+    elif not fields:
+        fields.append({"key": "name", "label": _("Name")})
+    return fields + [{"key": key, "label": key} for key in carried]
 
 
 @login_required
@@ -255,8 +275,8 @@ def session_csv(request, sitting_pk: int):
     sitting = _sitting_or_404(request.user, sitting_pk)
     test = sitting.revision.test
     questions = test.get("questions", [])
-    fields = test.get("taker_fields") or [{"key": "name", "label": _("Name")}]
     attempts = list(sitting.attempts.all())
+    fields = _csv_taker_fields(test, attempts)
 
     points: dict[tuple[int, str], Decimal | None] = {}
     for a in Answer.objects.filter(attempt__sitting=sitting):
@@ -282,7 +302,7 @@ def session_csv(request, sitting_pk: int):
     )
     for a in attempts:
         writer.writerow(
-            [_csv_safe((a.taker or {}).get(f["key"], "")) for f in fields]
+            [csv_safe((a.taker or {}).get(f["key"], "")) for f in fields]
             + [
                 a.status,
                 a.started_at.isoformat(timespec="seconds"),
@@ -290,7 +310,7 @@ def session_csv(request, sitting_pk: int):
                 "" if a.score is None else a.score,
                 "" if a.max_score is None else a.max_score,
                 "" if a.percent is None else a.percent,
-                _csv_safe(a.grade),
+                csv_safe(a.grade),
                 a.pending_reviews,
             ]
             + [
@@ -330,7 +350,5 @@ def session_pdf(request, sitting_pk: int):
     if status not in data.STATUS_FILTERS:
         status = "finished"
     selected = data.filter_and_sort(attempts, status, "name")
-    if status == "all":
-        selected = [a for a in selected if a.status != Attempt.Status.VOIDED]
     options = pdf.PdfOptions.from_query(request.GET)
     return _pdf_response(pdf.render_pdf(selected, options), pdf.session_filename(sitting))

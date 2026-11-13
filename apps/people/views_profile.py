@@ -20,11 +20,12 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, ngettext
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from apps.core.text import csv_safe
 from apps.reports.student_pdf import render_student_pdf
 
 from . import profile as profile_data
 from .access import get_student_or_404
-from .profile import NOTES_MAX_LENGTH, csv_safe, download_name
+from .profile import NOTES_MAX_LENGTH, download_name
 
 KEEP, DELETE = "keep", "delete"
 

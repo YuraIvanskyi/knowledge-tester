@@ -16,6 +16,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
 from apps.assessments.models import Project
+from apps.core.text import csv_safe
 from apps.grading.scales import fmt_number
 
 from .access import get_group_or_404
@@ -89,12 +90,6 @@ def gradebook(request, pk: int):
     )
 
 
-def _csv_safe(value: object) -> str:
-    """Neutralise spreadsheet formula injection in names and titles."""
-    text = "" if value is None else str(value)
-    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
-
-
 def _filename(group) -> str:
     name = _UNSAFE_FILENAME.sub("_", group.name).strip(" ._")[:80] or "group"
     return f"gradebook-{name}.csv"
@@ -106,13 +101,13 @@ def _number(value) -> str:
 
 def gradebook_rows(book: Gradebook) -> list[list[str]]:
     """The matrix as CSV rows: header, one row per student, then the average (and a note)."""
-    header = [_csv_safe(_("Student"))]
+    header = [csv_safe(_("Student"))]
     for col in book.columns:
-        header.append(_csv_safe(f"{col.title} ({col.date:%d.%m.%Y})"))
-    header.append(_csv_safe(_("Average")))
+        header.append(csv_safe(f"{col.title} ({col.date:%d.%m.%Y})"))
+    header.append(csv_safe(_("Average")))
     rows = [header]
     for row in book.rows:
-        line = [_csv_safe(row.student.full_name)]
+        line = [csv_safe(row.student.full_name)]
         for cell in row.cells:
             line.append(
                 "" if cell is None else _number(cell.percent) + ("*" if cell.provisional else "")
@@ -121,7 +116,7 @@ def gradebook_rows(book: Gradebook) -> list[list[str]]:
             _number(row.average) + ("*" if row.provisional and row.average is not None else "")
         )
         rows.append(line)
-    footer = [_csv_safe(_("Average"))]
+    footer = [csv_safe(_("Average"))]
     for col in book.columns:
         footer.append(
             _number(col.average) + ("*" if col.provisional and col.average is not None else "")

@@ -190,7 +190,7 @@ def test_rows_follow_the_ukrainian_alphabet(teacher, group):
 def test_alpha_key_ignores_case_and_apostrophe_style():
     assert alpha_key("дем’ян") == alpha_key("ДЕМ'ЯН")
     assert alpha_key("Іван") < alpha_key("Яна")
-    assert alpha_key("Anna") < alpha_key("Андрій")  # Latin before Cyrillic, consistently
+    assert alpha_key("Андрій") < alpha_key("Anna")  # Latin after the letters, as on every page
 
 
 def test_empty_group_and_group_without_sessions(teacher, group):

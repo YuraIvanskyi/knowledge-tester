@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from django.core.cache import cache
 from django.utils.translation import gettext as _
 
+from apps.core.text import uk_sort_key
 from apps.people.models import Student
 from apps.people.names import normalize_name
 
@@ -26,15 +27,10 @@ from .models import Attempt, Sitting
 PIN_MAX_FAILURES = 5
 PIN_WINDOW_SECONDS = 5 * 60
 
-# Ukrainian alphabet order (plain code-point order puts ґ є і ї after я).
-_UK_ALPHABET = "абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"
-_UK_ORDER = {ch: i for i, ch in enumerate(_UK_ALPHABET)}
-
 
 def name_sort_key(name: str) -> tuple:
     """Case-insensitive sort key that orders Ukrainian names alphabetically."""
-    text = " ".join((name or "").split()).casefold()
-    return tuple((0, _UK_ORDER[ch]) if ch in _UK_ORDER else (1, ord(ch)) for ch in text)
+    return uk_sort_key(" ".join((name or "").split()))
 
 
 def is_group_bound(sitting: Sitting | None) -> bool:

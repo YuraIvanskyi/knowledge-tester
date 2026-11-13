@@ -16,22 +16,14 @@ from dataclasses import dataclass, field
 from django.db import IntegrityError, transaction
 from django.utils.translation import gettext as _
 
+from apps.core.text import uk_sort_key
+
 from . import importing
 from .importing import ParsedRow
 from .models import Group, Student
 from .names import normalize_name, same_person_key
 
 # ---- sorting (SQLite orders by code point, which puts Ukrainian "І" after "Я") -------------
-
-_ALPHABET = "абвгґдеєёжзиіїйклмнопрстуфхцчшщъыьэюя"
-_LETTER_ORDER = {ch: index for index, ch in enumerate(_ALPHABET)}
-
-
-def uk_sort_key(text: str) -> tuple:
-    """Sort key following the Ukrainian alphabet; other characters sort after the letters."""
-    return tuple(
-        (0, _LETTER_ORDER[ch]) if ch in _LETTER_ORDER else (1, ord(ch)) for ch in text.casefold()
-    )
 
 
 def natural_group_key(name: str) -> list:

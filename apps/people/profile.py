@@ -17,7 +17,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -27,6 +27,7 @@ from django.utils.translation import gettext, ngettext
 
 from apps.delivery.models import Attempt
 
+from .gradebook import mean
 from .models import Student
 
 COUNTED_STATUSES = (Attempt.Status.SUBMITTED, Attempt.Status.AUTO_SUBMITTED)
@@ -172,12 +173,6 @@ def _row(attempt: Attempt) -> HistoryRow:
     )
 
 
-def _mean(values: list[Decimal]) -> Decimal | None:
-    if not values:
-        return None
-    return (sum(values) / len(values)).quantize(ONE_DECIMAL, rounding=ROUND_HALF_UP)
-
-
 def project_stats(rows: list[HistoryRow]) -> list[ProjectStats]:
     """Per project: mean of percent, attempts, best, latest. `rows` are counted, newest first.
 
@@ -197,7 +192,7 @@ def project_stats(rows: list[HistoryRow]) -> list[ProjectStats]:
                 project_id=project_id,
                 title=group[0].project_title,
                 count=len(scored),
-                mean=_mean(percents),
+                mean=mean(percents),
                 best=max(percents),
                 latest=scored[0].percent,
                 provisional=any(row.provisional for row in scored),
@@ -224,7 +219,7 @@ def profile_from_rows(student: Student, rows: list[HistoryRow]) -> Profile:
     profile.projects = project_stats(profile.rows)
     overall = [row.percent for row in profile.rows if row.percent is not None]
     profile.overall_count = len(overall)
-    profile.overall_mean = _mean(overall)
+    profile.overall_mean = mean(overall)
     return profile
 
 
@@ -236,12 +231,6 @@ def build_profile(student: Student, *, viewer=None) -> Profile:
 # ---------------------------------------------------------------------------------------------
 # CSV
 # ---------------------------------------------------------------------------------------------
-
-
-def csv_safe(value: object) -> str:
-    """Neutralise spreadsheet formula injection: a leading = + - @ tab or CR gets a quote."""
-    text = "" if value is None else str(value)
-    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
 
 
 def download_name(student: Student, extension: str) -> str:

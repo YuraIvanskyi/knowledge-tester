@@ -5,6 +5,7 @@ from decimal import Decimal
 import pytest
 from django.utils import translation
 
+from apps.core.text import csv_safe
 from apps.delivery.models import Attempt
 from apps.people import profile as data
 from apps.people.models import Student
@@ -201,14 +202,14 @@ def test_not_counted_text_counts_each_kind(student, math):
 
 @pytest.mark.parametrize("bad", ["=1+1", "+1", "-1", "@SUM(A1)", "\tx", "\rx"])
 def test_csv_safe_prefixes_dangerous_cells(bad):
-    assert data.csv_safe(bad) == "'" + bad
+    assert csv_safe(bad) == "'" + bad
 
 
 def test_csv_safe_leaves_normal_text_and_none():
-    assert data.csv_safe("Іван") == "Іван"
-    assert data.csv_safe(None) == ""
-    assert data.csv_safe("a=b") == "a=b"
-    assert data.csv_safe(12) == "12"
+    assert csv_safe("Іван") == "Іван"
+    assert csv_safe(None) == ""
+    assert csv_safe("a=b") == "a=b"
+    assert csv_safe(12) == "12"
 
 
 def test_download_name_keeps_cyrillic_and_has_a_fallback(teacher):
