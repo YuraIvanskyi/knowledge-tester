@@ -94,6 +94,10 @@ Rules for contributors:
 - **Closing a session** asks first when somebody is still working; their answers so far are submitted automatically. A closed session can be reopened.
 - **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt".
 
+## Load test
+
+`scripts/load_test.py` (standard library only) simulates a class taking one open session on a running server, optionally with a teacher polling the live stats. Run it against scratch data, never your real data folder; the usage is in the file's docstring. Measured: 32 simultaneous students without errors (slowest request 0.26 s), 100 without errors (slowest 3 s).
+
 ## PDF sheets
 
 `apps/reports/pdf.py` builds PDFs with fpdf2 and the bundled DejaVu Sans (Latin and Cyrillic, embedded as a subset; licence in `assets/fonts/LICENSE_DEJAVU`). A sheet is one attempt: taker details, score and grade, then the questions with points and a result word. Options: compact or full (every option marked), A4 or Letter, show correct answers / comments / unanswered questions, shorten long questions, and for a whole session "continuous" (no page break between sheets). Entry points are `reports:attempt_pdf` and `reports:session_pdf` (`?status=` picks finished, needs_review or all). The labels follow the UI language of whoever downloads it. Tests read the text back with `pypdf` (a dev dependency).

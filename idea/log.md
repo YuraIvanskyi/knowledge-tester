@@ -12,8 +12,16 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 - **Visual re-check** of Manage (teachers, new teacher, settings) at 390 and 1280 px: no overflow, nothing broken. Phone results page 1,859 px for 2 attempts, no sideways scroll.
 - README: navigation, cancel attempt, close confirmation, review, test notes.
 - **Ownership audit (KT-607) as a test:** `tests/test_ownership_audit.py` reads every `/teach/` route from the URL resolver (a new route without an entry fails), then checks anonymous -> login, another teacher -> the same answer as for an id that does not exist (404, or 405 where the route does not take the method; never a leak of the owner's names), lists scoped to the viewer, and admin not stopped by ownership. 217 checks, no hole found. `/manage/` has its own permission tests; `/s/` is public by design.
-- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (32-taker load run on the real server, code review of the seams).
-- **Next:** wave 2 of Phase 6 (load run), then Phase 7 or the Phase 3/4 gaps.
+- **Load run (KT-310, first measurement)** with the new `scripts/load_test.py` (standard library only; N students start at the same instant: test page, 4 autosaves with think time, submit, done page; an optional teacher polls the stats endpoint) against the real Waitress server (`serve`, 8 threads, SQLite WAL, scratch data):
+
+  | Students | Wall time | Errors | Autosave p50 / p95 / max | Submit p50 / max | Test page p95 |
+  |---|---|---|---|---|---|
+  | 32 | 4.1 s | 0 | 0.03 / 0.19 / 0.26 s | 0.07 / 0.18 s | 0.18 s |
+  | 100 | 6.3 s | 0 | 0.30 / 0.59 / 3.0 s | 1.6 / 2.2 s | 0.32 s |
+
+  All 32 attempts ended submitted and graded. A class of 32 is comfortable; 100 simultaneous starters still lose nothing, only the tail grows (SQLite has one writer, so writes queue). The 1.2 s teacher login is the real PBKDF2 hash. Q5 (maximum concurrent takers) can be answered with "tested to 100".
+- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (code review of the seams between the workstreams).
+- **Next:** the code review of wave 2, then Phase 7 or the Phase 3/4 gaps.
 
 ## 2026-11-13: UX review wave (UX-01 to UX-18), built; integration gate open
 

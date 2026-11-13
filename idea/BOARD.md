@@ -41,7 +41,7 @@ This board is the single source of truth for status. The task content lives in [
 
 ## In progress
 
-- [~] Phase 6 wave 2: ownership audit done (`tests/test_ownership_audit.py`, 2026-11-13); still open: load run with 32 takers on the real server, code review of the workstream seams
+- [~] Phase 6 wave 2: ownership audit done (`tests/test_ownership_audit.py`, 2026-11-13); load run done (32 and 100 takers, no errors, see log); still open: code review of the workstream seams
 
 ## Ready (listed in suggested order)
 
