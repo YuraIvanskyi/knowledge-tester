@@ -42,6 +42,17 @@ scripts\start.ps1                           # sync + migrate + serve in one go
 4. Disable sleep during the lesson and keep the laptop on mains power.
 5. Scan the QR code from the terminal (or from a session's share screen), or type the URL.
 
+## Settings
+
+| What | How | Default |
+|---|---|---|
+| Data folder (database, media, `kt.toml`) | `KT_DATA_DIR` | `%LOCALAPPDATA%\KnowledgeTester` (Windows), `~/.local/share/knowledge-tester` (others) |
+| Secret key | `KT_SECRET_KEY`, or `secret_key` in `<data folder>/kt.toml` | generated on the first start and written to `kt.toml` |
+| Settings module | `DJANGO_SETTINGS_MODULE` | `config.settings.dev` (`manage.py serve` uses `lan`) |
+| Port, host, threads | `manage.py serve --port 8000 --host 0.0.0.0 --threads 8` | 8000, all interfaces, 8 |
+
+`ALLOWED_HOSTS` is still `*` (planned: derived from the LAN addresses, KT-005). Logging in is throttled per client address (10 wrong passwords per 5 minutes), registration with an invite code likewise.
+
 ## Checks and tests
 
 ```powershell

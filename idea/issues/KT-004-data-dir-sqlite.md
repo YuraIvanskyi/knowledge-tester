@@ -3,12 +3,12 @@ id: KT-004
 title: Configure data folder and SQLite (WAL)
 phase: 0
 type: chore
-status: ready
+status: done
 priority: must
 size: S
 depends_on: [KT-002]
 created: 2026-11-10
-updated: 2026-11-10
+updated: 2026-11-13
 ---
 
 # KT-004: Configure data folder and SQLite (WAL)
@@ -30,10 +30,11 @@ The database must survive 40–60 takers submitting at once and must **never** l
 - `MEDIA_ROOT` pointing at the data folder's `media/`.
 
 ## Acceptance criteria
-- [ ] A test asserts that `PRAGMA journal_mode` returns `wal`
-- [ ] A test with 20 threads doing concurrent short write transactions gets no "database is locked" errors
-- [ ] A unit test confirms the warning fires for a path inside OneDrive
-- [ ] The data folder location is printed at startup by `serve` (KT-005) and `runserver`
+- [x] A test asserts that `PRAGMA journal_mode` returns `wal`
+- [x] A test with 20 threads doing concurrent short write transactions gets no "database is locked" errors
+- [x] A unit test confirms the warning fires for a path inside OneDrive
+- [x] The data folder location is printed at startup by `serve` (KT-005) and `runserver`
 
 ## Log
 - 2026-11-10: created from the plan.
+- 2026-11-13: checked: `apps/core/tests/test_sqlite_config.py` (WAL, busy timeout, 20 threads of short writes), `test_datadir.py` (OneDrive warning); `serve` prints the data folder.

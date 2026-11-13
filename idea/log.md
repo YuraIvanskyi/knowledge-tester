@@ -4,6 +4,19 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-13: Tech-debt pass: two code reviews, 19 findings fixed
+
+- **Method:** `/code-review high` over all apps (two passes, 19 findings, every one reproduced or read in the code before fixing; none dismissed). Each fix has a regression test; the suite grew from 1423 to about 1500 tests and still runs in 30 s.
+- **Security and data safety:** the access code now hides the questions until it is entered (it used to guard only the start of an attempt); wrong passwords at the login page are throttled per client address (not per account, so a student cannot lock the teacher out); `isdigit()` guards in the roster views and a non-numeric `project` in the test forms no longer cause a 500 (`isdecimal()` plus a length cap).
+- **Races:** a second autosave that overtakes the first response (no cookie yet) now joins the same attempt instead of creating a second one or failing with "already taken"; `start_attempt` is idempotent per token and survives the unique-constraint race; `finalize` flips and grades in one transaction, so the loser of a submit race sees a graded attempt; saving a review sheet and regrading are one transaction.
+- **Grading:** grade bands are decided from the exact percentage (1/12 gave mark 1 instead of 2; 49.96 % displayed as 50.0 passed a 50 % mark); `м´ята` with the acute accent now matches `м'ята` (apostrophes are mapped before NFKC); an attempt is graded once, not twice, per regrade.
+- **Importer:** `Infinity`, `NaN`, `1e308` points/weights/tolerances and a non-string `type` are errors in the report, not exceptions (the importer is documented as never raising on bad input).
+- **Duplication removed:** one `csv_safe` and one Ukrainian sort key (`apps/core/text.py`) instead of three each (the three alphabets differed, so lists sorted differently on different pages); one `mean`.
+- **Smaller:** the results CSV names the taker even when the test has no `name` field; a dead branch in the PDF export; `import_test` with two projects of the same title; a `kt.toml` without a trailing newline; a hung load test when one student fails before the start barrier; the test-run warning noise (919 warnings -> 0).
+- **Behaviour changes worth knowing:** with an access code the landing page shows a Start form first, questions appear after it; the gradebook sorts Latin names after Cyrillic ones (as the other pages already did).
+- **KT-004 criteria now tested:** WAL mode and busy timeout on a real file, and 20 threads of short writes with no "database is locked".
+- **Not changed, by decision:** `ALLOWED_HOSTS = ["*"]` (KT-005, needs the LAN address logic); the group class list visible to anyone with a session link (documented limit).
+
 ## 2026-11-13: UX wave integration gate closed
 
 - **The "hanging" full `pytest` was not a hang.** Nearly every test creates a user, and Django 6's default PBKDF2 hasher costs about a second per user here; the suite needed 25+ minutes (earlier runs took about 80 s on a faster setup). `config/settings/test.py` now uses the MD5 hasher: **1206 tests in 27 s**, ruff and `manage.py check` clean. No test depended on the hasher.

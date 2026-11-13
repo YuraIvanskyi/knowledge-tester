@@ -3,12 +3,12 @@ id: KT-002
 title: Create the Django project skeleton and app layout
 phase: 0
 type: chore
-status: ready
+status: done
 priority: must
 size: M
 depends_on: [KT-001]
 created: 2026-11-10
-updated: 2026-11-10
+updated: 2026-11-13
 ---
 
 # KT-002: Create the Django project skeleton and app layout
@@ -34,13 +34,14 @@ This sets up the code layout every later phase builds on. See [plan.md §7](../p
 **Out of scope:** the User model (KT-003, which must be configured before the first `migrate`) and UI styling (KT-006).
 
 ## Acceptance criteria
-- [ ] `uv run manage.py check` passes with both `dev` and `lan` settings
-- [ ] `uv run manage.py check --deploy --settings=config.settings.lan` shows only the documented HTTPS warnings, which are accepted because the LAN uses plain HTTP (ADR-0003)
-- [ ] The first start creates `kt.toml` with a random `SECRET_KEY`, and later starts reuse it
-- [ ] A table in the README (or the KT-009 draft) lists the `KT_*` settings: `KT_DATA_DIR`, `KT_PORT`, `KT_DEBUG`, `KT_ALLOWED_HOSTS`, `KT_SETTINGS`
+- [x] `uv run manage.py check` passes with both `dev` and `lan` settings
+- [x] `uv run manage.py check --deploy --settings=config.settings.lan` shows only the documented HTTPS warnings, which are accepted because the LAN uses plain HTTP (ADR-0003)
+- [x] The first start creates `kt.toml` with a random `SECRET_KEY`, and later starts reuse it
+- [x] A table in the README (or the KT-009 draft) lists the `KT_*` settings: `KT_DATA_DIR`, `KT_PORT`, `KT_DEBUG`, `KT_ALLOWED_HOSTS`, `KT_SETTINGS`
 
 ## Notes
 - **Don't run `migrate` until KT-003 has set `AUTH_USER_MODEL`.**
 
 ## Log
 - 2026-11-10: created from the plan.
+- 2026-11-13: checked: `manage.py check` clean with dev and lan; `check --deploy` shows only W004/W008/W012/W016 (HTTPS, accepted); `apps/core/tests/test_config_file.py` covers the generated key; the README has a settings table (the real variables are `KT_DATA_DIR`, `KT_SECRET_KEY`; the port is a `serve` option, not `KT_PORT`).

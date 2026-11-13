@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built and integrated · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built and integrated; two full code reviews fixed (see log) · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -14,7 +14,7 @@ This board is the single source of truth for status. The task content lives in [
 
 | Phase | Goal | Status | Done |
 |---|---|---|---|
-| 0. Foundation | A running skeleton that a phone can reach over the LAN | In progress | 1 / 9 |
+| 0. Foundation | A running skeleton that a phone can reach over the LAN | In progress (built in the prototype; remaining items wait for a check against their acceptance criteria) | 3 / 9 |
 | 1. Domain core and exchange format | Test data model and JSON import/export | Backlog | 0 / 8 |
 | 2. Authoring UI | Build and edit tests in the browser | Backlog | 0 / 7 |
 | 3. Delivery | Sessions, links and QR, taking tests on phones | Backlog | 0 / 10 |
@@ -24,7 +24,7 @@ This board is the single source of truth for status. The task content lives in [
 | 7. Local LLM assistant | Imports and drafting with a local LLM | Backlog | 0 / 9 |
 | 8. Ukrainian | Full Ukrainian localization | Backlog | 0 / 4 |
 | 9. Hardening and packaging | Backups, launcher, security, docs | Backlog | 0 / 9 |
-| **Total** | | | **7 / 78** |
+| **Total** | | | **9 / 78** |
 
 ## Milestones
 
@@ -60,8 +60,8 @@ Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. 
 
 ### Phase 0
 
-- [ ] [KT-002](issues/KT-002-django-skeleton.md) Django project skeleton and app layout · M
-- [ ] [KT-004](issues/KT-004-data-dir-sqlite.md) Data folder and SQLite configuration · S
+The prototype already contains all of this; an item is ticked once its acceptance criteria are checked (KT-002 and KT-004 were on 2026-11-13). Unchecked criteria that are known to be open: KT-005 unknown `Host` gets a 400 (`ALLOWED_HOSTS` is `*`) and the phone/QR manual check; KT-006 style guide page and the 15 KB CSS budget; KT-007 `makemessages` route (the `scripts/i18n.py` route replaces it, see the issue log); KT-009 a clean-clone run by someone else.
+
 - [ ] [KT-003](issues/KT-003-user-model-auth.md) Custom User model, roles and auth (before the first migrate) · M
 - [ ] [KT-008](issues/KT-008-test-harness.md) Test harness and quality gates · S
 - [ ] [KT-006](issues/KT-006-base-ui-kit.md) Base UI kit · M
@@ -191,6 +191,8 @@ _New ideas go here first, then into the plan once they're accepted._
 
 - [x] KT-000 Planning groundwork: plan, board, ADRs, issue system · 2026-11-10
 - [x] KT-001 Repository and tooling bootstrap · 2026-11-11
+- [x] KT-002 Django project skeleton: `check` clean for dev and lan, `--deploy` shows only the HTTPS warnings, `kt.toml` secret key tested, settings table in the README · 2026-11-13
+- [x] KT-004 Data folder and SQLite: WAL and busy timeout tested on a real file, 20 writer threads without a locked database, OneDrive warning tested, folder printed at start · 2026-11-13
 - [x] KT-601 Admin area: `/manage/` teachers (create, edit, deactivate, password reset shown once), system settings, invite-code registration · 2026-11-12
 - [x] KT-602 Groups and students: CRUD, printable PIN sheet, paste/CSV/XLSX import with preview and duplicate detection · 2026-11-12
 - [x] KT-603 Group-bound sessions: pick your name, optional personal PIN with throttle, per-student attempt limit · 2026-11-12
