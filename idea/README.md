@@ -31,6 +31,7 @@ When a phase is finished, check its exit criteria in plan.md §21, mark the phas
 
 - `KT-<phase><nn>` for planned tasks: KT-001…KT-009 are Phase 0, KT-101… are Phase 1, and so on. An ID never changes, even if the task moves to another phase.
 - `BUG-<nnn>` for bugs found along the way.
+- `UX-<nn>` for the findings of the 2026-11-13 UI/UX review ([specs/ux-review-contracts.md](specs/ux-review-contracts.md)); they cut across phases, so they have their own series.
 - `Q<n>` for open questions, tracked in [plan.md §23](plan.md#23-open-questions).
 - `ADR-<nnnn>` for decisions.
 

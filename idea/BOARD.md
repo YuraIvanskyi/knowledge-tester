@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-12 · **Current work:** Phase 6 (People) on top of the working prototype · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave is ready to start · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -44,6 +44,21 @@ This board is the single source of truth for status. The task content lives in [
 - [~] Phase 6 wave 2: ownership audit (KT-607 audit part), end-to-end and load run with 32 takers, code review, UX pass in Ukrainian light/dark
 
 ## Ready (listed in suggested order)
+
+### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
+
+Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. Wave 0 first, then the five workstreams in parallel; `must` items first inside each.
+
+- [ ] Wave 0: skeleton (base.css and base.html fixes, phone card pattern, `void_attempt`, reserved URLs, `sessions.css` split) · M
+- [ ] WS A, student test page: UX-01 confirm before submitting unanswered, UX-03 save status and timer warning, UX-05 one-row bottom bar, UX-10 class-session form *(should)*, UX-15 wrapped question titles *(should)* · M
+- [ ] WS B, teacher sessions: UX-02 confirm close, UX-04 sessions list on phones, UX-06 session chooser, UX-16 share screen *(should)* · M
+- [ ] WS C, results and review: UX-01 cancel an attempt, UX-07 one Save per sheet, UX-17 results polish *(should)* · M
+- [ ] WS D, tests and dashboard: UX-06 "Open session" on tests and dashboard, UX-08 question rows *(should)* · M
+- [ ] WS E, people and admin: UX-06 group page button, UX-09 sub-tabs *(should)*, UX-14 gradebook alignment *(should)* · S
+- [ ] Shared: UX-11 phone cards in every stacked table *(should)*, UX-18 tap targets, titles, plurals *(could)* · S
+- [ ] Integration: translations, end-to-end pass, README, log · S
+
+### Phase 0
 
 - [ ] [KT-002](issues/KT-002-django-skeleton.md) Django project skeleton and app layout · M
 - [ ] [KT-004](issues/KT-004-data-dir-sqlite.md) Data folder and SQLite configuration · S
