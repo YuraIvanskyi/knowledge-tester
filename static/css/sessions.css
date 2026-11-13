@@ -1,14 +1,19 @@
 /* Teacher session pages: share screen, create form, linking table. Uses tokens from base.css. */
 
-/* Share screen */
+/* Share screen. Phones and tablets: QR and code side by side, the URL on its own line below.
+   Wide screens: the QR on the left, code and URL stacked on the right. */
 .presentation {
   display: grid;
-  gap: var(--space-4);
+  grid-template-columns: minmax(0, 7rem) minmax(0, 1fr);
+  grid-template-areas:
+    "qr code"
+    "url url";
+  gap: var(--space-3) var(--space-4);
   align-items: center;
 }
 .qr {
-  width: min(100%, 60vmin);
-  max-width: 34rem;
+  grid-area: qr;
+  width: 100%;
   background: #ffffff;
   padding: var(--space-2);
   border: 1px solid var(--border);
@@ -19,19 +24,90 @@
   width: 100%;
   height: auto;
 }
-.big-url {
-  font-size: clamp(1.25rem, 5vw, 2.25rem);
-  font-weight: 700;
-  overflow-wrap: anywhere;
+.join-code {
+  grid-area: code;
+  min-width: 0;
+  container-type: inline-size;
+}
+.join-url {
+  grid-area: url;
+  min-width: 0;
+  container-type: inline-size;
+}
+.join-code p,
+.join-url p {
   margin: 0;
 }
-.join-info p {
-  margin: 0;
+.join-code .big-code {
+  font-size: clamp(1.75rem, 8vw, 3.5rem);
+  letter-spacing: 0.08em;
+}
+/* The URL stays on one line: its font size follows the width of its box and the length
+   class (len-N = at most N characters). 0.62 is a safe upper bound for a monospace advance. */
+.big-url {
+  --chars: 30;
+  font-size: clamp(0.7rem, 3.4vw, 2.25rem);
+  font-size: min(2.25rem, calc(100cqi / (var(--chars) * 0.62)));
+  font-weight: 700;
+  white-space: nowrap;
+}
+.big-url a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.big-url.len-30 {
+  --chars: 30;
+}
+.big-url.len-34 {
+  --chars: 34;
+}
+.big-url.len-38 {
+  --chars: 38;
+}
+.big-url.len-42 {
+  --chars: 42;
+}
+.big-url.len-48 {
+  --chars: 48;
+}
+.big-url.len-56 {
+  --chars: 56;
+}
+.big-url.len-64 {
+  --chars: 64;
+}
+.big-url.len-80 {
+  --chars: 80;
+}
+.big-url.len-96 {
+  --chars: 96;
+}
+@media (min-width: 640px) {
+  .presentation {
+    grid-template-columns: 14rem minmax(0, 1fr);
+  }
 }
 @media (min-width: 900px) {
   .presentation {
-    grid-template-columns: auto 1fr;
-    gap: var(--space-5);
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "qr code"
+      "qr url";
+    gap: var(--space-4) var(--space-5);
+    align-content: start;
+  }
+  .qr {
+    width: min(34rem, 50vmin);
+  }
+  .join-code {
+    align-self: end;
+  }
+  .join-url {
+    align-self: start;
+  }
+  .join-code .big-code {
+    font-size: min(5rem, calc(100cqi / 4.4));
   }
 }
 
@@ -56,6 +132,68 @@
   font-size: var(--fs-2xl);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 639px) {
+  .counters {
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .counters div {
+    padding: var(--space-1) var(--space-3);
+  }
+  .counters dt {
+    line-height: 1.25;
+  }
+  .counters dd {
+    font-size: var(--fs-xl);
+    line-height: 1.2;
+  }
+  .share.stack {
+    gap: var(--space-3);
+  }
+  .share .page-head {
+    margin-bottom: 0;
+  }
+  /* "Refresh" and "linked to students" share a line; the hint about polling is for wide screens */
+  .share-meta {
+    display: inline;
+    margin: 0;
+    font-size: var(--fs-sm);
+  }
+  .share-meta .muted {
+    display: none;
+  }
+  .share-meta + .share-meta::before {
+    content: " \b7  ";
+  }
+  /* Takers: one tight card per student (name, then status and answered on one line) */
+  .takers tr {
+    padding-block: 0 2px;
+  }
+  .takers td {
+    padding-block: 0;
+    line-height: 1.25;
+  }
+  .takers td.cell-title {
+    padding-top: 2px;
+  }
+  /* Actions: two per row; the destructive one is the last cell, on its own */
+  .share-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .share-actions .btn {
+    padding-inline: var(--space-2);
+  }
+  .share-actions .btn,
+  .share-actions form,
+  .share-actions form .btn {
+    width: 100%;
+  }
+  .share-actions .btn-link {
+    justify-content: flex-start;
+  }
 }
 
 /* Teacher: create form checkbox row and the linking table */
@@ -86,7 +224,9 @@
 @media (max-width: 639px) {
   .link-table td.link-cell-td {
     display: block;
+    flex: 1 1 100%;
     text-align: left;
+    padding-bottom: var(--space-2);
   }
   .link-table td.link-cell-td::before {
     display: block;
@@ -96,4 +236,57 @@
     min-width: 0;
     width: 100%;
   }
+}
+
+/* Share screen: the destructive action sits at the far end of the button row */
+.row-end {
+  margin-inline-start: auto;
+}
+@media (max-width: 639px) {
+  .row-end {
+    margin-inline-start: 0;
+  }
+}
+/* Presentation mode: bigger code and counters for a projector */
+.share-present .counters dd {
+  font-size: clamp(2rem, 8vw, 4rem);
+}
+@media (min-width: 900px) {
+  .share-present .join-code .big-code {
+    font-size: min(8rem, calc(100cqi / 4.4));
+  }
+  .share-present .qr {
+    width: min(34rem, 62vmin);
+  }
+}
+
+/* Session chooser */
+.pick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.pick-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.pick-text {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+.pick-text p {
+  margin: 0;
+}
+.pick-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.pick-facts,
+.pick-note {
+  font-size: var(--fs-sm);
 }

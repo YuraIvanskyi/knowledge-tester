@@ -101,3 +101,28 @@ def test_class_pages_load_only_local_scripts(world):
     html = Client().get(f"/s/{world['class'].code}/").content.decode()
     assert "/static/js/namepicker.js" in html and "/static/js/autosave.js" in html
     assert "https://" not in html and "http://" not in html
+
+
+def test_session_chooser_close_confirmation_and_presentation_are_clean(
+    client_for, teacher, world, monkeypatch
+):
+    """UX wave: the chooser, the close confirmation and the presentation mode stay offline."""
+    monkeypatch.setattr(lan, "lan_ipv4_addresses", lambda: ["127.0.0.1"])
+    teacher_client = client_for(teacher)
+    Client().post(f"/s/{world['plain'].code}/", {"tf_name": "Still Working"})
+    group_id = world["class"].group_id
+    responses = [
+        teacher_client.get(reverse("delivery:pick")),
+        teacher_client.get(reverse("delivery:pick"), {"group": group_id}),
+        teacher_client.get(
+            reverse("delivery:create", args=[world["revision"].pk]), {"group": group_id}
+        ),
+        teacher_client.get(reverse("delivery:share", args=[world["plain"].pk]), {"present": "1"}),
+        teacher_client.post(reverse("delivery:close", args=[world["plain"].pk])),
+    ]
+    assert "still working" in responses[-1].content.decode()
+    for response in responses:
+        assert response.status_code == 200, response.request["PATH_INFO"]
+        html = response.content.decode()
+        assert external_urls(html) == [], response.request["PATH_INFO"]
+        assert csp_violations(html) == [], response.request["PATH_INFO"]

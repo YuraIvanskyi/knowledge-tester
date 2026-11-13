@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Close session" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}"><link rel="stylesheet" href="{% static 'css/sessions.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Close this session?" %}</h1>
+  <p><strong>{{ sitting.title|default:sitting.code }}</strong> <span class="mono">{{ sitting.code }}</span></p>
+  <p class="alert alert-warn" role="note">
+    {% blocktrans count n=working %}{{ n }} student is still working. Their answers so far will be submitted now and they cannot continue.{% plural %}{{ n }} students are still working. Their answers so far will be submitted now and they cannot continue.{% endblocktrans %}
+  </p>
+  <p class="muted">{% trans "You can reopen the session later, but attempts submitted by closing it stay finished." %}</p>
+  <form method="post" action="{% url 'delivery:close' sitting.pk %}" class="row">
+    {% csrf_token %}
+    <input type="hidden" name="confirm" value="1">
+    <button class="btn btn-primary" type="submit">{% trans "Close session" %}</button>
+    <a class="btn" href="{% url 'delivery:share' sitting.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

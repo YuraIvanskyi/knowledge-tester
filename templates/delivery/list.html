@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Sessions" %}{% endblock %}
+{% block title %}{% trans "Sessions" %} - Knowledge Tester{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}"><link rel="stylesheet" href="{% static 'css/sessions.css' %}">{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>{% trans "Sessions" %}</h1>
+  <a class="btn btn-primary" href="{% url 'delivery:pick' %}">{% trans "Open a session" %}</a>
 </div>
 {% if sittings %}
-  <table class="table">
+  <table class="table table-compact">
     <thead>
       <tr>
         <th scope="col">{% trans "Title" %}</th>
@@ -15,18 +16,18 @@
         <th scope="col">{% trans "Code" %}</th>
         <th scope="col">{% trans "Status" %}</th>
         <th scope="col" class="num">{% trans "Attempts" %}</th>
-        <th scope="col">{% trans "Links" %}</th>
+        <th scope="col"><span class="visually-hidden">{% trans "Links" %}</span></th>
       </tr>
     </thead>
     <tbody>
       {% for s in sittings %}
         <tr>
-          <td data-label="{% trans 'Title' %}"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.code }}</a>{% if s.group %} <span class="muted">({{ s.group.name }})</span>{% endif %}</td>
+          <td class="cell-title"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.code }}</a>{% if s.group %} <span class="muted">({{ s.group.name }})</span>{% endif %}</td>
           <td data-label="{% trans 'Test' %}">{{ s.revision.assessment.title }} <span class="muted">({% trans "rev." %} {{ s.revision.number }})</span></td>
           <td data-label="{% trans 'Code' %}" class="mono">{{ s.code }}</td>
           <td data-label="{% trans 'Status' %}">{% if s.status == "open" %}<span class="status-ok">{% trans "Open" %}</span>{% else %}<span class="muted">{% trans "Closed" %}</span>{% endif %}</td>
           <td data-label="{% trans 'Attempts' %}" class="num">{{ s.attempt_count }}</td>
-          <td><a href="{% url 'delivery:share' s.pk %}">{% trans "Share" %}</a> &middot; <a href="{% url 'reports:session' s.pk %}">{% trans "Results" %}</a> &middot; <a href="{% url 'delivery:link' s.pk %}">{% trans "Link to students" %}</a> &middot; <a href="{% url 'delivery:delete' s.pk %}">{% trans "Delete" %}</a></td>
+          <td class="cell-actions"><a href="{% url 'delivery:share' s.pk %}">{% trans "Share" %}</a> &middot; <a href="{% url 'reports:session' s.pk %}">{% trans "Results" %}</a> &middot; <a href="{% url 'delivery:link' s.pk %}">{% trans "Link to students" %}</a> &middot; <a href="{% url 'delivery:delete' s.pk %}">{% trans "Delete" %}</a></td>
         </tr>
       {% endfor %}
     </tbody>
@@ -34,7 +35,7 @@
 {% else %}
   <div class="empty">
     <p>{% trans "No sessions yet. Open a session from a published test." %}</p>
-    <a class="btn btn-primary" href="{% url 'assessments:list' %}">{% trans "Go to tests" %}</a>
+    <a class="btn btn-primary" href="{% url 'delivery:pick' %}">{% trans "Open a session" %}</a>
   </div>
 {% endif %}
 {% endblock %}

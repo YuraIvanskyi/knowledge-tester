@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Open a session" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}"><link rel="stylesheet" href="{% static 'css/sessions.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Open a session" %}</h1>
+  {% if group %}
+    <p>{% blocktrans with name=group.name %}Choose a test for the class {{ name }}.{% endblocktrans %}</p>
+  {% else %}
+    <p>{% trans "Choose the test students will take. A session always uses the last published version of the test." %}</p>
+  {% endif %}
+  {% if options %}
+    <ul class="pick-list">
+      {% for o in options %}
+        <li class="pick-item panel">
+          <div class="pick-text">
+            <p class="pick-title">{{ o.assessment.title }}</p>
+            <p class="muted pick-facts">
+              {% blocktrans count n=o.question_count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}
+              &middot; {% if o.time_limit %}{% blocktrans with time_limit=o.time_limit %}Time limit: {{ time_limit }} min{% endblocktrans %}{% else %}{% trans "No time limit" %}{% endif %}
+              &middot; {% trans "revision" %} {{ o.revision.number }}
+            </p>
+            {% if o.has_changes %}<p class="pick-note"><span class="status-warn">{% trans "Unpublished changes" %}</span> <span class="muted">{% blocktrans with number=o.revision.number %}The session will use the last published version ({{ number }}).{% endblocktrans %}</span></p>{% endif %}
+          </div>
+          <a class="btn btn-primary" href="{% url 'delivery:create' o.revision.pk %}{{ group_qs }}">{% trans "Open session" %}<span class="visually-hidden">: {{ o.assessment.title }}</span></a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">
+      <p>{% trans "You have no published tests yet. Publish a test first, then open a session from it." %}</p>
+      <a class="btn btn-primary" href="{% url 'assessments:list' %}">{% trans "Go to tests" %}</a>
+    </div>
+  {% endif %}
+  <p><a class="link-tap" href="{% url 'delivery:list' %}">&larr; {% trans "All sessions" %}</a></p>
+</div>
+{% endblock %}

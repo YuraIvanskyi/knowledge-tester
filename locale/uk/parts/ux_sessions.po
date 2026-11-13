@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Session closed."
+msgstr "Сесію закрито."
+
+msgid "Session closed. %(count)d unfinished attempt was submitted automatically."
+msgid_plural "Session closed. %(count)d unfinished attempts were submitted automatically."
+msgstr[0] "Сесію закрито. %(count)d незавершену спробу надіслано автоматично."
+msgstr[1] "Сесію закрито. %(count)d незавершені спроби надіслано автоматично."
+msgstr[2] "Сесію закрито. %(count)d незавершених спроб надіслано автоматично."
+
+msgid "Close this session?"
+msgstr "Закрити цю сесію?"
+
+msgid "%(n)s student is still working. Their answers so far will be submitted now and they cannot continue."
+msgid_plural "%(n)s students are still working. Their answers so far will be submitted now and they cannot continue."
+msgstr[0] "%(n)s учень ще працює. Його відповіді, дані на цей момент, буде надіслано зараз, і він не зможе продовжити."
+msgstr[1] "%(n)s учні ще працюють. Їхні відповіді, дані на цей момент, буде надіслано зараз, і вони не зможуть продовжити."
+msgstr[2] "%(n)s учнів ще працюють. Їхні відповіді, дані на цей момент, буде надіслано зараз, і вони не зможуть продовжити."
+
+msgid "You can reopen the session later, but attempts submitted by closing it stay finished."
+msgstr "Сесію можна відкрити знову, але спроби, надіслані під час закриття, залишаться завершеними."
+
+msgid "Presentation mode"
+msgstr "Режим показу"
+
+msgid "Back to the session page"
+msgstr "Назад до сторінки сесії"
+
+msgid "Choose a test for the class %(name)s."
+msgstr "Оберіть тест для класу %(name)s."
+
+msgid "Choose the test students will take. A session always uses the last published version of the test."
+msgstr "Оберіть тест, який складатимуть учні. Сесія завжди використовує останню опубліковану версію тесту."
+
+msgid "Unpublished changes"
+msgstr "Є неопубліковані зміни"
+
+msgid "The session will use the last published version (%(number)s)."
+msgstr "Сесія використає останню опубліковану версію (%(number)s)."
+
+msgid "You have no published tests yet. Publish a test first, then open a session from it."
+msgstr "У вас ще немає опублікованих тестів. Спершу опублікуйте тест, а потім відкрийте з нього сесію."

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Link to students" %}: {{ sitting.title|default:sitting.code }}{% endblock %}
+{% block title %}{% trans "Link to students" %}: {{ sitting.title|default:sitting.code }} - Knowledge Tester{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}"><link rel="stylesheet" href="{% static 'css/sessions.css' %}">{% endblock %}
 {% block content %}
 <div class="stack">
@@ -27,7 +27,7 @@
     <p class="muted">{% blocktrans with linked=linked total=total %}{{ linked }} of {{ total }} attempts are linked to a student.{% endblocktrans %}</p>
     <form method="post" class="stack">
       {% csrf_token %}
-      <table class="table link-table">
+      <table class="table table-compact link-table">
         <thead>
           <tr>
             <th scope="col">{% trans "Typed name" %}</th>
@@ -41,7 +41,7 @@
           {% for row in rows %}
             {% with a=row.attempt %}
             <tr>
-              <td data-label="{% trans 'Typed name' %}" class="typed"><label for="student_{{ a.pk }}">{{ row.typed }}</label></td>
+              <td class="typed cell-title"><label for="student_{{ a.pk }}">{{ row.typed }}</label></td>
               <td data-label="{% trans 'Status' %}">{{ a.get_status_display }}</td>
               <td data-label="{% trans 'Score' %}" class="num">{% if a.score is not None %}{{ a.score|floatformat:"-2" }} / {{ a.max_score|floatformat:"-2" }}{% if a.pending_reviews %} <span class="muted">{% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
               <td data-label="{% trans 'Linked to' %}">{% if row.student %}<span>{{ row.student.full_name }}{% if row.student.group %} <span class="muted">({{ row.student.group.name }})</span>{% endif %}</span>{% else %}<span class="muted">{% trans "not linked" %}</span>{% endif %}</td>

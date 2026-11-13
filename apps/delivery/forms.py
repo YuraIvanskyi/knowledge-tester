@@ -18,6 +18,16 @@ class GroupChoiceField(forms.ModelChoiceField):
         return label
 
 
+def group_from_query(raw, user):
+    """The user's own, non-archived class named by a `?group=<pk>` value, else None.
+
+    A malformed, foreign or archived id is ignored silently (no 404, nothing leaks).
+    """
+    if user is None or not str(raw or "").isdecimal() or len(str(raw)) > 9:
+        return None
+    return Group.objects.filter(pk=int(raw), owner=user, is_archived=False).first()
+
+
 class SittingForm(forms.Form):
     title = forms.CharField(label=_("Session title"), max_length=200)
     access_code = forms.CharField(

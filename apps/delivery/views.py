@@ -3,7 +3,7 @@
 import segno
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, OuterRef, Subquery
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
@@ -11,12 +11,13 @@ from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST
 
+from apps.assessments import services as assessment_services
 from apps.assessments.models import Revision
 from apps.core import lan
 from apps.people.access import students_for
 
 from . import linking, roster, services
-from .forms import SittingForm
+from .forms import SittingForm, group_from_query
 from .models import Attempt, Sitting
 
 
@@ -37,6 +38,40 @@ def session_list(request):
     if not request.user.is_admin_role:
         sittings = sittings.filter(created_by=request.user)
     return render(request, "delivery/list.html", {"sittings": sittings})
+
+
+@login_required
+def session_pick(request):
+    """Step one of opening a session: choose a published test (its latest revision is used)."""
+    latest = Revision.objects.filter(assessment=OuterRef("pk")).order_by("-number").values("pk")[:1]
+    projects = assessment_services.visible_projects(request.user)
+    assessments = list(
+        assessment_services.visible_assessments(request.user)
+        .filter(project__in=projects)
+        .annotate(latest_revision_pk=Subquery(latest))
+        .exclude(latest_revision_pk=None)
+    )
+    revisions = Revision.objects.in_bulk([a.latest_revision_pk for a in assessments])
+    options = []
+    for assessment in assessments:
+        revision = revisions[assessment.latest_revision_pk]
+        test = revision.test
+        options.append(
+            {
+                "assessment": assessment,
+                "revision": revision,
+                "question_count": len(test.get("questions", [])),
+                "time_limit": services.time_limit_minutes(test),
+                "has_changes": assessment.has_unpublished_changes,
+            }
+        )
+    options.sort(key=lambda o: o["revision"].created_at, reverse=True)
+    group = group_from_query(request.GET.get("group"), request.user)
+    return render(
+        request,
+        "delivery/pick.html",
+        {"options": options, "group": group, "group_qs": f"?group={group.pk}" if group else ""},
+    )
 
 
 @login_required
@@ -61,9 +96,11 @@ def session_create(request, revision_pk: int):
             _warn_about_roster(request, sitting)
             return redirect("delivery:share", pk=sitting.pk)
     else:
-        form = SittingForm(
-            initial={"title": test.get("title") or revision.assessment.title}, user=request.user
-        )
+        initial = {"title": test.get("title") or revision.assessment.title}
+        group = group_from_query(request.GET.get("group"), request.user)
+        if group is not None:
+            initial["group"] = group.pk
+        form = SittingForm(initial=initial, user=request.user)
     context = {
         "form": form,
         "revision": revision,
@@ -129,6 +166,9 @@ def session_share(request, pk: int):
         "stats": stats,
         "is_open": sitting.status == Sitting.Status.OPEN,
         "group_info": roster.group_summary(sitting) if sitting.group_id else None,
+        "present": request.GET.get("present") == "1",
+        # picks the font size class that keeps the URL on one line (see sessions.css)
+        "url_size": next((n for n in (30, 34, 38, 42, 48, 56, 64, 80) if len(url) <= n), 96),
     }
     return render(request, "delivery/share.html", context)
 
@@ -170,12 +210,24 @@ def session_delete(request, pk: int):
 @require_POST
 def session_close(request, pk: int):
     sitting = _own_sitting(request, pk)
+    working = sitting.attempts.filter(status=Attempt.Status.IN_PROGRESS).count()
+    if working and request.POST.get("confirm") != "1":
+        return render(
+            request, "delivery/confirm_close.html", {"sitting": sitting, "working": working}
+        )
     count = services.close_sitting(sitting)
-    messages.success(
-        request,
-        _("Session closed. %(count)d unfinished attempt(s) were submitted automatically.")
-        % {"count": count},
-    )
+    if count:
+        messages.success(
+            request,
+            ngettext(
+                "Session closed. %(count)d unfinished attempt was submitted automatically.",
+                "Session closed. %(count)d unfinished attempts were submitted automatically.",
+                count,
+            )
+            % {"count": count},
+        )
+    else:
+        messages.success(request, _("Session closed."))
     return redirect("delivery:share", pk=sitting.pk)
 
 

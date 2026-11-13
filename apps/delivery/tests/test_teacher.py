@@ -116,7 +116,10 @@ def test_stats_endpoint(client, teacher, sitting):
                 data='{"answers": {"q1": ["a"]}}',
                 content_type="application/json",
             )
-            c.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a", "q_q4": "x"})
+            c.post(
+                f"/s/{sitting.code}/submit/",
+                {"form_sent": "1", "q_q1": "a", "q_q4": "x", "confirm_unanswered": "1"},
+            )
     client.force_login(teacher)
     data = client.get(reverse("delivery:stats", args=[sitting.pk])).json()
     assert (data["joined"], data["in_progress"], data["submitted"]) == (3, 2, 1)
@@ -138,13 +141,15 @@ def test_close_finalizes_in_progress(client, teacher, sitting, grade_calls):
         data='{"answers": {"q1": ["a"]}}',
         content_type="application/json",
     )
-    t2.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    t2.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a", "confirm_unanswered": "1"}
+    )
     assert len(grade_calls) == 1
 
     client.force_login(teacher)
     r = client.get(reverse("delivery:close", args=[sitting.pk]))
     assert r.status_code == 405  # POST only
-    r = client.post(reverse("delivery:close", args=[sitting.pk]))
+    r = client.post(reverse("delivery:close", args=[sitting.pk]), {"confirm": "1"})
     assert r["Location"] == reverse("delivery:share", args=[sitting.pk])
     sitting.refresh_from_db()
     assert sitting.status == Sitting.Status.CLOSED and sitting.closed_at

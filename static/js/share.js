@@ -16,11 +16,11 @@
   }
   var of = body ? body.getAttribute("data-of") : "/";
 
-  function cell(text, label, cls) {
+  // Builds the same markup as templates/delivery/share.html (card pattern of base.css).
+  function cell(label, cls) {
     var td = document.createElement("td");
-    td.setAttribute("data-label", label);
+    if (label) td.setAttribute("data-label", label);
     if (cls) td.className = cls;
-    td.textContent = text;
     return td;
   }
 
@@ -32,7 +32,7 @@
     body.textContent = "";
     data.takers.forEach(function (t) {
       var tr = document.createElement("tr");
-      var nameCell = cell("", labels.name);
+      var nameCell = cell("", "cell-title");
       var nameText = document.createElement("span");
       nameText.textContent = t.name;
       if (t.group) {
@@ -43,10 +43,19 @@
       }
       nameCell.appendChild(nameText);
       tr.appendChild(nameCell);
-      tr.appendChild(cell(t.status_label, labels.status));
-      tr.appendChild(
-        cell(t.answered + " " + of + " " + data.total_questions, labels.answered, "num")
-      );
+      var statusCell = cell(labels.status);
+      if (t.status !== "in_progress") {
+        var done = document.createElement("span");
+        done.className = "status-ok";
+        done.textContent = t.status_label;
+        statusCell.appendChild(done);
+      } else {
+        statusCell.textContent = t.status_label;
+      }
+      tr.appendChild(statusCell);
+      var answeredCell = cell(labels.answered, "num");
+      answeredCell.textContent = t.answered + " " + of + " " + data.total_questions;
+      tr.appendChild(answeredCell);
       body.appendChild(tr);
     });
     table.hidden = data.takers.length === 0;
