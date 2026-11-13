@@ -58,6 +58,7 @@ def test_full_flow(client, sitting, grade_calls):
         f"/s/{sitting.code}/submit/",
         {
             "form_sent": "1",
+            "confirm_unanswered": "1",
             "q_q1": "a",
             "q_q2": ["a", "b"],
             "q_q3": ["a", "b"],
@@ -79,7 +80,9 @@ def test_full_flow(client, sitting, grade_calls):
     assert "ZEBRA-ACCEPT" not in html  # show_result=score hides correct answers
 
     # idempotent: repeat submit returns done and does not grade again
-    r = client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "b"})
+    r = client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "b"}
+    )
     assert r["Location"] == f"/s/{sitting.code}/done/"
     assert grade_calls == [attempt.pk]
     assert Answer.objects.get(attempt=attempt, question_key="q1").value == ["a"]
@@ -88,7 +91,7 @@ def test_full_flow(client, sitting, grade_calls):
 def test_submit_without_js_fields_keeps_autosaved(client, sitting):
     start(client, sitting)
     save(client, sitting, {"q1": ["a"]})
-    r = client.post(f"/s/{sitting.code}/submit/")
+    r = client.post(f"/s/{sitting.code}/submit/", {"confirm_unanswered": "1"})
     assert r["Location"].endswith("/done/")
     assert Answer.objects.get(attempt=attempt_of(sitting), question_key="q1").value == ["a"]
 
@@ -138,14 +141,18 @@ def test_closed_session(client, sitting):
 
 def test_required_question_message(client, sitting, grade_calls):
     start(client, sitting)
-    r = client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q4": "x"})
+    r = client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q4": "x"}
+    )
     assert r.status_code == 200
     html = r.content.decode()
     assert "required questions" in html and 'href="#q-q1"' in html
     assert attempt_of(sitting).status == Attempt.Status.IN_PROGRESS
     assert not grade_calls
     assert 'value="x"' in html  # answers entered so far are kept
-    r = client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "b"})
+    r = client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "b"}
+    )
     assert r["Location"].endswith("/done/")
 
 
@@ -180,7 +187,9 @@ def test_submit_just_after_deadline_is_accepted_as_auto_submitted(client, sittin
     start(client, sitting)
     attempt = attempt_of(sitting)
     Attempt.objects.filter(pk=attempt.pk).update(deadline_at=timezone.now() - timedelta(seconds=2))
-    r = client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    r = client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "a"}
+    )
     assert r["Location"].endswith("/done/")
     attempt.refresh_from_db()
     assert attempt.status == Attempt.Status.AUTO_SUBMITTED
@@ -207,7 +216,9 @@ def test_required_taker_field(client, sitting):
 
 def test_max_attempts_by_cookie_and_name(client, sitting):
     start(client, sitting, name="Ann  Lee")
-    client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "a"}
+    )
     # same browser: back to done
     assert client.get(f"/s/{sitting.code}/")["Location"].endswith("/done/")
     # other browser, same normalised name: blocked
@@ -224,11 +235,15 @@ def test_max_attempts_by_cookie_and_name(client, sitting):
 def test_max_attempts_two_allows_retry(client, make_sitting):
     sitting = make_sitting(max_attempts=2)
     start(client, sitting)
-    client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "a"}
+    )
     page = client.get(f"/s/{sitting.code}/")
     assert page.status_code == 200 and 'name="tf_name"' in page.content.decode()
     assert start(client, sitting).status_code == 302
-    client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "a"}
+    )
     r = start(client, sitting)
     assert r.status_code == 200 and "already taken" in r.content.decode()
 
@@ -285,7 +300,13 @@ def test_done_by_show_result(client, make_sitting, mode):
     start(client, sitting)
     client.post(
         f"/s/{sitting.code}/submit/",
-        {"form_sent": "1", "q_q1": "a", "q_q4": "wrong", "q_q5": "my essay"},
+        {
+            "form_sent": "1",
+            "confirm_unanswered": "1",
+            "q_q1": "a",
+            "q_q4": "wrong",
+            "q_q5": "my essay",
+        },
     )
     html = client.get(f"/s/{sitting.code}/done/").content.decode()
     assert "Submitted" in html

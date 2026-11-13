@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "You have answered %(done)s of %(total)s questions."
+msgstr "Ви відповіли на %(done)s із %(total)s запитань."
+
+msgid "These questions have no answer yet:"
+msgstr "На ці запитання ще немає відповіді:"
+
+msgid "Keep answering, or submit now. Questions left empty score no points."
+msgstr "Можна продовжити відповідати або надіслати зараз. За порожні запитання балів не нараховують."
+
+msgid "Submit anyway"
+msgstr "Усе одно надіслати"
+
+msgid "Saved"
+msgstr "Збережено"
+
+msgid "No connection. Your answers will be sent when it is back."
+msgstr "Немає з'єднання. Відповіді буде надіслано, щойно воно з'явиться."
+
+msgid "1 minute left"
+msgstr "Залишилась 1 хвилина"
+
+msgid "Your teacher cancelled your previous attempt. You can start again below."
+msgstr "Вчитель скасував вашу попередню спробу. Нижче можна почати знову."

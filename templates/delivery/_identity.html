@@ -19,7 +19,7 @@
   {% if pin_mode %}
     <div class="field">
       <label for="pin">{% trans "Your personal PIN" %}</label>
-      <input type="password" id="pin" name="pin" maxlength="8" required autocomplete="off" autocapitalize="off" spellcheck="false" value="">
+      <input type="password" id="pin" name="pin" maxlength="8" inputmode="numeric" pattern="[0-9]*" required autocomplete="off" autocapitalize="off" spellcheck="false" value="">
       <span class="help">{% trans "The PIN your teacher gave you." %}</span>
     </div>
   {% endif %}

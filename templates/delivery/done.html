@@ -8,6 +8,7 @@
   {% if voided %}
     <h1>{% trans "Attempt cancelled" %}</h1>
     <p class="alert alert-warn">{% trans "Your teacher cancelled this attempt." %}</p>
+    {% if can_retry %}<p><a class="link-tap" href="{% url 'taker:session' sitting.code %}">{% trans "Take the test again" %}</a></p>{% endif %}
   {% else %}
     <h1>{% trans "Submitted" %}</h1>
     <p class="alert alert-ok" role="status">
@@ -39,7 +40,7 @@
         {% endfor %}
       </section>
     {% endif %}
-    {% if can_retry %}<p><a href="{% url 'taker:session' sitting.code %}">{% trans "Take the test again" %}</a></p>{% endif %}
+    {% if can_retry %}<p><a class="link-tap" href="{% url 'taker:session' sitting.code %}">{% trans "Take the test again" %}</a></p>{% endif %}
   {% endif %}
 </div>
 {% endblock %}

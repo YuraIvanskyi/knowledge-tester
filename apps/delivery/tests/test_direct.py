@@ -47,6 +47,7 @@ def test_submit_creates_attempt_with_the_shown_token(client, untimed, grade_call
             "unstarted": "1",
             "attempt_token": token,
             "form_sent": "1",
+            "confirm_unanswered": "1",
             "tf_name": "Ann Lee",
             "q_q1": ["a"],
         },
@@ -61,7 +62,13 @@ def test_submit_creates_attempt_with_the_shown_token(client, untimed, grade_call
 
 def test_double_submit_is_idempotent(client, untimed):
     token = token_of(client.get(f"/s/{untimed.code}/").content.decode())
-    data = {"unstarted": "1", "attempt_token": token, "form_sent": "1", "tf_name": "Ann Lee"}
+    data = {
+        "unstarted": "1",
+        "attempt_token": token,
+        "form_sent": "1",
+        "confirm_unanswered": "1",
+        "tf_name": "Ann Lee",
+    }
     data["q_q1"] = "a"
     first = client.post(f"/s/{untimed.code}/submit/", data)
     second = client.post(f"/s/{untimed.code}/submit/", data)
@@ -73,7 +80,14 @@ def test_missing_name_rerenders_with_answers_and_creates_nothing(client, untimed
     token = token_of(client.get(f"/s/{untimed.code}/").content.decode())
     r = client.post(
         f"/s/{untimed.code}/submit/",
-        {"unstarted": "1", "attempt_token": token, "form_sent": "1", "tf_name": " ", "q_q1": "a"},
+        {
+            "unstarted": "1",
+            "attempt_token": token,
+            "form_sent": "1",
+            "confirm_unanswered": "1",
+            "tf_name": " ",
+            "q_q1": "a",
+        },
     )
     html = r.content.decode()
     assert r.status_code == 200 and "Please fill in" in html
@@ -102,7 +116,7 @@ def test_autosave_starts_the_attempt_once_details_are_valid(client, untimed):
 
     done = client.post(
         f"/s/{untimed.code}/submit/",
-        {"unstarted": "1", "attempt_token": token, "tf_name": "Ann Lee"},
+        {"unstarted": "1", "attempt_token": token, "tf_name": "Ann Lee", "confirm_unanswered": "1"},
     )
     assert done["Location"] == f"/s/{untimed.code}/done/"
     assert untimed.attempts.count() == 1
@@ -135,7 +149,13 @@ def test_access_code_required_on_direct_page(client, untimed):
     html = client.get(f"/s/{untimed.code}/").content.decode()
     assert 'name="access_code"' in html
     token = token_of(html)
-    data = {"unstarted": "1", "attempt_token": token, "form_sent": "1", "tf_name": "Ann"}
+    data = {
+        "unstarted": "1",
+        "attempt_token": token,
+        "form_sent": "1",
+        "confirm_unanswered": "1",
+        "tf_name": "Ann",
+    }
     data["q_q1"] = "a"
     r = client.post(f"/s/{untimed.code}/submit/", {**data, "access_code": "nope"})
     assert "access code is not correct" in r.content.decode()

@@ -36,7 +36,14 @@ def try_path(sitting, student, pin, path="form", client=None):
         return r.json()["started"], r
     r = client.post(
         f"/s/{sitting.code}/submit/",
-        {"unstarted": "1", "attempt_token": token, "form_sent": "1", "q_q1": "a", **data},
+        {
+            "unstarted": "1",
+            "attempt_token": token,
+            "form_sent": "1",
+            "confirm_unanswered": "1",
+            "q_q1": "a",
+            **data,
+        },
     )
     return r.status_code == 302, r
 
@@ -129,6 +136,7 @@ def test_page_rerendered_after_a_wrong_pin_keeps_the_pick_but_not_the_pin(pin_si
             "unstarted": "1",
             "attempt_token": token,
             "form_sent": "1",
+            "confirm_unanswered": "1",
             "q_q4": "my-answer",
             "student": str(pupils["ann"].pk),
             "pin": WRONG,

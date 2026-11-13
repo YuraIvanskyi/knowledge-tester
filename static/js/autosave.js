@@ -1,4 +1,4 @@
-// Debounced autosave of changed answers, answered counter, and choose_n selection cap.
+// Debounced autosave of changed answers, answered counter, save status line and choose_n cap.
 // The form works without this file: submit posts every answer.
 (function () {
   "use strict";
@@ -18,6 +18,9 @@
   // until the taker changes something, so a wrong PIN is not counted once per answer.
   var rejected = null;
   var note = document.getElementById("details-note");
+  // Save status in the bottom bar: empty until the first save, then "Saved" or "No connection".
+  var statusEl = document.getElementById("save-status");
+  var everSaved = false;
   var DETAILS = 'input[name^="tf_"], input[name="access_code"], input[name="pin"], select[name="student"]';
 
   function questionId(name) {
@@ -75,6 +78,12 @@
     note.hidden = !(errors && errors.length);
   }
 
+  function setStatus(kind) {
+    if (!statusEl) return;
+    statusEl.textContent = statusEl.getAttribute("data-" + kind) || "";
+    statusEl.classList.toggle("save-offline", kind === "offline");
+  }
+
   function flush() {
     timer = null;
     if (preview) pending = {};
@@ -101,6 +110,7 @@
             window.location.href = d.url;
           });
         }
+        if (r.status >= 500) throw new Error("server error");
         return r.json().then(function (d) {
           if (d.started === false) {
             // Details (name, PIN, access code) not valid yet: keep answers, retry when they change.
@@ -113,6 +123,8 @@
             unstarted = false;
             rejected = null;
             showNote(null);
+            everSaved = true;
+            setStatus("saved");
             if (d.left !== null && d.left !== undefined && window.ktStartTimer) {
               window.ktStartTimer(d.left);
             }
@@ -121,6 +133,7 @@
       })
       .catch(function () {
         // Network hiccup: keep the values and retry shortly.
+        setStatus("offline");
         Object.keys(batch).forEach(function (k) {
           if (!(k in pending)) pending[k] = batch[k];
         });
@@ -157,5 +170,11 @@
   form.addEventListener("input", function (ev) {
     if (ev.target.type === "text" || ev.target.tagName === "TEXTAREA") onChange(ev);
   });
-  window.addEventListener("online", flush);
+  window.addEventListener("offline", function () {
+    setStatus("offline");
+  });
+  window.addEventListener("online", function () {
+    if (!Object.keys(pending).length && !timer && everSaved) setStatus("saved");
+    else flush();
+  });
 })();

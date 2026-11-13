@@ -17,10 +17,21 @@
       <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
     </div>
   {% endif %}
+  {% if cancelled %}
+    <p class="alert alert-warn" role="status">{% trans "Your teacher cancelled your previous attempt. You can start again below." %}</p>
+  {% endif %}
   {% if missing %}
     <div class="alert alert-bad" role="alert" id="missing">
       <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
       <ul>{% for q in missing %}<li><a href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
+    </div>
+  {% elif unanswered %}
+    <div class="alert alert-warn confirm-panel" role="alert" id="unanswered" tabindex="-1" autofocus>
+      <p><strong>{% blocktrans with done=answered %}You have answered {{ done }} of {{ total }} questions.{% endblocktrans %}</strong></p>
+      <p>{% trans "These questions have no answer yet:" %}</p>
+      <ul class="unanswered-list">{% for q in unanswered %}<li><a class="link-tap" href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
+      <p class="muted">{% trans "Keep answering, or submit now. Questions left empty score no points." %}</p>
+      <button type="submit" form="take-form" name="confirm_unanswered" value="1" class="btn btn-primary">{% trans "Submit anyway" %}</button>
     </div>
   {% endif %}
   <form method="post" id="take-form" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}
@@ -39,6 +50,7 @@
       {% for q in questions %}
         <fieldset class="question" id="q-{{ q.id }}">
           <legend><span class="qnum">{{ q.number }}.</span> {{ q.text }}{% if q.required %} <span class="req">({% trans "required" %})</span>{% endif %}</legend>
+          <div class="q-body">
           {% if q.hint %}<p class="muted hint">{{ q.hint }}</p>{% endif %}
           {% if q.type == "choose_n" %}<p class="muted hint">{% blocktrans with n=q.n %}Choose exactly {{ n }}.{% endblocktrans %}</p>{% elif q.type == "multiple_choice" %}<p class="muted hint">{% trans "Select all that apply." %}</p>{% endif %}
           {% if q.is_choice %}
@@ -55,17 +67,22 @@
             <label class="visually-hidden" for="in-{{ q.id }}">{% trans "Your answer" %}</label>
             <textarea id="in-{{ q.id }}" name="q_{{ q.id }}" rows="6">{{ q.value|default:'' }}</textarea>
           {% endif %}
+          </div>
         </fieldset>
       {% endfor %}
     </div>
     <div class="sticky-bar">
-      <span class="progress">{% trans "Answered" %} <span id="answered-count">{{ answered }}</span> / {{ total }}</span>
+      <span class="progress"><span class="bar-label">{% trans "Answered" %} </span><span id="answered-count">{{ answered }}</span> / {{ total }}</span>
       {% if unstarted and time_limit %}
-        <span class="timer" role="timer">{% trans "Time left" %} <span id="timer" class="mono">{{ time_limit }}:00</span></span>
+        <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono">{{ time_limit }}:00</span></span>
       {% elif seconds_left is not None %}
-        <span class="timer" role="timer">{% trans "Time left" %} <span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
+        <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
       {% endif %}
+      <span id="save-status" class="save-status" role="status" aria-live="polite"
+            data-saved="{% trans 'Saved' %}" data-offline="{% trans 'No connection. Your answers will be sent when it is back.' %}"></span>
       <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+      <span id="timer-live" class="visually-hidden" role="status" aria-live="polite"></span>
+      <span id="timer-note" class="timer-note" aria-hidden="true" hidden></span>
     </div>
   </form>
 </div>

@@ -30,7 +30,14 @@ def autosave(client, sitting, token, answers=None, **details):
 
 
 def submit(client, sitting, token, **details):
-    data = {"unstarted": "1", "attempt_token": token, "form_sent": "1", "q_q1": ["a"], **details}
+    data = {
+        "unstarted": "1",
+        "attempt_token": token,
+        "form_sent": "1",
+        "confirm_unanswered": "1",
+        "q_q1": ["a"],
+        **details,
+    }
     return client.post(f"/s/{sitting.code}/submit/", data)
 
 
@@ -40,7 +47,7 @@ def submit(client, sitting, token, **details):
 def test_landing_page_has_a_class_list_instead_of_a_name_box(client, group_sitting, pupils):
     html = client.get(f"/s/{group_sitting.code}/").content.decode()
     assert 'name="student"' in html and 'name="tf_name"' not in html
-    assert 'name="tf_class"' in html  # the other taker fields are still asked
+    assert 'name="tf_class"' not in html  # the class is known from the session (UX-10)
     assert 'name="q_q1"' in html  # the test itself is the landing page
     assert 'name="pin"' not in html
     assert "js/namepicker.js" in html
@@ -103,11 +110,14 @@ def test_query_budget_of_the_landing_page(client, group_sitting, django_assert_m
 
 
 def test_start_form_links_the_student(client, group_sitting, pupils):
-    r = pick(client, group_sitting, pupils["ann"], tf_class="7-A", tf_name="Hacker")
+    r = pick(client, group_sitting, pupils["ann"], tf_class="typed", tf_name="Hacker")
     assert r.status_code == 302 and r["Location"] == f"/s/{group_sitting.code}/take/"
     attempt = group_sitting.attempts.get()
     assert attempt.student == pupils["ann"]
-    assert attempt.taker == {"name": "Ann Lee", "class": "7-A"}  # typed name is ignored
+    assert attempt.taker == {
+        "name": "Ann Lee",
+        "class": "7-A",
+    }  # typed name and class are ignored: the group name is stored
     assert client.get(f"/s/{group_sitting.code}/take/").status_code == 200
 
 
@@ -149,14 +159,15 @@ def test_submit_with_a_missing_pick_rerenders_with_answers_kept(client, group_si
 
 def test_picked_student_stays_selected_after_an_error(client, group_sitting, pupils):
     # a required taker field is empty -> error, the pick must survive the round trip
-    group_sitting.revision.test["taker_fields"][1]["required"] = True
+    seat = {"key": "seat", "label": "Seat", "required": True}
+    group_sitting.revision.test["taker_fields"].append(seat)
     revision = group_sitting.revision
-    revision.document["test"]["taker_fields"][1]["required"] = True
+    revision.document["test"]["taker_fields"].append(seat)
     revision.save()
     token = token_of(client.get(f"/s/{group_sitting.code}/").content.decode())
     r = submit(client, group_sitting, token, student=str(pupils["bob"].pk))
     html = r.content.decode()
-    assert "Please fill in: Class" in html
+    assert "Please fill in: Seat" in html
     assert f'<option value="{pupils["bob"].pk}" selected>' in html
 
 
@@ -201,7 +212,9 @@ def test_deleted_group_turns_into_a_free_name_session(client, group_sitting, pup
 
 
 def finish(client, sitting):
-    client.post(f"/s/{sitting.code}/submit/", {"form_sent": "1", "q_q1": "a"})
+    client.post(
+        f"/s/{sitting.code}/submit/", {"form_sent": "1", "confirm_unanswered": "1", "q_q1": "a"}
+    )
 
 
 def second_browser_attempt(sitting, student, path):

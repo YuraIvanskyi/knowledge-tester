@@ -15,6 +15,7 @@
   {% if closed %}
     <p class="alert alert-warn" role="status">{% trans "This session is closed. It no longer accepts answers." %}</p>
   {% else %}
+    {% if cancelled %}<p class="alert alert-warn" role="status">{% trans "Your teacher cancelled your previous attempt. You can start again below." %}</p>{% endif %}
     {% if previous %}<p class="alert alert-warn">{% trans "You have already submitted this test once. You can take it again below." %}</p>{% endif %}
     {% if errors %}
       <div class="alert alert-bad" role="alert">

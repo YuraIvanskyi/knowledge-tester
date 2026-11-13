@@ -17,6 +17,9 @@ from .models import Attempt, Sitting
 
 COOKIE_MAX_AGE = 60 * 60 * 24 * 3
 FIELD_PREFIX = "tf_"
+# Taker fields a class session never asks: the class is known from the session itself.
+# `name` is replaced by the picked student; `class` / `group` are filled with the group's name.
+GROUP_FIELD_KEYS = frozenset({"class", "group"})
 
 
 # --- helpers -----------------------------------------------------------------------------------
@@ -102,7 +105,7 @@ def _build_questions(attempt: Attempt, test: dict, values: dict[str, object]) ->
     return result
 
 
-def _render_take(request, sitting, attempt, missing=None):
+def _render_take(request, sitting, attempt, missing=None, unanswered=None):
     test = sitting.revision.test
     questions = _build_questions(attempt, test, _answer_values(attempt))
     context = {
@@ -114,6 +117,7 @@ def _render_take(request, sitting, attempt, missing=None):
         "answered": sum(1 for q in questions if q["value"] is not None),
         "seconds_left": _seconds_left(attempt),
         "missing": missing or [],
+        "unanswered": unanswered or [],
     }
     return render(request, "delivery/take.html", context)
 
@@ -125,17 +129,22 @@ def _parse_token(raw) -> uuid.UUID | None:
         return None
 
 
+def _skipped_in_group(key: str) -> bool:
+    return key == "name" or str(key).strip().casefold() in GROUP_FIELD_KEYS
+
+
 def _identity_context(sitting, test, data) -> dict:
     """Who-are-you part of the landing page, shared by the test page and the Start form.
 
     Free-name sessions ask the typed fields as before. Group-bound sessions replace the typed
     `name` field by the class list (names only, see apps.delivery.roster) and, with a PIN, ask
-    for it; every other taker field is still asked. `data` is what was posted (or {})."""
+    for it; a `class` / `group` field is not asked either (the group's name is stored instead);
+    every other taker field is still asked. `data` is what was posted (or {})."""
     group_mode = roster.is_group_bound(sitting)
     fields = [
         {**f, "value": data.get(FIELD_PREFIX + f["key"], "")}
         for f in services.taker_fields(test)
-        if not (group_mode and f["key"] == "name")
+        if not (group_mode and _skipped_in_group(f["key"]))
     ]
     context = {"fields": fields, "group_mode": group_mode}
     if group_mode:
@@ -147,7 +156,9 @@ def _identity_context(sitting, test, data) -> dict:
     return context
 
 
-def _render_unstarted(request, sitting, test, errors=None, data=None, token=None, preview=None):
+def _render_unstarted(
+    request, sitting, test, errors=None, data=None, token=None, preview=None, cancelled=False
+):
     """The test itself as the landing page: identity fields on top, questions below.
     The attempt is created on the first autosave or on submit, using this page's token."""
     data = data if data is not None else {}
@@ -173,7 +184,9 @@ def _render_unstarted(request, sitting, test, errors=None, data=None, token=None
         "seconds_left": None,
         "time_limit": services.time_limit_minutes(test),  # clock starts with the attempt
         "missing": [],
+        "unanswered": [],
         "preview": preview,
+        "cancelled": cancelled,
     }
     return render(request, "delivery/take.html", context)
 
@@ -219,6 +232,9 @@ def _start_errors(data, sitting: Sitting, test: dict, fields: list[dict]):
     for field in fields:
         if group_mode and field["key"] == "name":
             continue  # the picked student's name is used instead
+        if group_mode and _skipped_in_group(field["key"]):
+            taker[field["key"]] = sitting.group.name  # known from the session, not asked
+            continue
         value = " ".join(str(data.get(FIELD_PREFIX + field["key"]) or "").split())[:200]
         if field.get("required", False) and not value:
             errors.append(_("Please fill in: %(field)s.") % {"field": field["label"]})
@@ -244,6 +260,11 @@ def session(request, code: str):
     test = sitting.revision.test
     attempt = _get_attempt(request, sitting)
     closed = sitting.status == Sitting.Status.CLOSED
+    cancelled = False
+
+    if attempt is not None and attempt.status == Attempt.Status.VOIDED and not closed:
+        # The teacher cancelled the previous attempt: it never blocks a new one.
+        attempt, cancelled = None, True
 
     if attempt is not None:
         services.enforce_deadline(attempt)
@@ -265,9 +286,10 @@ def session(request, code: str):
         "time_limit": services.time_limit_minutes(test),
         "closed": closed,
         "previous": attempt,
+        "cancelled": cancelled,
     }
     if not closed and request.method != "POST":
-        return _render_unstarted(request, sitting, test)
+        return _render_unstarted(request, sitting, test, cancelled=cancelled)
     if closed or request.method != "POST":
         return render(request, "delivery/session.html", context)
 
@@ -287,7 +309,7 @@ def take(request, code: str):
     attempt = _get_attempt(request, sitting)
     if attempt is None:
         return redirect("taker:session", code=sitting.code)
-    if services.enforce_deadline(attempt):
+    if services.enforce_deadline(attempt) or attempt.is_finished:
         return redirect("taker:done", code=sitting.code)
     return _render_take(request, sitting, attempt)
 
@@ -391,11 +413,16 @@ def submit(request, code: str):
         return reply(redirect("taker:done", code=sitting.code))
 
     answered = services.answered_ids(attempt)
-    missing = [
-        q for q in _build_questions(attempt, test, {}) if q["required"] and q["id"] not in answered
-    ]
+    questions = _build_questions(attempt, test, {})
+    missing = [q for q in questions if q["required"] and q["id"] not in answered]
     if missing:
         return reply(_render_take(request, sitting, attempt, missing=missing))
+
+    # Ask once before finishing with questions left empty. The deadline branch above and the
+    # timer's automatic submit (which posts confirm_unanswered=1) never ask.
+    unanswered = [q for q in questions if q["id"] not in answered]
+    if unanswered and not request.POST.get("confirm_unanswered"):
+        return reply(_render_take(request, sitting, attempt, unanswered=unanswered))
 
     services.finalize(attempt, Attempt.Status.SUBMITTED)
     return reply(redirect("taker:done", code=sitting.code))
@@ -467,6 +494,6 @@ def done(request, code: str):
         "auto": attempt.status == Attempt.Status.AUTO_SUBMITTED,
         "show_score": show in ("score", "full") and attempt.score is not None and not voided,
         "review": _full_review(attempt, test) if show == "full" and not voided else [],
-        "can_retry": _max_attempts(test) > 1 and sitting.status == Sitting.Status.OPEN,
+        "can_retry": (voided or _max_attempts(test) > 1) and sitting.status == Sitting.Status.OPEN,
     }
     return render(request, "delivery/done.html", context)
