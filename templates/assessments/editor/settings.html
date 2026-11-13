@@ -6,7 +6,7 @@
 <div class="container-narrow stack">
   <div class="page-head">
     <h1>{% trans "Test settings" %}</h1>
-    <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Back to the test" %}</a>
+    <a class="link-tap" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Back to the test" %}</a>
   </div>
   <form method="post" class="stack" novalidate>
     {% csrf_token %}
@@ -88,7 +88,7 @@
     </fieldset>
 
     <div class="sticky-bar">
-      <a href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+      <a class="link-tap" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
       <button class="btn btn-primary" type="submit" name="action" value="save">{% trans "Save settings" %}</button>
     </div>
   </form>

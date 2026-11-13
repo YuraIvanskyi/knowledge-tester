@@ -68,7 +68,9 @@ def _summary(document: dict) -> dict:
 def test_list(request):
     services.ensure_default_project(request.user)
     projects = list(services.visible_projects(request.user).select_related("owner"))
-    assessments = services.visible_assessments(request.user).filter(project__in=projects)
+    assessments = services.with_latest_revision(
+        services.visible_assessments(request.user).filter(project__in=projects)
+    )
     by_project: dict[int, list] = {p.pk: [] for p in projects}
     for a in assessments:
         by_project[a.project_id].append(a)
@@ -136,14 +138,24 @@ def _target_project(request, projects):
 def detail(request, pk):
     assessment = _owned_assessment(request, pk)
     result = import_document(assessment.document)
+    revisions = list(assessment.revisions.all())  # newest first
+    latest = revisions[0] if revisions else None
+    if latest is None:
+        state = "unpublished"
+    elif assessment.has_unpublished_changes:
+        state = "changed"
+    else:
+        state = "current"
     context = {
         "assessment": assessment,
+        "publish_state": state,
+        "latest_revision": latest,
         "report": result.report,
         "valid": result.ok,
         "questions": _question_rows(assessment.document),
         "question_types": list(TYPE_LABELS.items()),
         "summary": _summary(result.document) if result.ok else None,
-        "revisions": assessment.revisions.all(),
+        "revisions": revisions,
     }
     return render(request, "assessments/detail.html", context)
 

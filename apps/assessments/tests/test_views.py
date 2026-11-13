@@ -5,6 +5,8 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from apps.assessments import services
@@ -237,3 +239,102 @@ def test_seed_demo_is_idempotent():
     # the English example plus the four Ukrainian ones (see test_demo_content.py)
     assert Assessment.objects.filter(project__owner=teacher).count() == 5
     assert Revision.objects.count() == 5
+
+
+# UX-06 / UX-08: one primary button per state, "Open session" where the test is, compact rows
+
+
+def _primary_buttons(html):
+    import re
+
+    return re.findall(r'class="btn btn-primary"[^>]*>([^<]*)<', html)
+
+
+def _detail_html(client, test):
+    return client.get(reverse("assessments:detail", args=[test.pk])).content.decode()
+
+
+def test_detail_never_published_has_publish_as_only_primary(client_a, test_a):
+    html = _detail_html(client_a, test_a)
+    assert _primary_buttons(html) == ["Publish"]
+    assert "Published, version" not in html
+    assert "Open session" not in html
+
+
+def test_detail_published_unchanged_primary_is_open_session(client_a, test_a):
+    client_a.post(reverse("assessments:publish", args=[test_a.pk]))
+    revision = Revision.objects.get()
+    html = _detail_html(client_a, test_a)
+    assert _primary_buttons(html) == ["Open session"]
+    assert reverse("delivery:create", args=[revision.pk]) in html
+    assert "Published, version 1" in html
+    assert "Publish changes" not in html
+    assert reverse("assessments:publish", args=[test_a.pk]) not in html
+
+
+def test_detail_published_with_changes_has_publish_changes_and_secondary_session(client_a, test_a):
+    client_a.post(reverse("assessments:publish", args=[test_a.pk]))
+    test_a.has_unpublished_changes = True
+    test_a.save()
+    revision = Revision.objects.get()
+    html = _detail_html(client_a, test_a)
+    assert _primary_buttons(html) == ["Publish changes"]
+    assert "Open session (version 1)" in html
+    assert f'class="btn" href="{reverse("delivery:create", args=[revision.pk])}"' in html
+
+
+def test_editing_a_published_question_moves_the_test_to_changed_state(client_a, test_a):
+    client_a.post(reverse("assessments:publish", args=[test_a.pk]))
+    url = reverse("assessments:question_duplicate", args=[test_a.pk, "q1"])
+    assert client_a.post(url).status_code == 302
+    assert _primary_buttons(_detail_html(client_a, test_a)) == ["Publish changes"]
+
+
+def test_question_rows_use_more_menu_and_no_edit_button(client_a, test_a):
+    html = _detail_html(client_a, test_a)
+    assert '<details class="more">' in html
+    assert 'aria-label="Move question 2 up"' in html
+    assert 'aria-label="Delete question 1"' in html
+    assert (
+        'class="btn btn-danger" href="'
+        + reverse("assessments:question_delete", args=[test_a.pk, "q1"])
+        not in html
+    )
+    edit = reverse("assessments:question_edit", args=[test_a.pk, "q1"])
+    assert f'class="btn" href="{edit}"' not in html
+    assert 'id="question-q1"' in html
+
+
+def test_move_redirects_to_the_moved_row(client_a, test_a):
+    url = reverse("assessments:question_move", args=[test_a.pk, "q2"])
+    response = client_a.post(url, {"direction": "up"})
+    assert response["Location"] == reverse("assessments:detail", args=[test_a.pk]) + "#question-q2"
+
+
+def test_list_links_open_session_to_latest_revision_only_when_published(client_a, test_a):
+    html = client_a.get(reverse("assessments:list")).content.decode()
+    assert "Open session" not in html
+    client_a.post(reverse("assessments:publish", args=[test_a.pk]))
+    test_a.document["test"]["title"] = "Fractions v2"
+    test_a.has_unpublished_changes = True
+    test_a.save()
+    client_a.post(reverse("assessments:publish", args=[test_a.pk]))
+    latest = Revision.objects.get(number=2)
+    old = Revision.objects.get(number=1)
+    html = client_a.get(reverse("assessments:list")).content.decode()
+    assert reverse("delivery:create", args=[latest.pk]) in html
+    assert reverse("delivery:create", args=[old.pk]) not in html
+
+
+def test_list_query_count_does_not_grow_with_tests(client_a, teacher_a, test_a):
+    project = services.ensure_default_project(teacher_a)
+    url = reverse("assessments:list")
+    client_a.get(url)  # warm up
+    with CaptureQueriesContext(connection) as few:
+        client_a.get(url)
+    for _ in range(6):
+        extra = services.create_assessment(project, import_document(FULL).document)
+        client_a.post(reverse("assessments:publish", args=[extra.pk]))
+    with CaptureQueriesContext(connection) as many:
+        client_a.get(url)
+    assert len(many) == len(few)

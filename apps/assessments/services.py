@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from django.db import transaction
+from django.db.models import OuterRef, Subquery
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
@@ -23,6 +24,18 @@ def visible_projects(user):
 def visible_assessments(user):
     qs = Assessment.objects.select_related("project", "project__owner")
     return qs if user.is_admin_role else qs.filter(project__owner=user)
+
+
+def with_latest_revision(queryset):
+    """Annotate tests with `latest_revision_pk` and `latest_revision_number` (None if unpublished).
+
+    One subquery per column, so a list of tests costs the same number of queries for any length.
+    """
+    newest = Revision.objects.filter(assessment=OuterRef("pk")).order_by("-number")
+    return queryset.annotate(
+        latest_revision_pk=Subquery(newest.values("pk")[:1]),
+        latest_revision_number=Subquery(newest.values("number")[:1]),
+    )
 
 
 def ensure_default_project(user) -> Project:

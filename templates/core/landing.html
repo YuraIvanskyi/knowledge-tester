@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block title %}{% trans "Enter session code" %} - Knowledge Tester{% endblock %}
 {% block content %}
 <div class="container-narrow stack">
   <h1>{% trans "Enter session code" %}</h1>
@@ -15,6 +16,6 @@
     </div>
     <button type="submit" class="btn btn-primary btn-block">{% trans "Join" %}</button>
   </form>
-  <p><a href="{% url 'accounts:login' %}">{% trans "Teacher log in" %}</a></p>
+  <p><a class="link-tap" href="{% url 'accounts:login' %}">{% trans "Teacher log in" %}</a></p>
 </div>
 {% endblock %}

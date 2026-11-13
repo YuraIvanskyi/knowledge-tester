@@ -196,7 +196,9 @@ def question_move(request, pk, question_id):
     _question_or_404(document, question_id)
     if editing.move_question(document, question_id, request.POST.get("direction", "")):
         services.save_draft(assessment, document)
-    return redirect("assessments:detail", pk=assessment.pk)
+    # Land on the row that moved, not at the top of a long page.
+    url = reverse("assessments:detail", args=[assessment.pk])
+    return redirect(f"{url}#question-{question_id}")
 
 
 @login_required

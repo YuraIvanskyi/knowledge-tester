@@ -86,3 +86,31 @@ def test_nav_shows_manage_only_to_admins(client_for, teacher, admin_user):
     manage = reverse("manage:home")
     assert manage not in client_for(teacher).get(reverse("core:dashboard")).content.decode()
     assert manage in client_for(admin_user).get(reverse("core:dashboard")).content.decode()
+
+
+def test_dashboard_primary_action_opens_a_session_and_recent_tests_link_latest_revision(
+    teacher_client, teacher
+):
+    import re
+
+    from apps.assessments.models import Revision
+
+    project = Project.objects.create(owner=teacher, title="Mine")
+    published = Assessment.objects.create(
+        project=project, title="Published quiz", status="published"
+    )
+    revision = Revision.objects.create(
+        assessment=published, number=1, document={}, content_hash="a"
+    )
+    revision2 = Revision.objects.create(
+        assessment=published, number=2, document={}, content_hash="b"
+    )
+    Assessment.objects.create(project=project, title="Draft quiz")
+    html = teacher_client.get(reverse("core:dashboard")).content.decode()
+    primary = re.findall(r'class="btn btn-primary" href="([^"]*)"', html)
+    assert primary == [reverse("delivery:pick")]
+    assert reverse("assessments:create") in html and reverse("assessments:import") in html
+    assert reverse("delivery:create", args=[revision2.pk]) in html
+    assert reverse("delivery:create", args=[revision.pk]) not in html
+    # the "no open sessions" text leads to the chooser
+    assert f'<a href="{reverse("delivery:pick")}">No open sessions' in html

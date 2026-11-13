@@ -2,14 +2,14 @@
 {% load i18n %}
 {% block title %}{% trans "Dashboard" %} - Knowledge Tester{% endblock %}
 {% block content %}
-{% url 'assessments:list' as tests_url %}{% url 'assessments:import' as import_url %}{% url 'delivery:list' as sessions_url %}{% url 'people:groups' as people_url %}
+{% url 'assessments:list' as tests_url %}{% url 'assessments:import' as import_url %}{% url 'delivery:list' as sessions_url %}{% url 'people:groups' as people_url %}{% url 'delivery:pick' as pick_url %}
 <div class="stack">
   <div class="page-head">
     <h1>{% trans "Dashboard" %}</h1>
     <div class="row">
-      {% if import_url %}<a class="btn btn-primary" href="{{ import_url }}">{% trans "Import a test" %}</a>{% endif %}
-      {% if sessions_url %}<a class="btn" href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
-      {% if people_url %}<a class="btn" href="{{ people_url }}">{% trans "People" %}</a>{% endif %}
+      {% if test_count %}<a class="btn btn-primary" href="{{ pick_url }}">{% trans "Open a session" %}</a>{% endif %}
+      <a class="btn" href="{% url 'assessments:create' %}">{% trans "New test" %}</a>
+      <a class="btn" href="{{ import_url }}">{% trans "Import a test" %}</a>
     </div>
   </div>
 
@@ -34,15 +34,15 @@
   <section class="stack-sm">
     <div class="row row-between">
       <h2>{% trans "Open sessions" %}</h2>
-      {% if sessions_url %}<a href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
+      {% if sessions_url %}<a class="link-tap" href="{{ sessions_url }}">{% trans "All sessions" %}</a>{% endif %}
     </div>
     {% if open_sessions %}
-    <table class="table">
+    <table class="table table-compact">
       <thead><tr><th>{% trans "Session" %}</th><th>{% trans "Code" %}</th><th class="num">{% trans "Takers" %}</th></tr></thead>
       <tbody>
       {% for s in open_sessions %}
         <tr>
-          <td data-label="{% trans 'Session' %}"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.revision.assessment.title }}</a></td>
+          <td class="cell-title"><a href="{% url 'delivery:share' s.pk %}">{{ s.title|default:s.revision.assessment.title }}</a></td>
           <td data-label="{% trans 'Code' %}" class="mono">{{ s.code }}</td>
           <td data-label="{% trans 'Takers' %}" class="num">{{ s.attempt_count }}</td>
         </tr>
@@ -50,23 +50,24 @@
       </tbody>
     </table>
     {% else %}
-    <p class="muted">{% trans "No open sessions. Open a session from a published test." %}</p>
+    <p class="muted"><a href="{{ pick_url }}">{% trans "No open sessions. Open a session from a published test." %}</a></p>
     {% endif %}
   </section>
 
   <section class="stack-sm">
     <div class="row row-between">
       <h2>{% trans "Recent tests" %}</h2>
-      {% if tests_url %}<a href="{{ tests_url }}">{% trans "All tests" %}</a>{% endif %}
+      {% if tests_url %}<a class="link-tap" href="{{ tests_url }}">{% trans "All tests" %}</a>{% endif %}
     </div>
-    <table class="table">
-      <thead><tr><th>{% trans "Test" %}</th><th>{% trans "Status" %}</th><th>{% trans "Updated" %}</th></tr></thead>
+    <table class="table table-compact">
+      <thead><tr><th>{% trans "Test" %}</th><th>{% trans "Status" %}</th><th>{% trans "Updated" %}</th><th><span class="visually-hidden">{% trans "Actions" %}</span></th></tr></thead>
       <tbody>
       {% for t in recent_tests %}
         <tr>
-          <td data-label="{% trans 'Test' %}"><a href="{% url 'assessments:detail' t.pk %}">{{ t.title }}</a></td>
+          <td class="cell-title"><a href="{% url 'assessments:detail' t.pk %}">{{ t.title }}</a></td>
           <td data-label="{% trans 'Status' %}">{{ t.get_status_display }}{% if t.has_unpublished_changes and t.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}</td>
           <td data-label="{% trans 'Updated' %}">{{ t.updated_at|date:"SHORT_DATE_FORMAT" }}</td>
+          <td class="cell-actions">{% if t.status == 'published' and t.latest_revision_pk %}<a class="link-tap" href="{% url 'delivery:create' t.latest_revision_pk %}">{% trans "Open session" %}</a>{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>

@@ -1,0 +1,27 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8
+"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
+"
+
+msgid "Publish changes"
+msgstr "Опублікувати зміни"
+
+msgid "Open session (version %(n)s)"
+msgstr "Відкрити сесію (версія %(n)s)"
+
+msgid "Published, version %(n)s"
+msgstr "Опубліковано, версія %(n)s"
+
+msgid "More"
+msgstr "Ще"
+
+msgid "question %(n)s"
+msgstr "запитання %(n)s"
+
+msgid "Version"
+msgstr "Версія"
+
+msgid "Version %(n)s"
+msgstr "Версія %(n)s"

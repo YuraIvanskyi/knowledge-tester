@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from apps.assessments.models import Assessment
+from apps.assessments.services import with_latest_revision
 from apps.delivery.models import Sitting
 from apps.people import access as people_access
 
@@ -31,7 +32,7 @@ def dashboard(request):
         "session_count": sittings.count(),
         "group_count": people_access.groups_for(user).filter(is_archived=False).count(),
         "student_count": people_access.students_for(user).filter(is_active=True).count(),
-        "recent_tests": tests.order_by("-updated_at")[:RECENT],
+        "recent_tests": with_latest_revision(tests).order_by("-updated_at")[:RECENT],
         "open_sessions": open_sittings.annotate(attempt_count=Count("attempts"))[:RECENT],
     }
     return render(request, "core/dashboard.html", context)

@@ -8,10 +8,10 @@
     <div>
       <h1>{{ assessment.title }}</h1>
       <p class="muted">
-        {{ assessment.project.title }} &middot; {{ assessment.get_status_display }}{% if assessment.has_unpublished_changes and assessment.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}
+        {{ assessment.project.title }}{% if publish_state != 'current' %} &middot; {{ assessment.get_status_display }}{% if publish_state == 'changed' %} ({% trans "unpublished changes" %}){% endif %}{% endif %}
       </p>
     </div>
-    <a href="{% url 'assessments:list' %}">{% trans "Back to tests" %}</a>
+    <a class="link-tap" href="{% url 'assessments:list' %}">{% trans "Back to tests" %}</a>
   </div>
 
   {% if assessment.description %}<p>{{ assessment.description }}</p>{% endif %}
@@ -32,10 +32,18 @@
   {% endif %}
 
   <div class="row">
+    {% if publish_state == 'current' %}
+    <a class="btn btn-primary" href="{% url 'delivery:create' latest_revision.pk %}">{% trans "Open session" %}</a>
+    <span class="muted">{% blocktrans with n=latest_revision.number %}Published, version {{ n }}{% endblocktrans %}</span>
+    {% else %}
     <form method="post" action="{% url 'assessments:publish' assessment.pk %}">
       {% csrf_token %}
-      <button class="btn btn-primary" type="submit"{% if not valid %} disabled{% endif %}>{% trans "Publish" %}</button>
+      <button class="btn btn-primary" type="submit"{% if not valid %} disabled{% endif %}>{% if publish_state == 'changed' %}{% trans "Publish changes" %}{% else %}{% trans "Publish" %}{% endif %}</button>
     </form>
+    {% if publish_state == 'changed' %}
+    <a class="btn" href="{% url 'delivery:create' latest_revision.pk %}">{% blocktrans with n=latest_revision.number %}Open session (version {{ n }}){% endblocktrans %}</a>
+    {% endif %}
+    {% endif %}
     {% if valid %}<a class="btn" href="{% url 'assessments:preview' assessment.pk %}">{% trans "Preview" %}</a>{% endif %}
     <a class="btn" href="{% url 'assessments:settings' assessment.pk %}">{% trans "Test settings" %}</a>
     <a class="btn" href="{% url 'assessments:export' assessment.pk %}">{% trans "Export JSON" %}</a>
@@ -52,10 +60,9 @@
     </p>
     {% endif %}
     {% if questions %}
-    <table class="table">
+    <table class="table table-compact questions">
       <thead>
         <tr>
-          <th class="num">#</th>
           <th>{% trans "Question" %}</th>
           <th>{% trans "Type" %}</th>
           <th class="num">{% trans "Points" %}</th>
@@ -64,22 +71,25 @@
       </thead>
       <tbody>
       {% for q in questions %}
-        <tr>
-          <td data-label="#" class="num">{{ q.number }}</td>
-          <td data-label="{% trans 'Question' %}"><a href="{% url 'assessments:question_edit' assessment.pk q.id %}">{{ q.text }}</a></td>
+        <tr id="question-{{ q.id }}">
+          <td class="cell-title"><span class="q-num">{{ q.number }}.</span> <a href="{% url 'assessments:question_edit' assessment.pk q.id %}">{{ q.text }}</a></td>
           <td data-label="{% trans 'Type' %}">{{ q.type_label }}</td>
           <td data-label="{% trans 'Points' %}" class="num">{{ q.points }}</td>
-          <td data-label="{% trans 'Actions' %}">
+          <td class="cell-actions">
             <div class="row-actions">
-              <a class="btn" href="{% url 'assessments:question_edit' assessment.pk q.id %}">{% trans "Edit" %}</a>
               {% if not forloop.first %}
-              <form method="post" action="{% url 'assessments:question_move' assessment.pk q.id %}">{% csrf_token %}<input type="hidden" name="direction" value="up"><button class="btn" type="submit" aria-label="{% blocktrans with n=q.number %}Move question {{ n }} up{% endblocktrans %}">{% trans "Up" %}</button></form>
-              {% endif %}
+              <form method="post" action="{% url 'assessments:question_move' assessment.pk q.id %}">{% csrf_token %}<input type="hidden" name="direction" value="up"><button class="btn btn-icon" type="submit" aria-label="{% blocktrans with n=q.number %}Move question {{ n }} up{% endblocktrans %}"><span aria-hidden="true">&uarr;</span></button></form>
+              {% else %}<span class="btn-slot" aria-hidden="true"></span>{% endif %}
               {% if not forloop.last %}
-              <form method="post" action="{% url 'assessments:question_move' assessment.pk q.id %}">{% csrf_token %}<input type="hidden" name="direction" value="down"><button class="btn" type="submit" aria-label="{% blocktrans with n=q.number %}Move question {{ n }} down{% endblocktrans %}">{% trans "Down" %}</button></form>
-              {% endif %}
-              <form method="post" action="{% url 'assessments:question_duplicate' assessment.pk q.id %}">{% csrf_token %}<button class="btn" type="submit" aria-label="{% blocktrans with n=q.number %}Duplicate question {{ n }}{% endblocktrans %}">{% trans "Duplicate" %}</button></form>
-              <a class="btn btn-danger" href="{% url 'assessments:question_delete' assessment.pk q.id %}" aria-label="{% blocktrans with n=q.number %}Delete question {{ n }}{% endblocktrans %}">{% trans "Delete" %}</a>
+              <form method="post" action="{% url 'assessments:question_move' assessment.pk q.id %}">{% csrf_token %}<input type="hidden" name="direction" value="down"><button class="btn btn-icon" type="submit" aria-label="{% blocktrans with n=q.number %}Move question {{ n }} down{% endblocktrans %}"><span aria-hidden="true">&darr;</span></button></form>
+              {% else %}<span class="btn-slot" aria-hidden="true"></span>{% endif %}
+              <details class="more">
+                <summary class="btn">{% trans "More" %}<span class="visually-hidden"> ({% blocktrans with n=q.number %}question {{ n }}{% endblocktrans %})</span></summary>
+                <div class="more-body">
+                  <form method="post" action="{% url 'assessments:question_duplicate' assessment.pk q.id %}">{% csrf_token %}<button class="btn" type="submit" aria-label="{% blocktrans with n=q.number %}Duplicate question {{ n }}{% endblocktrans %}">{% trans "Duplicate" %}</button></form>
+                  <a class="link-tap" href="{% url 'assessments:question_delete' assessment.pk q.id %}" aria-label="{% blocktrans with n=q.number %}Delete question {{ n }}{% endblocktrans %}">{% trans "Delete" %}</a>
+                </div>
+              </details>
             </div>
           </td>
         </tr>
@@ -100,16 +110,16 @@
   <section class="stack-sm">
     <h2>{% trans "Revisions" %}</h2>
     {% if revisions %}
-    <table class="table">
+    <table class="table table-compact">
       <thead>
-        <tr><th class="num">#</th><th>{% trans "Published" %}</th><th></th></tr>
+        <tr><th>{% trans "Version" %}</th><th>{% trans "Published" %}</th><th></th></tr>
       </thead>
       <tbody>
       {% for revision in revisions %}
         <tr>
-          <td data-label="#" class="num">{{ revision.number }}</td>
+          <td class="cell-title">{% blocktrans with n=revision.number %}Version {{ n }}{% endblocktrans %}</td>
           <td data-label="{% trans 'Published' %}">{{ revision.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-          <td><a class="btn" href="{% url 'delivery:create' revision.pk %}">{% trans "Open session" %}</a></td>
+          <td class="cell-actions"><a class="btn" href="{% url 'delivery:create' revision.pk %}">{% trans "Open session" %}</a></td>
         </tr>
       {% endfor %}
       </tbody>
