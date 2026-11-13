@@ -8,7 +8,6 @@ import pytest
 from django.db import connection
 from django.db.backends.sqlite3.base import DatabaseWrapper
 
-
 # pytest-django blocks every database wrapper unless the test is marked; these tests only open
 # their own wrappers on files in tmp_path and never touch the test database.
 pytestmark = pytest.mark.django_db
