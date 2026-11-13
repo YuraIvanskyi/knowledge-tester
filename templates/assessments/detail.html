@@ -46,8 +46,6 @@
     {% endif %}
     {% if valid %}<a class="btn" href="{% url 'assessments:preview' assessment.pk %}">{% trans "Preview" %}</a>{% endif %}
     <a class="btn" href="{% url 'assessments:settings' assessment.pk %}">{% trans "Test settings" %}</a>
-    <a class="btn" href="{% url 'assessments:export' assessment.pk %}">{% trans "Export JSON" %}</a>
-    <a class="btn btn-danger" href="{% url 'assessments:delete' assessment.pk %}">{% trans "Delete test" %}</a>
   </div>
 
   <section class="stack-sm">
@@ -128,5 +126,10 @@
     <p class="muted">{% trans "Not published yet. Publish the test to open a session for it." %}</p>
     {% endif %}
   </section>
+
+  <div class="row">
+    <a class="btn" href="{% url 'assessments:export' assessment.pk %}">{% trans "Export JSON" %}</a>
+    <a class="btn btn-danger" href="{% url 'assessments:delete' assessment.pk %}">{% trans "Delete test" %}</a>
+  </div>
 </div>
 {% endblock %}

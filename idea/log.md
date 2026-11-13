@@ -20,7 +20,7 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
   | 100 | 6.3 s | 0 | 0.30 / 0.59 / 3.0 s | 1.6 / 2.2 s | 0.32 s |
 
   All 32 attempts ended submitted and graded. A class of 32 is comfortable; 100 simultaneous starters still lose nothing, only the tail grows (SQLite has one writer, so writes queue). The 1.2 s teacher login is the real PBKDF2 hash. Q5 (maximum concurrent takers) can be answered with "tested to 100".
-- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (code review of the seams between the workstreams).
+- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly) (Delete test and Export JSON moved to the bottom of the test page, not re-checked visually); the Phase 6 wave 2 items (code review of the seams between the workstreams).
 - **Next:** the code review of wave 2, then Phase 7 or the Phase 3/4 gaps.
 
 ## 2026-11-13: UX review wave (UX-01 to UX-18), built; integration gate open
