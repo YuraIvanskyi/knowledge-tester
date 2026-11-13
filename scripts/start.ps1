@@ -7,7 +7,7 @@ Set-Location (Split-Path -Parent $PSScriptRoot)
 
 # The environment is the repo-local .venv (uv default). To keep it elsewhere, e.g. outside a OneDrive folder, set UV_PROJECT_ENVIRONMENT.
 
-python -m uv sync
+python -m uv sync --extra xlsx
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 python -m uv run manage.py migrate
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
