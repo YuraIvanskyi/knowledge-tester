@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Cancel attempt"
+msgstr "Скасувати спробу"
+
+msgid "Cancel this attempt?"
+msgstr "Скасувати цю спробу?"
+
+msgid "Keep the attempt"
+msgstr "Залишити спробу"
+
+msgid "This cannot be undone. A cancelled attempt no longer counts in the results, the gradebook or the student's profile."
+msgstr "Це неможливо скасувати. Скасована спроба більше не враховується в результатах, журналі та профілі учня."
+
+msgid "The student can then take the test again while the session is open."
+msgstr "Після цього учень зможе пройти тест знову, поки сесія відкрита."
+
+msgid "The session is closed, so the student cannot take the test again unless you reopen it."
+msgstr "Сесію закрито, тож учень не зможе пройти тест знову, доки ви не відкриєте її."
+
+msgid "This attempt is already cancelled."
+msgstr "Цю спробу вже скасовано."
+
+msgid "Attempt of %(name)s cancelled. It no longer counts."
+msgstr "Спробу учня %(name)s скасовано. Вона більше не враховується."
+
+msgid "This attempt was cancelled. It does not count in the results and cannot be reviewed."
+msgstr "Цю спробу скасовано. Вона не враховується в результатах і не перевіряється."
+
+msgid "Save and go to the next unreviewed attempt"
+msgstr "Зберегти й перейти до наступної неперевіреної спроби"
+
+msgid "Save and return to the results"
+msgstr "Зберегти й повернутися до результатів"
+
+msgid "Enter points to save the comment."
+msgstr "Введіть бали, щоб зберегти коментар."
+
+msgid "Question %(n)s was not saved. %(reason)s"
+msgstr "Запитання %(n)s не збережено. %(reason)s"
+
+msgid "%(n)s answer saved."
+msgid_plural "%(n)s answers saved."
+msgstr[0] "Збережено %(n)s відповідь."
+msgstr[1] "Збережено %(n)s відповіді."
+msgstr[2] "Збережено %(n)s відповідей."
+
+msgid "No other attempt waits for review."
+msgstr "Інших спроб, що чекають на перевірку, немає."
+
+msgid "Everything in this session is reviewed."
+msgstr "Усе в цій сесії перевірено."
+
+msgid "Nothing to save: no points were entered."
+msgstr "Нічого зберігати: бали не введено."
+
+msgid "Top wrong answer"
+msgstr "Часта помилка"

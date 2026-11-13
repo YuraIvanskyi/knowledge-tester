@@ -67,8 +67,11 @@
   font-weight: 600;
 }
 .result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
   font-size: var(--fs-lg);
-  margin: 0;
+  margin: var(--space-3) 0 0;
 }
 
 .questions {
@@ -132,6 +135,34 @@
 .review-fields .grow {
   min-width: 12rem;
 }
+.review-error {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.review-actions {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* Results page: the status filter is as wide as its content */
+
+.filter-form {
+  align-items: flex-end;
+}
+.filter-form .field {
+  margin-bottom: 0;
+}
+.filter-form select {
+  width: auto;
+  min-width: 11rem;
+}
+
+/* Sort links in the table head: the arrow shows the active column */
+
+.table th[aria-sort] a {
+  font-weight: 700;
+}
 
 /* PDF download box */
 
@@ -149,4 +180,81 @@
 .pdf-form {
   margin-top: var(--space-3);
   max-width: 28rem;
+}
+
+/* Sort links and row links get a real tap target */
+
+.table th a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Phones: the two result tables become short cards (the base card pattern, tightened) */
+
+@media (max-width: 639px) {
+  .table.table-compact.results-table tr {
+    position: relative;
+    padding: 2px var(--space-3);
+  }
+  .table.table-compact.results-table td {
+    padding-block: 0;
+    line-height: 1.35;
+  }
+  .table.table-compact.results-table td.cell-title {
+    padding-top: 0;
+  }
+  /* The name is the link to the sheet; its tap area is the whole card. */
+  .table.table-compact.results-table td.cell-title .row-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .table.table-compact.results-table td.cell-title .row-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .table.table-compact.results-table td.cell-actions {
+    display: none;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+  .stats > div {
+    padding: var(--space-2) var(--space-3);
+  }
+  .stats dd {
+    font-size: var(--fs-lg);
+  }
+  .dist li {
+    min-height: 1.2rem;
+    gap: var(--space-2);
+  }
+  .page-head {
+    margin-bottom: 0;
+  }
+}
+@media (min-width: 640px) {
+  .row-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .row-link:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Shown on paper only (the review form shows the same comment on screen) */
+.print-only {
+  display: none;
+}
+
+.table th a [aria-hidden="true"] {
+  margin-inline-start: 0.25em;
 }

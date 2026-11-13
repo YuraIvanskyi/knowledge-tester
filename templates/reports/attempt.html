@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 {% load static i18n l10n report_extras %}
-{% block title %}{{ name }} &middot; {{ test.title }}{% endblock %}
+{% block title %}{{ name }} - {{ test.title }} - Knowledge Tester{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/reports.css' %}">
 <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 {% endblock %}
 {% block content %}
 <div class="stack sheet">
+  <form id="review-form" method="post" class="no-print">{% csrf_token %}</form>
   <div class="row row-between no-print">
-    <a href="{% url 'reports:session' sitting.pk %}">&larr; {% trans "All results" %}</a>
+    <a class="link-tap" href="{% url 'reports:session' sitting.pk %}">&larr; {% trans "All results" %}</a>
     <div class="row">
       {% include "reports/_pdf_form.html" with action=pdf_url batch=False %}
       {% if next_attempt %}<a class="btn" href="{% url 'reports:attempt' next_attempt.pk %}">{% trans "Next unreviewed attempt" %}</a>{% endif %}
+      {% if not voided %}<a class="btn btn-danger" href="{% url 'reports:attempt_void' attempt.pk %}">{% trans "Cancel attempt" %}</a>{% endif %}
     </div>
   </div>
 
   <header class="sheet-head stack-sm">
-    <h1>{{ test.title }}</h1>
-    <p class="muted">{{ sitting.title|default:test.title }} &middot; {% trans "revision" %} {{ sitting.revision.number }} &middot; {% trans "session" %} <span class="mono">{{ sitting.code }}</span></p>
+    <h1>{{ name }}</h1>
+    <p class="muted">{{ test.title }}{% if sitting.title and sitting.title != test.title %} &middot; {{ sitting.title }}{% endif %} &middot; {% trans "revision" %} {{ sitting.revision.number }} &middot; {% trans "session" %} <span class="mono">{{ sitting.code }}</span> &middot; {% trans "Attempt" %} <span class="mono">{{ attempt.token|stringformat:"s"|slice:":4"|upper }}</span></p>
+    {% if voided %}<p class="alert alert-warn">{% trans "This attempt was cancelled. It does not count in the results and cannot be reviewed." %}</p>{% endif %}
     <dl class="taker">
       {% for label, value in taker_rows %}
       <div><dt>{{ label }}</dt><dd>{{ value|default:"&ndash;" }}</dd></div>
       {% endfor %}
       {% if attempt.submitted_at %}<div><dt>{% trans "Submitted" %}</dt><dd>{{ attempt.submitted_at|date:"d.m.Y H:i" }}</dd></div>{% endif %}
-      <div><dt>{% trans "Attempt" %}</dt><dd class="mono">{{ attempt.token|stringformat:"s"|slice:":4"|upper }}</dd></div>
     </dl>
 
     {% if grading_enabled %}
       {% if attempt.score is not None %}
       <p class="result">
-        <strong>{% trans "Score" %}:</strong> {{ attempt.score|numd }} / {{ attempt.max_score|numd }}{% if attempt.percent is not None %} ({{ attempt.percent }} %){% endif %}
-        {% if attempt.grade %}&nbsp; <strong>{% trans "Grade" %}:</strong> {{ attempt.grade|grade_text }}{% endif %}
-        {% if provisional %}<span class="status-warn">&nbsp; {% trans "Provisional" %}: {% blocktrans count n=attempt.pending_reviews %}{{ n }} answer still needs review{% plural %}{{ n }} answers still need review{% endblocktrans %}</span>{% endif %}
+        <span><strong>{% trans "Score" %}:</strong> {{ attempt.score|numd }} / {{ attempt.max_score|numd }}{% if attempt.percent is not None %} ({{ attempt.percent }} %){% endif %}</span>
+        {% if attempt.grade %}<span><strong>{% trans "Grade" %}:</strong> {{ attempt.grade|grade_text }}</span>{% endif %}
+        {% if provisional and not voided %}<span class="status-warn">{% trans "Provisional" %}: {% blocktrans count n=attempt.pending_reviews %}{{ n }} answer still needs review{% plural %}{{ n }} answers still need review{% endblocktrans %}</span>{% endif %}
       </p>
       {% else %}
       <p class="muted">{% trans "Not graded yet." %}</p>
@@ -69,30 +71,41 @@
         {% endif %}
 
         {% if row.answer.feedback %}
-          <p class="q-label">{% trans "Comment" %}</p>
-          <p class="print-keep">{{ row.answer.feedback }}</p>
+          <div{% if row.can_review %} class="print-only"{% endif %}>
+            <p class="q-label">{% trans "Comment" %}</p>
+            <p class="print-keep">{{ row.answer.feedback }}</p>
+          </div>
         {% endif %}
 
         {% if row.can_review %}
-        <form method="post" class="review no-print">
-          {% csrf_token %}
-          <input type="hidden" name="question_key" value="{{ row.question.id }}">
+        <div class="review no-print">
           <div class="row review-fields">
             <div class="field">
               <label for="p-{{ row.question.id }}">{% trans "Points" %} (0&ndash;{{ row.max_points|numd }})</label>
-              {% localize off %}<input id="p-{{ row.question.id }}" type="number" name="points" inputmode="decimal" min="0" max="{{ row.max_points|num }}" step="0.5" required value="{% if row.answer.manual_score is not None %}{{ row.answer.manual_score|num }}{% endif %}">{% endlocalize %}
+              {% localize off %}<input id="p-{{ row.question.id }}" form="review-form" type="number" name="points_{{ row.question.id }}" inputmode="decimal" min="0" max="{{ row.max_points|num }}" step="0.5"{% if row.error %} aria-invalid="true" aria-describedby="e-{{ row.question.id }}"{% endif %} value="{% if row.form_points is not None %}{{ row.form_points }}{% elif row.answer.manual_score is not None %}{{ row.answer.manual_score|num }}{% endif %}">{% endlocalize %}
             </div>
             <div class="field grow">
               <label for="c-{{ row.question.id }}">{% trans "Comment" %}</label>
-              <input id="c-{{ row.question.id }}" type="text" name="comment" maxlength="2000" value="{{ row.answer.feedback }}">
+              <input id="c-{{ row.question.id }}" form="review-form" type="text" name="comment_{{ row.question.id }}" maxlength="2000" value="{% if row.form_comment is not None %}{{ row.form_comment }}{% else %}{{ row.answer.feedback }}{% endif %}">
             </div>
-            <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
           </div>
-        </form>
+          {% if row.error %}<p class="review-error status-bad" id="e-{{ row.question.id }}">{{ row.error }}</p>{% endif %}
+        </div>
         {% endif %}
       </div>
     </li>
     {% endfor %}
   </ol>
+
+  {% if has_review %}
+  <div class="row review-actions no-print">
+    <button class="btn btn-primary" type="submit" form="review-form" name="action" value="save">{% trans "Save" %}</button>
+    {% if next_attempt %}
+    <button class="btn" type="submit" form="review-form" name="action" value="next">{% trans "Save and go to the next unreviewed attempt" %}</button>
+    {% elif provisional %}
+    <button class="btn" type="submit" form="review-form" name="action" value="next">{% trans "Save and return to the results" %}</button>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

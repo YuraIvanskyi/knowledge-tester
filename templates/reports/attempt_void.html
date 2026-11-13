@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static i18n report_extras %}
+{% block title %}{% trans "Cancel attempt" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/reports.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "Cancel this attempt?" %}</h1>
+  <p><strong>{{ name }}</strong><br>
+    <span class="muted">{{ test.title }} &middot; {% trans "session" %} <span class="mono">{{ sitting.code }}</span> &middot; {{ attempt.started_at|date:"d.m.Y H:i" }}</span></p>
+  {% if grading_enabled and attempt.score is not None %}
+  <p>{% trans "Score" %}: {{ attempt.score|numd }} / {{ attempt.max_score|numd }}{% if attempt.percent is not None %} ({{ attempt.percent }} %){% endif %}</p>
+  {% endif %}
+  <p class="alert alert-warn">
+    {% trans "This cannot be undone. A cancelled attempt no longer counts in the results, the gradebook or the student's profile." %}
+    {% if session_open %}{% trans "The student can then take the test again while the session is open." %}{% else %}{% trans "The session is closed, so the student cannot take the test again unless you reopen it." %}{% endif %}
+  </p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% trans "Cancel attempt" %}</button>
+    <a class="btn" href="{% url 'reports:attempt' attempt.pk %}">{% trans "Keep the attempt" %}</a>
+  </form>
+</div>
+{% endblock %}

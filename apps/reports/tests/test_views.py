@@ -131,7 +131,7 @@ def test_other_teacher_gets_404(client, other_teacher, sitting, attempts):
     assert client.get(reverse("reports:attempt", args=[attempts[0].pk])).status_code == 404
     response = client.post(
         reverse("reports:attempt", args=[attempts[0].pk]),
-        {"question_key": "q3", "points": "1"},
+        {"points_q3": "1"},
     )
     assert response.status_code == 404
     assert Answer.objects.get(attempt=attempts[0], question_key="q3").manual_score is None
@@ -251,17 +251,32 @@ def test_sheet_markers(login, attempts):
 
 def test_review_form_only_for_answers_needing_review(login, attempts):
     html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
-    assert html.count('name="question_key"') == 1
+    assert html.count('name="points_') == 1 and 'name="points_q3"' in html
+    assert html.count('name="comment_') == 1
     html = login.get(reverse("reports:attempt", args=[attempts[1].pk])).content.decode()
-    assert 'name="question_key"' not in html
+    assert 'name="points_' not in html
+
+
+def test_review_fields_belong_to_one_form(login, attempts):
+    html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
+    assert html.count('id="review-form"') == 1
+    assert html.count('form="review-form"') >= 4  # points, comment and two buttons
+    assert 'name="action" value="save"' in html
+
+
+def test_sheet_heading_is_the_student(login, attempts):
+    response = login.get(reverse("reports:attempt", args=[attempts[0].pk]))
+    html = response.content.decode()
+    assert "<h1>Ivan</h1>" in html
+    assert "<title>Ivan - Mixed quiz" in html
 
 
 def test_review_saves_manual_score_and_regrades(login, attempts):
     ivan = attempts[0]
     url = reverse("reports:attempt", args=[ivan.pk])
-    response = login.post(url, {"question_key": "q3", "points": "2,5", "comment": "Add example"})
+    response = login.post(url, {"points_q3": "2,5", "comment_q3": "Add example"})
     assert response.status_code == 302
-    assert response["Location"].startswith(url)
+    assert response["Location"] == url
 
     answer = Answer.objects.get(attempt=ivan, question_key="q3")
     assert answer.manual_score == D("2.5")
@@ -277,39 +292,94 @@ def test_review_saves_manual_score_and_regrades(login, attempts):
     assert "Add example" in html
     assert 'value="2.5"' in html  # reviewed answers stay editable
     # edit it again
-    login.post(url, {"question_key": "q3", "points": "1", "comment": ""})
+    login.post(url, {"points_q3": "1", "comment_q3": ""})
     ivan.refresh_from_db()
     assert ivan.score == D("4.00")
 
 
-@pytest.mark.parametrize("points", ["", "abc", "-1", "3.5", "0.3", "1e1", "NaN", "Infinity"])
+@pytest.mark.parametrize("points", ["abc", "-1", "3.5", "0.3", "1e1", "NaN", "Infinity"])
 def test_review_rejects_invalid_points(login, attempts, points):
     ivan = attempts[0]
-    login.post(reverse("reports:attempt", args=[ivan.pk]), {"question_key": "q3", "points": points})
+    url = reverse("reports:attempt", args=[ivan.pk])
+    response = login.post(url, {"points_q3": points, "comment_q3": "kept text"})
+    assert response.status_code == 200  # re-rendered, nothing lost
+    html = response.content.decode()
+    assert "Question 3 was not saved" in html
+    assert "kept text" in html and f'value="{points}"' in html
     assert Answer.objects.get(attempt=ivan, question_key="q3").manual_score is None
     ivan.refresh_from_db()
     assert ivan.pending_reviews == 1
 
 
-def test_review_rejects_non_reviewable_answer(login, attempts):
+def test_review_empty_points_leave_the_answer_alone(login, attempts):
     ivan = attempts[0]
-    login.post(reverse("reports:attempt", args=[ivan.pk]), {"question_key": "q1", "points": "0"})
+    url = reverse("reports:attempt", args=[ivan.pk])
+    response = login.post(url, {"points_q3": "", "comment_q3": ""})
+    assert response.status_code == 302
+    assert Answer.objects.get(attempt=ivan, question_key="q3").manual_score is None
+    # a comment without points is reported, not silently dropped
+    response = login.post(url, {"points_q3": "", "comment_q3": "Nice"})
+    assert response.status_code == 200
+    assert "Enter points to save the comment" in response.content.decode()
+
+
+def test_review_ignores_non_reviewable_answers(login, attempts):
+    ivan = attempts[0]
+    url = reverse("reports:attempt", args=[ivan.pk])
+    login.post(url, {"points_q1": "0", "points_nope": "0"})
     assert Answer.objects.get(attempt=ivan, question_key="q1").manual_score is None
-    login.post(reverse("reports:attempt", args=[ivan.pk]), {"question_key": "nope", "points": "0"})
 
 
 def test_review_boundaries_accept_zero_and_max(login, attempts):
     ivan = attempts[0]
     url = reverse("reports:attempt", args=[ivan.pk])
-    login.post(url, {"question_key": "q3", "points": "0"})
+    login.post(url, {"points_q3": "0"})
     assert Answer.objects.get(attempt=ivan, question_key="q3").manual_score == D("0")
-    login.post(url, {"question_key": "q3", "points": "3"})
+    login.post(url, {"points_q3": "3"})
     assert Answer.objects.get(attempt=ivan, question_key="q3").manual_score == D("3")
 
 
 def test_review_requires_csrf_token_in_form(login, attempts):
     html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
     assert "csrfmiddlewaretoken" in html
+
+
+@pytest.fixture
+def two_open(sitting):
+    doc = {
+        **DOC,
+        "test": {
+            **DOC["test"],
+            "questions": [
+                *DOC["test"]["questions"],
+                {"id": "q4", "type": "open", "text": "Why?", "points": 2},
+            ],
+        },
+    }
+    sitting.revision.document = doc
+    sitting.revision.save()
+    return make_attempt(sitting, "Zoya", {"q1": ["a"], "q3": "text", "q4": "because"})
+
+
+def test_one_post_grades_two_open_answers(login, two_open):
+    url = reverse("reports:attempt", args=[two_open.pk])
+    assert two_open.pending_reviews == 2
+    login.post(url, {"points_q3": "2", "comment_q3": "ok", "points_q4": "1.5"})
+    two_open.refresh_from_db()
+    assert two_open.pending_reviews == 0
+    assert Answer.objects.get(attempt=two_open, question_key="q4").manual_score == D("1.5")
+    assert two_open.score == D("4.50")  # 1 + 0 + 2 + 1.5
+
+
+def test_bad_row_does_not_block_the_other(login, two_open):
+    url = reverse("reports:attempt", args=[two_open.pk])
+    response = login.post(url, {"points_q3": "9", "points_q4": "2"})
+    assert response.status_code == 200
+    assert "Question 3 was not saved" in response.content.decode()
+    assert Answer.objects.get(attempt=two_open, question_key="q4").manual_score == D("2")
+    assert Answer.objects.get(attempt=two_open, question_key="q3").manual_score is None
+    two_open.refresh_from_db()
+    assert two_open.pending_reviews == 1
 
 
 def test_next_unreviewed_link(login, sitting, attempts):
@@ -321,8 +391,120 @@ def test_next_unreviewed_link(login, sitting, attempts):
     # wraps around to the first pending attempt
     assert login.get(reverse("reports:attempt", args=[third.pk])).context["next_attempt"] == ivan
     # nothing else pending -> no link
-    login.post(reverse("reports:attempt", args=[third.pk]), {"question_key": "q3", "points": "1"})
+    login.post(reverse("reports:attempt", args=[third.pk]), {"points_q3": "1"})
     assert login.get(reverse("reports:attempt", args=[ivan.pk])).context["next_attempt"] is None
+
+
+def test_save_and_next_walks_through_pending_attempts(login, sitting, attempts):
+    ivan, olena = attempts
+    third = make_attempt(sitting, "Zoya", {"q3": "text"})
+    first = reverse("reports:attempt", args=[ivan.pk])
+    response = login.post(first, {"points_q3": "1", "action": "next"})
+    assert response["Location"] == reverse("reports:attempt", args=[third.pk])
+    response = login.post(
+        reverse("reports:attempt", args=[third.pk]), {"points_q3": "2", "action": "next"}
+    )
+    assert response["Location"] == reverse("reports:session", args=[sitting.pk])
+    response = login.get(response["Location"])
+    assert "Everything in this session is reviewed" in response.content.decode()
+
+
+def test_save_and_next_stays_when_a_row_is_invalid(login, sitting, attempts):
+    make_attempt(sitting, "Zoya", {"q3": "text"})
+    response = login.post(
+        reverse("reports:attempt", args=[attempts[0].pk]), {"points_q3": "99", "action": "next"}
+    )
+    assert response.status_code == 200
+
+
+def test_next_button_on_last_pending_attempt_returns_to_results(login, sitting, attempts):
+    html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
+    assert "Save and return to the results" in html
+    assert "Save and go to the next unreviewed attempt" not in html
+    make_attempt(sitting, "Zoya", {"q3": "text"})
+    html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
+    assert "Save and go to the next unreviewed attempt" in html
+
+
+# ---- cancelling an attempt ---------------------------------------------------------------
+
+
+def test_void_requires_login_and_ownership(client, other_teacher, attempts):
+    url = reverse("reports:attempt_void", args=[attempts[0].pk])
+    assert client.get(url).status_code == 302
+    assert client.post(url).status_code == 302
+    client.force_login(other_teacher)
+    assert client.get(url).status_code == 404
+    assert client.post(url).status_code == 404
+    attempts[0].refresh_from_db()
+    assert attempts[0].status == Attempt.Status.SUBMITTED
+    assert client.get(reverse("reports:attempt_void", args=[999])).status_code == 404
+
+
+def test_void_get_confirms_and_changes_nothing(login, attempts):
+    url = reverse("reports:attempt_void", args=[attempts[0].pk])
+    response = login.get(url)
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "Ivan" in html and "3 / 6" in html and "cannot be undone" in html
+    assert 'style="' not in html
+    attempts[0].refresh_from_db()
+    assert attempts[0].status == Attempt.Status.SUBMITTED
+
+
+def test_void_post_cancels_and_returns_to_results(login, sitting, attempts):
+    ivan, olena = attempts
+    response = login.post(reverse("reports:attempt_void", args=[ivan.pk]))
+    assert response["Location"] == reverse("reports:session", args=[sitting.pk])
+    ivan.refresh_from_db()
+    assert ivan.status == Attempt.Status.VOIDED
+    assert ivan.score == D("3.00")  # the teacher can still see it
+
+    page = login.get(response["Location"])
+    assert [r["name"] for r in page.context["rows"]] == ["Olena"]
+    assert page.context["summary"].takers == 1
+    assert page.context["first_pending"] is None  # a voided attempt waits for nobody
+    assert "cancelled" in page.content.decode()
+    voided = login.get(response["Location"], {"status": "voided"})
+    assert [r["name"] for r in voided.context["rows"]] == ["Ivan"]
+    needs = login.get(response["Location"], {"status": "needs_review"})
+    assert needs.context["rows"] == []
+
+
+def test_void_is_idempotent_and_hides_actions(login, attempts):
+    ivan = attempts[0]
+    login.post(reverse("reports:attempt_void", args=[ivan.pk]))
+    response = login.get(reverse("reports:attempt_void", args=[ivan.pk]))
+    assert response.status_code == 302  # already cancelled: back to the sheet
+    html = login.get(reverse("reports:attempt", args=[ivan.pk])).content.decode()
+    assert "This attempt was cancelled" in html
+    assert reverse("reports:attempt_void", args=[ivan.pk]) not in html
+    assert 'name="points_' not in html  # no review of a cancelled attempt
+
+
+def test_sheet_offers_cancel_button(login, attempts):
+    html = login.get(reverse("reports:attempt", args=[attempts[0].pk])).content.decode()
+    assert reverse("reports:attempt_void", args=[attempts[0].pk]) in html
+    assert "Cancel attempt" in html
+
+
+# ---- results page polish -----------------------------------------------------------------
+
+
+def test_sort_links_show_state(login, sitting, attempts):
+    url = reverse("reports:session", args=[sitting.pk])
+    html = login.get(url, {"sort": "name"}).content.decode()
+    assert 'aria-sort="ascending"' in html
+    assert html.count("aria-sort=") == 1
+    html = login.get(url, {"sort": "-score"}).content.decode()
+    assert 'aria-sort="descending"' in html and "↓" in html
+
+
+def test_provisional_is_flagged_once_with_a_footnote(login, sitting, attempts):
+    html = login.get(reverse("reports:session", args=[sitting.pk])).content.decode()
+    assert html.count("(needs review)") == 1
+    assert "* Provisional" in html
+    assert 'class="cell-title"' in html and "table-compact" in html
 
 
 # ---- CSV ---------------------------------------------------------------------------------

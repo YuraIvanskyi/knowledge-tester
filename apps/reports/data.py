@@ -65,6 +65,10 @@ class SheetRow:
     marker: str = "unanswered"  # correct | partial | wrong | pending | unanswered | ungraded
     marker_label: str = ""
     can_review: bool = False
+    # Review form state: what the teacher typed (kept when the row was rejected) and why.
+    form_points: str | None = None
+    form_comment: str | None = None
+    error: str = ""
 
     @property
     def blank(self) -> bool:
@@ -116,7 +120,12 @@ def build_sheet(attempt: Attempt, test: dict, answers: list[Answer]) -> list[She
                 row.correct = [str(x) for x in question.get("accept", [])]
         row.max_points = Decimal(str(question.get("points", 1)))
         row.points = effective_points(answer)
-        row.can_review = bool(grading_enabled and answer and answer.status in REVIEWABLE)
+        row.can_review = bool(
+            grading_enabled
+            and answer
+            and answer.status in REVIEWABLE
+            and attempt.status != Attempt.Status.VOIDED
+        )
 
         status = answer.status if answer else Answer.Status.UNANSWERED
         if row.max_points == 0 or not grading_enabled:
@@ -140,7 +149,9 @@ def build_sheet(attempt: Attempt, test: dict, answers: list[Answer]) -> list[She
 def next_unreviewed_attempt(attempt: Attempt) -> Attempt | None:
     """The next attempt of the same session that still has answers waiting for review."""
     pending = list(
-        Attempt.objects.filter(sitting_id=attempt.sitting_id, pending_reviews__gt=0)
+        Attempt.objects.filter(
+            sitting_id=attempt.sitting_id, pending_reviews__gt=0, status__in=FINISHED
+        )
         .exclude(pk=attempt.pk)
         .order_by("started_at", "pk")
         .only("pk", "started_at")
@@ -160,6 +171,9 @@ STATUS_FILTERS = ("all", "finished", "in_progress", "needs_review", "voided")
 
 
 def filter_and_sort(attempts: list[Attempt], status: str, sort: str) -> list[Attempt]:
+    """A voided attempt shows only under the "voided" filter, never in the other lists."""
+    if status != "voided":
+        attempts = [a for a in attempts if a.status != Attempt.Status.VOIDED]
     if status == "finished":
         attempts = [a for a in attempts if a.status in FINISHED]
     elif status == "in_progress":

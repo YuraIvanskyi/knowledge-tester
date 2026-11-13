@@ -8,8 +8,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import content_disposition_header
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
 
+from apps.delivery import services
 from apps.delivery.models import Answer, Attempt, Sitting
 from apps.grading.service import grade_attempt
 
@@ -38,13 +40,25 @@ def session_results(request, sitting_pk: int):
     if sort not in data.SORTS:
         sort = "time"
 
-    next_sort = {}
+    sort_key, descending = sort.lstrip("-"), sort.startswith("-")
+    columns = {}
     for key in ("name", "score", "time"):
-        next_sort[key] = f"-{key}" if sort == key else key
+        active = sort_key == key
+        columns[key] = {
+            "next": f"-{key}" if sort == key else key,
+            "aria": ("descending" if descending else "ascending") if active else "",
+            "arrow": ("↓" if descending else "↑") if active else "",
+        }
 
     pending_attempt = next(
-        (a for a in sorted(attempts, key=lambda a: (a.started_at, a.pk)) if a.pending_reviews), None
+        (
+            a
+            for a in sorted(attempts, key=lambda a: (a.started_at, a.pk))
+            if a.pending_reviews and a.status in data.FINISHED
+        ),
+        None,
     )
+    shown = data.filter_and_sort(attempts, status, sort)
     return render(
         request,
         "reports/session.html",
@@ -53,14 +67,12 @@ def session_results(request, sitting_pk: int):
             "test": test,
             "grading_enabled": (test.get("grading") or {}).get("enabled", True),
             "summary": data.summarize(attempts),
-            "rows": [
-                {"attempt": a, "name": data.taker_name(a)}
-                for a in data.filter_and_sort(attempts, status, sort)
-            ],
+            "rows": [{"attempt": a, "name": data.taker_name(a)} for a in shown],
+            "any_provisional": any(a.pending_reviews and a.score is not None for a in shown),
             "items": data.item_analysis(test, attempts),
             "status": status,
             "sort": sort,
-            "next_sort": next_sort,
+            "columns": columns,
             "status_filters": [
                 ("all", _("All")),
                 ("finished", _("Finished")),
@@ -83,47 +95,91 @@ def _parse_points(raw: str, max_points: Decimal) -> Decimal | None:
     return points.quantize(Decimal("0.01"))
 
 
-def _save_review(request, attempt: Attempt, test: dict):
-    key = request.POST.get("question_key", "")
-    question = next((q for q in test.get("questions", []) if str(q["id"]) == key), None)
-    answer = Answer.objects.filter(attempt=attempt, question_key=key).first()
-    if question is None or answer is None or answer.status not in data.REVIEWABLE:
-        messages.error(request, _("This answer cannot be reviewed."))
-        return
-    max_points = Decimal(str(question.get("points", 1)))
-    points = _parse_points(request.POST.get("points", ""), max_points)
-    if points is None:
-        messages.error(
-            request,
-            _("Enter points from 0 to %(max)s in steps of 0.5.") % {"max": f"{max_points:f}"},
-        )
-        return
-    answer.manual_score = points
-    answer.feedback = request.POST.get("comment", "").strip()[:2000]
-    answer.save(update_fields=["manual_score", "feedback"])
-    grade_attempt(attempt)
-    messages.success(request, _("Saved."))
+def _attempt_or_404(user, pk: int) -> Attempt:
+    attempt = get_object_or_404(
+        Attempt.objects.select_related("sitting__revision__assessment"), pk=pk
+    )
+    if not data.can_view_sitting(user, attempt.sitting):
+        raise Http404
+    return attempt
+
+
+def _save_review(request, attempt: Attempt, rows: list[data.SheetRow]) -> tuple[int, dict]:
+    """Save every reviewable row of the posted sheet. Returns (saved count, errors by question id).
+
+    An empty points field leaves the answer as it is. A bad row is reported and does not stop
+    the others; what the teacher typed is kept for the next render."""
+    saved = 0
+    errors: dict[str, tuple[str, str, str]] = {}
+    for row in rows:
+        if not row.can_review or row.answer is None:
+            continue
+        qid = str(row.question["id"])
+        raw = request.POST.get(f"points_{qid}", "").strip()
+        comment = request.POST.get(f"comment_{qid}", "").strip()[:2000]
+        if not raw:
+            if comment and comment != (row.answer.feedback or ""):
+                errors[qid] = (_("Enter points to save the comment."), raw, comment)
+            continue
+        points = _parse_points(raw, row.max_points)
+        if points is None:
+            message = _("Enter points from 0 to %(max)s in steps of 0.5.") % {
+                "max": f"{row.max_points:f}"
+            }
+            errors[qid] = (message, raw, comment)
+            continue
+        row.answer.manual_score = points
+        row.answer.feedback = comment
+        row.answer.save(update_fields=["manual_score", "feedback"])
+        saved += 1
+    if saved:
+        grade_attempt(attempt)
+    return saved, errors
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def attempt_sheet(request, pk: int):
-    attempt = get_object_or_404(
-        Attempt.objects.select_related("sitting__revision__assessment"), pk=pk
-    )
+    attempt = _attempt_or_404(request.user, pk)
     sitting = attempt.sitting
-    if not data.can_view_sitting(request.user, sitting):
-        raise Http404
     test = sitting.revision.test
+    errors: dict[str, tuple[str, str, str]] = {}
 
     if request.method == "POST":
-        _save_review(request, attempt, test)
-        key = request.POST.get("question_key", "")
-        url = request.path + (f"#q-{key}" if key else "")
-        return redirect(url)
+        rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
+        saved, errors = _save_review(request, attempt, rows)
+        for row in rows:
+            failed = errors.get(str(row.question["id"]))
+            if failed:
+                messages.error(
+                    request,
+                    _("Question %(n)s was not saved. %(reason)s")
+                    % {"n": row.number, "reason": failed[0]},
+                )
+        if saved:
+            messages.success(
+                request,
+                ngettext("%(n)s answer saved.", "%(n)s answers saved.", saved) % {"n": saved},
+            )
+        if not errors:
+            if request.POST.get("action") == "next":
+                following = data.next_unreviewed_attempt(attempt)
+                if following is not None:
+                    return redirect("reports:attempt", pk=following.pk)
+                if attempt.pending_reviews:
+                    messages.info(request, _("No other attempt waits for review."))
+                else:
+                    messages.success(request, _("Everything in this session is reviewed."))
+                return redirect("reports:session", sitting_pk=sitting.pk)
+            if not saved:
+                messages.info(request, _("Nothing to save: no points were entered."))
+            return redirect(request.path)
 
-    answers = list(attempt.answers.all())
-    grading = test.get("grading") or {}
+    rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
+    for row in rows:
+        failed = errors.get(str(row.question["id"]))
+        if failed:
+            row.error, row.form_points, row.form_comment = failed
     return render(
         request,
         "reports/attempt.html",
@@ -133,11 +189,44 @@ def attempt_sheet(request, pk: int):
             "test": test,
             "name": data.taker_name(attempt),
             "taker_rows": _taker_rows(test, attempt),
-            "rows": data.build_sheet(attempt, test, answers),
-            "grading_enabled": grading.get("enabled", True),
+            "rows": rows,
+            "has_review": any(r.can_review for r in rows),
+            "grading_enabled": (test.get("grading") or {}).get("enabled", True),
             "provisional": attempt.pending_reviews > 0,
+            "voided": attempt.status == Attempt.Status.VOIDED,
             "next_attempt": data.next_unreviewed_attempt(attempt),
             "pdf_url": reverse("reports:attempt_pdf", args=[attempt.pk]),
+        },
+    )
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def attempt_void(request, pk: int):
+    """Cancel an attempt: a confirmation page first, then the POST. Same access as the sheet."""
+    attempt = _attempt_or_404(request.user, pk)
+    sitting = attempt.sitting
+    name = data.taker_name(attempt)
+    if attempt.status == Attempt.Status.VOIDED:
+        messages.info(request, _("This attempt is already cancelled."))
+        return redirect("reports:attempt", pk=attempt.pk)
+    if request.method == "POST":
+        services.void_attempt(attempt)
+        messages.success(
+            request, _("Attempt of %(name)s cancelled. It no longer counts.") % {"name": name}
+        )
+        return redirect("reports:session", sitting_pk=sitting.pk)
+    test = sitting.revision.test
+    return render(
+        request,
+        "reports/attempt_void.html",
+        {
+            "attempt": attempt,
+            "sitting": sitting,
+            "test": test,
+            "name": name,
+            "grading_enabled": (test.get("grading") or {}).get("enabled", True),
+            "session_open": sitting.status == Sitting.Status.OPEN,
         },
     )
 
@@ -148,8 +237,10 @@ def _taker_rows(test: dict, attempt: Attempt) -> list[tuple[str, str]]:
     for field in test.get("taker_fields", []):
         key = field.get("key")
         seen.add(key)
+        if key == "name":  # the name is the page heading
+            continue
         rows.append((field.get("label") or key, str(taker.get(key, ""))))
-    rows += [(k, str(v)) for k, v in taker.items() if k not in seen]
+    rows += [(k, str(v)) for k, v in taker.items() if k not in seen and k != "name"]
     return rows
 
 

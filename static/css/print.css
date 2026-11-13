@@ -37,6 +37,10 @@ nav {
   display: none !important;
 }
 
+.print-only {
+  display: block !important;
+}
+
 .container {
   max-width: none;
   padding: 0;
