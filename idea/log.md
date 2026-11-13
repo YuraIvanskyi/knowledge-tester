@@ -11,8 +11,9 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 - **End-to-end pass done** (headless Edge against a scratch instance, 11 of 11 checks): dashboard -> create form -> class session -> a student submits half-empty and sees the unanswered step -> confirms -> teacher cancels the attempt -> the student sees the cancelled note and retakes -> another student keeps working -> closing asks first ("1 student still works") -> auto-submitted -> review with "Save and go to the next" returns to the results. The attempt that "stayed in progress" in workstream C's script was the new confirmation step (a first submit lands on `/submit/`; the attempt finishes after "Submit anyway"), not a bug.
 - **Visual re-check** of Manage (teachers, new teacher, settings) at 390 and 1280 px: no overflow, nothing broken. Phone results page 1,859 px for 2 attempts, no sideways scroll.
 - README: navigation, cancel attempt, close confirmation, review, test notes.
-- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (ownership audit matrix, 32-taker load run, code review).
-- **Next:** wave 2 of Phase 6 (ownership audit and load run), then Phase 7 or the Phase 3/4 gaps.
+- **Ownership audit (KT-607) as a test:** `tests/test_ownership_audit.py` reads every `/teach/` route from the URL resolver (a new route without an entry fails), then checks anonymous -> login, another teacher -> the same answer as for an id that does not exist (404, or 405 where the route does not take the method; never a leak of the owner's names), lists scoped to the viewer, and admin not stopped by ownership. 217 checks, no hole found. `/manage/` has its own permission tests; `/s/` is public by design.
+- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (32-taker load run on the real server, code review of the seams).
+- **Next:** wave 2 of Phase 6 (load run), then Phase 7 or the Phase 3/4 gaps.
 
 ## 2026-11-13: UX review wave (UX-01 to UX-18), built; integration gate open
 

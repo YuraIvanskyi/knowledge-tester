@@ -41,7 +41,7 @@ This board is the single source of truth for status. The task content lives in [
 
 ## In progress
 
-- [~] Phase 6 wave 2: ownership audit (KT-607 audit part), end-to-end and load run with 32 takers, code review, UX pass in Ukrainian light/dark
+- [~] Phase 6 wave 2: ownership audit done (`tests/test_ownership_audit.py`, 2026-11-13); still open: load run with 32 takers on the real server, code review of the workstream seams
 
 ## Ready (listed in suggested order)
 
@@ -147,7 +147,7 @@ _Nothing yet._
 - [x] KT-604 Link attempts to students after the fact · S
 - [x] KT-605 Student profile · M
 - [x] KT-606 Group gradebook *(should)* · M
-- [~] KT-607 Ownership audit (in wave 2); sharing between teachers is not planned for v1 *(could)* · S
+- [~] KT-607 Ownership audit (done as a test, see log; the rest is wave 2); sharing between teachers is not planned for v1 *(could)* · S
 - [ ] KT-608 Read-only student login *(could, skipped: plan Q3 = no student logins in v1)* · M
 
 ### Phase 7: Local LLM assistant
