@@ -21,7 +21,7 @@ kt.toml
 htmlcov/
 
 # Editors / OS
-.vscode/
+# .vscode/
 .idea/
 Thumbs.db
 .DS_Store

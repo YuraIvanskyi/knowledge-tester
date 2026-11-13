@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "sandbox: migrate + seed_demo",
+      "type": "shell",
+      "command": "& \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\python.exe\" manage.py migrate -v0; if ($?) { & \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\python.exe\" manage.py seed_demo }",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "KT_DATA_DIR": "${userHome}\\AppData\\Local\\KnowledgeTester-sandbox" },
+        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+      },
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Sandbox: reset (delete throw-away data dir)",
+      "type": "shell",
+      "command": "Remove-Item -Recurse -Force \"$env:LOCALAPPDATA\\KnowledgeTester-sandbox\" -ErrorAction SilentlyContinue; 'Sandbox data removed.'",
+      "options": {
+        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "uv sync (venv outside OneDrive)",
+      "type": "shell",
+      "command": "python -m uv sync",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "UV_PROJECT_ENVIRONMENT": "${userHome}\\AppData\\Local\\KnowledgeTester\\venv" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ruff: check + format",
+      "type": "shell",
+      "command": "& \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\ruff.exe\" check . ; & \"$env:LOCALAPPDATA\\KnowledgeTester\\venv\\Scripts\\ruff.exe\" format .",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+      },
+      "problemMatcher": []
+    }
+  ]
+}
