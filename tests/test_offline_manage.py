@@ -82,3 +82,14 @@ def test_manage_css_is_loaded_from_static(admin_user):
 def test_manage_pages_need_no_javascript(admin_user, teacher, registration_open):
     for response in responses(admin_user, teacher):
         assert "<script" not in response.content.decode()
+
+
+def test_manage_sub_tabs_come_before_the_title_and_teachers_use_cards(admin_user, teacher):
+    admin = Client()
+    admin.force_login(admin_user)
+    for name in ("manage:home", "manage:teachers", "manage:settings", "manage:teacher_create"):
+        html = admin.get(reverse(name)).content.decode()
+        assert html.index('class="subnav"') < html.index("<h1"), name
+    html = admin.get(reverse("manage:teachers")).content.decode()
+    assert "table-compact" in html and html.count("cell-title") == html.count("<tr>") - 1
+    assert 'class="cell-actions"' in html

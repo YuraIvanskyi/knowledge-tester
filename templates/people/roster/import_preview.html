@@ -7,7 +7,7 @@
   {% include "people/roster/_tabs.html" with current="import" %}
   <div class="page-head">
     <h1>{% trans "Check the import" %}</h1>
-    <a href="{% url 'people:import' %}{% if can_edit %}?back=1{% endif %}">{% if can_edit %}{% trans "Edit the list" %}{% else %}{% trans "Start again" %}{% endif %}</a>
+    <a class="link-tap" href="{% url 'people:import' %}{% if can_edit %}?back=1{% endif %}">{% if can_edit %}{% trans "Edit the list" %}{% else %}{% trans "Start again" %}{% endif %}</a>
   </div>
 
   <ul class="facts">
@@ -31,7 +31,7 @@
     <p class="alert alert-warn">{% trans "This list is long, so rows cannot be unticked one by one. Every valid row is added; use the duplicate switch below to leave duplicates out." %}</p>
     {% endif %}
 
-    <table class="table">
+    <table class="table table-compact import-table{% if selectable %} import-pickable{% endif %}">
       <thead>
         <tr>
           {% if selectable %}<th scope="col">{% trans "Add" %}</th>{% endif %}
@@ -45,15 +45,15 @@
         {% for row in preview.rows %}
         <tr class="row-{{ row.status }}">
           {% if selectable %}
-          <td data-label="{% trans 'Add' %}">
+          <td class="import-pick">
             {% if row.is_invalid %}<label class="tap"><input type="checkbox" disabled aria-label="{% trans 'Not valid, cannot be added' %}"></label>
             {% else %}<label class="tap"><input type="checkbox" name="include" value="{{ row.index }}" checked aria-label="{% blocktrans with name=row.full_name %}Add {{ name }}{% endblocktrans %}"></label>{% endif %}
           </td>
           {% endif %}
           <td data-label="#" class="num col-num">{{ forloop.counter }}</td>
-          <td data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
-          <td data-label="{% trans 'Group' %}"><span>{% if row.group_name %}{{ row.group_name }}{% if row.group_is_new %} <span class="muted">({% trans "new group" %})</span>{% endif %}{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</span></td>
-          <td data-label="{% trans 'Check' %}"><span>
+          <td class="cell-title" data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
+          <td class="import-group" data-label="{% trans 'Group' %}"><span>{% if row.group_name %}{{ row.group_name }}{% if row.group_is_new %} <span class="muted">({% trans "new group" %})</span>{% endif %}{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</span></td>
+          <td class="import-check" data-label="{% trans 'Check' %}"><span>
             {% if row.is_invalid %}
               <span class="status-bad">{% trans "Not valid" %}</span>: {{ row.problems|join:", " }}
             {% elif row.is_duplicate %}
@@ -86,7 +86,7 @@
     <a class="btn btn-primary" href="{% url 'people:import' %}{% if can_edit %}?back=1{% endif %}">{% trans "Back" %}</a>
   </div>
   {% if preview.rows %}
-  <table class="table">
+  <table class="table table-compact import-table">
     <thead>
       <tr>
         <th scope="col" class="num col-num">#</th>
@@ -98,7 +98,7 @@
       {% for row in preview.rows %}
       <tr class="row-{{ row.status }}">
         <td data-label="#" class="num col-num">{{ forloop.counter }}</td>
-        <td data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
+        <td class="cell-title" data-label="{% trans 'Student' %}">{% if row.full_name %}{{ row.full_name }}{% else %}&mdash;{% endif %}</td>
         <td data-label="{% trans 'Check' %}"><span><span class="status-bad">{% trans "Not valid" %}</span>: {{ row.problems|join:", " }}</span></td>
       </tr>
       {% endfor %}

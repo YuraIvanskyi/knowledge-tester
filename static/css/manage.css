@@ -1,28 +1,5 @@
 /* Admin area (/manage/). Uses the tokens and components of base.css. */
 
-/* Section switcher under the page title: plain links, tall enough to tap */
-.subnav {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: var(--space-4);
-  border-bottom: 1px solid var(--border);
-}
-.subnav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text);
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-}
-.subnav a:hover {
-  text-decoration: underline;
-}
-.subnav a[aria-current="page"] {
-  font-weight: 700;
-  border-bottom-color: var(--accent);
-}
-
 /* Overview numbers */
 .stat-grid {
   display: grid;
@@ -125,6 +102,17 @@
     content: none;
   }
 }
+@media (max-width: 639px) {
+  /* Card pattern (base.css): the actions line up with the left edge like the name above */
+  .accounts .actions {
+    justify-content: flex-start;
+  }
+  .accounts td.cell-title a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
 @media (min-width: 62rem) {
   .accounts {
     font-size: var(--fs-sm);
@@ -133,6 +121,11 @@
   .accounts td {
     padding-left: var(--space-1);
     padding-right: var(--space-1);
+  }
+  /* Normal left padding in the first column: the name no longer touches the border */
+  .accounts th:first-child,
+  .accounts td:first-child {
+    padding-left: var(--space-3);
   }
   .actions {
     justify-content: flex-start;

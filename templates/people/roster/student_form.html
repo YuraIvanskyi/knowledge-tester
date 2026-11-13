@@ -13,7 +13,7 @@
       <p><strong>{% blocktrans count n=duplicates|length %}This looks like a student you already have:{% plural %}This looks like students you already have:{% endblocktrans %}</strong></p>
       <ul>
         {% for d in duplicates %}
-        <li><a href="{% url 'people:student' d.student.pk %}">{{ d.student.full_name }}</a>{% if d.student.group %} ({{ d.student.group.name }}){% endif %}{% if d.kind == "reordered" %} <span class="muted">&ndash; {% trans "same words in a different order" %}</span>{% endif %}</li>
+        <li><a class="link-tap" href="{% url 'people:student' d.student.pk %}">{{ d.student.full_name }}</a>{% if d.student.group %} ({{ d.student.group.name }}){% endif %}{% if d.kind == "reordered" %} <span class="muted">&ndash; {% trans "same words in a different order" %}</span>{% endif %}</li>
         {% endfor %}
       </ul>
       <p>{% if student %}{% trans "Change the name, or save anyway if these are different people." %}{% else %}{% trans "Change the name, or add anyway if these are different people." %}{% endif %}</p>
@@ -42,7 +42,7 @@
     </form>
 
     {% if student %}
-    <p class="muted"><a href="{% url 'people:student' student.pk %}">{% trans "Open the profile" %}</a> &middot; <a href="{% url 'people:student_delete' student.pk %}">{% trans "Delete student" %}</a></p>
+    <p class="muted"><a class="link-tap" href="{% url 'people:student' student.pk %}">{% trans "Open the profile" %}</a> &middot; <a class="link-tap" href="{% url 'people:student_delete' student.pk %}">{% trans "Delete student" %}</a></p>
     {% endif %}
   </div>
 </div>

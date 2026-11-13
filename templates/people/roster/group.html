@@ -12,7 +12,8 @@
       {% if user.is_admin_role %}<p class="muted">{% blocktrans with owner=group.owner %}Teacher: {{ owner }}{% endblocktrans %}</p>{% endif %}
     </div>
     <div class="row">
-      <a class="btn btn-primary" href="{% url 'people:student_create' %}?group={{ group.pk }}">{% trans "Add student" %}</a>
+      <a class="btn{% if n_active %} btn-primary{% endif %}" href="{% url 'delivery:pick' %}?group={{ group.pk }}">{% trans "Open a session for this group" %}</a>
+      <a class="btn" href="{% url 'people:student_create' %}?group={{ group.pk }}">{% trans "Add student" %}</a>
       <a class="btn" href="{% url 'people:import' %}?group={{ group.pk }}">{% trans "Import into this group" %}</a>
     </div>
   </div>
@@ -28,7 +29,7 @@
   </div>
 
   {% if students %}
-  <table class="table">
+  <table class="table table-compact row-edit">
     <thead>
       <tr>
         <th scope="col">{% trans "Student" %}</th>
@@ -40,10 +41,10 @@
     <tbody>
       {% for s in students %}
       <tr{% if not s.is_active %} class="row-inactive"{% endif %}>
-        <td data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
+        <td class="cell-title" data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
         <td data-label="{% trans 'PIN' %}" class="mono">{% if s.pin %}{{ s.pin }}{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</td>
         <td data-label="{% trans 'Status' %}">{% if s.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="muted">{% trans "Left the class" %}</span>{% endif %}</td>
-        <td data-label="{% trans 'Actions' %}"><a href="{% url 'people:student_edit' s.pk %}?next={{ request.path|urlencode }}">{% trans "Edit" %}</a></td>
+        <td class="cell-actions"><a href="{% url 'people:student_edit' s.pk %}?next={{ request.path|urlencode }}">{% trans "Edit" %}</a></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -83,14 +84,9 @@
   </section>
   {% endif %}
 
-  <section class="panel stack-sm" aria-labelledby="session-title">
-    <h2 id="session-title">{% trans "Start a session for this group" %}</h2>
-    <p>{% trans "Open a session from a published test and choose this group in the session form. Students then pick their name from the class list, and their results land on their profile." %}</p>
-    <p class="muted">
-      <a href="{% url 'assessments:list' %}">{% trans "Go to tests" %}</a>
-      &middot; <a href="{% url 'delivery:list' %}">{% trans "All sessions" %}</a>
-      {% if n_sessions %}&middot; {% blocktrans count n=n_sessions %}{{ n }} session is tied to this group{% plural %}{{ n }} sessions are tied to this group{% endblocktrans %}{% endif %}
-    </p>
-  </section>
+  <p class="muted">
+    <a class="link-tap" href="{% url 'delivery:list' %}">{% trans "All sessions" %}</a>
+    {% if n_sessions %}&middot; {% blocktrans count n=n_sessions %}{{ n }} session is tied to this group{% plural %}{{ n }} sessions are tied to this group{% endblocktrans %}{% endif %}
+  </p>
 </div>
 {% endblock %}

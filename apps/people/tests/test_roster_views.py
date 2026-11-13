@@ -224,7 +224,8 @@ def test_group_page_lists_students_with_pins_and_links(client_for, teacher, mine
         assert reverse(name, args=[mine.pk]) in html
     assert reverse("people:student_create") + f"?group={mine.pk}" in html
     assert reverse("people:import") + f"?group={mine.pk}" in html
-    assert "Start a session for this group" in html
+    assert "Open a session for this group" in html
+    assert reverse("delivery:pick") + f"?group={mine.pk}" in html
     assert (response.context["n_with_pin"], response.context["n_without_pin"]) == (1, 1)
 
 

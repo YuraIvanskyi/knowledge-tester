@@ -4,11 +4,11 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
 {% block content %}
 <div class="stack">
+  {% include "manage/_subnav.html" %}
   <div class="page-head">
     <h1>{% trans "Teachers" %}</h1>
     <a class="btn btn-primary" href="{% url 'manage:teacher_create' %}">{% trans "Add a teacher" %}</a>
   </div>
-  {% include "manage/_subnav.html" %}
 
   <form method="get" class="search-form" role="search">
     <div class="field grow">
@@ -20,7 +20,7 @@
   </form>
 
   {% if accounts %}
-  <table class="table accounts">
+  <table class="table table-compact accounts">
     <thead>
       <tr>
         <th scope="col">{% trans "Name" %}</th>
@@ -36,14 +36,14 @@
     <tbody>
       {% for u in accounts %}
       <tr>
-        <td data-label="{% trans 'Name' %}"><span><a href="{% url 'manage:teacher_edit' u.pk %}">{{ u }}</a>{% if u.pk == me.pk %} <span class="muted">({% trans "you" %})</span>{% endif %}</span></td>
+        <td class="cell-title" data-label="{% trans 'Name' %}"><span><a href="{% url 'manage:teacher_edit' u.pk %}">{{ u }}</a>{% if u.pk == me.pk %} <span class="muted">({% trans "you" %})</span>{% endif %}</span></td>
         <td data-label="{% trans 'Username' %}" class="mono">{{ u.username }}</td>
         <td data-label="{% trans 'Role' %}">{{ u.get_role_display }}</td>
         <td data-label="{% trans 'Status' %}">{% if u.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="status-bad">{% trans "Deactivated" %}</span>{% endif %}</td>
         <td data-label="{% trans 'Last login' %}">{% if u.last_login %}<time datetime="{{ u.last_login|date:'c' }}" title="{{ u.last_login|date:'SHORT_DATETIME_FORMAT' }}">{{ u.last_login|date:"SHORT_DATE_FORMAT" }}</time>{% else %}<span class="muted">{% trans "Never" %}</span>{% endif %}</td>
         <td data-label="{% trans 'Tests' %}" class="num">{{ u.test_count }}</td>
         <td data-label="{% trans 'Sessions' %}" class="num">{{ u.session_count }}</td>
-        <td>
+        <td class="cell-actions">
           <div class="actions">
             <a class="btn" href="{% url 'manage:teacher_edit' u.pk %}">{% trans "Edit" %}</a>
             <a class="btn" href="{% url 'manage:teacher_password' u.pk %}">{% trans "Password" %}</a>

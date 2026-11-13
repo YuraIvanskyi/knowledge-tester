@@ -4,15 +4,15 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
 {% block content %}
 <div class="stack">
+  {% include "manage/_subnav.html" %}
   <div class="page-head">
     <h1>{% trans "Admin area" %}</h1>
     <a class="btn btn-primary" href="{% url 'manage:teacher_create' %}">{% trans "Add a teacher" %}</a>
   </div>
-  {% include "manage/_subnav.html" %}
 
   <dl class="stat-grid">
     <div class="stat">
-      <dt><a href="{% url 'manage:teachers' %}">{% trans "Teachers" %}</a></dt>
+      <dt><a class="link-tap" href="{% url 'manage:teachers' %}">{% trans "Teachers" %}</a></dt>
       <dd class="stat-num">{{ teacher_count }}</dd>
       <dd class="muted">{% blocktrans count n=admin_count %}and {{ n }} admin{% plural %}and {{ n }} admins{% endblocktrans %}</dd>
     </div>
@@ -41,15 +41,15 @@
     {% else %}
       <p><span class="status-warn">{% trans "Self-registration is off." %}</span> {% trans "Only admins can create teacher accounts." %}</p>
     {% endif %}
-    <p><a href="{% url 'manage:settings' %}">{% trans "Change settings" %}</a></p>
+    <p><a class="link-tap" href="{% url 'manage:settings' %}">{% trans "Change settings" %}</a></p>
   </section>
 
   <section class="stack-sm">
     <h2>{% trans "What you can do here" %}</h2>
     <ul>
-      <li><a href="{% url 'manage:teachers' %}">{% trans "See all accounts, reset a password or deactivate an account." %}</a></li>
-      <li><a href="{% url 'manage:teacher_create' %}">{% trans "Create an account for a new teacher." %}</a></li>
-      <li><a href="{% url 'manage:settings' %}">{% trans "Set the school name and the registration rules." %}</a></li>
+      <li><a class="link-tap" href="{% url 'manage:teachers' %}">{% trans "See all accounts, reset a password or deactivate an account." %}</a></li>
+      <li><a class="link-tap" href="{% url 'manage:teacher_create' %}">{% trans "Create an account for a new teacher." %}</a></li>
+      <li><a class="link-tap" href="{% url 'manage:settings' %}">{% trans "Set the school name and the registration rules." %}</a></li>
     </ul>
   </section>
 </div>

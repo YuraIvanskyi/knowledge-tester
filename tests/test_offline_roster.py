@@ -101,3 +101,51 @@ def test_people_stylesheet_has_no_remote_resources():
     )
     assert external_urls(css) == []
     assert "@import" not in css and "@font-face" not in css and "url(" not in css
+
+
+def test_roster_pages_put_the_sub_tabs_directly_under_the_top_bar(client_for, teacher):
+    responses = roster_responses(client_for(teacher), teacher)
+    checked = 0
+    for response in responses:
+        html = response.content.decode()
+        if 'class="subnav"' in html:
+            assert html.index('class="subnav"') < html.index("<h1"), response.request["PATH_INFO"]
+            checked += 1
+    assert checked >= 10
+
+
+def test_roster_tables_use_the_card_pattern(client_for, teacher):
+    client = client_for(teacher)
+    group = Group.objects.create(owner=teacher, name="7-А")
+    Student.objects.create(owner=teacher, group=group, full_name="Іваненко Дем’ян", pin="4821")
+    for name in ("people:groups", "people:students"):
+        html = client.get(reverse(name)).content.decode()
+        assert "table-compact" in html and html.count("cell-title") >= 1, name
+    for name in ("people:group", "people:group_pins"):
+        html = client.get(reverse(name, args=[group.pk])).content.decode()
+        assert "table-compact" in html and html.count("cell-title") == 1, name
+    redirect = client.post(reverse("people:import"), {"text": "Іваненко Дем'ян; 7-А\nНовий; Нова"})
+    html = client.get(redirect["Location"]).content.decode()
+    assert "import-table" in html and html.count("cell-title") == 2
+    assert 'label class="tap"' in html
+
+
+def test_group_page_button_opens_the_chooser_for_the_group(client_for, teacher):
+    group = Group.objects.create(owner=teacher, name="7-А")
+    Student.objects.create(owner=teacher, group=group, full_name="Іваненко Дем’ян")
+    html = client_for(teacher).get(reverse("people:group", args=[group.pk])).content.decode()
+    link = reverse("delivery:pick") + f"?group={group.pk}"
+    assert f'class="btn btn-primary" href="{link}"' in html
+
+
+def test_people_stylesheet_keeps_no_copy_of_the_shared_rules():
+    css = (Path(__file__).resolve().parent.parent / "static" / "css" / "people.css").read_text(
+        encoding="utf-8"
+    )
+    manage = (Path(__file__).resolve().parent.parent / "static" / "css" / "manage.css").read_text(
+        encoding="utf-8"
+    )
+    for text in (css, manage):
+        assert not re.search(r"^\.subnav\b", text, re.M)
+        assert not re.search(r"^\.tap\b", text, re.M)
+        assert "[hidden] {" not in text

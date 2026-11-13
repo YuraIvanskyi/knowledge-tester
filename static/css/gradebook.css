@@ -2,7 +2,8 @@
    Uses the tokens from base.css. */
 
 /* The matrix is wider than a text page: let this page use more of the screen. */
-main.container {
+main.container,
+.topbar-inner {
   max-width: 80rem;
 }
 

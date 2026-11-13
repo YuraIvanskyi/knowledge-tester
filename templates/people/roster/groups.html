@@ -14,7 +14,7 @@
   </div>
 
   {% if groups %}
-  <table class="table">
+  <table class="table table-compact">
     <thead>
       <tr>
         <th scope="col">{% trans "Group" %}</th>
@@ -27,11 +27,11 @@
     <tbody>
       {% for g in groups %}
       <tr>
-        <td data-label="{% trans 'Group' %}"><span><a href="{% url 'people:group' g.pk %}">{{ g.name }}</a>{% if g.is_archived %} <span class="muted">({% trans "archived" %})</span>{% endif %}</span></td>
+        <td class="cell-title" data-label="{% trans 'Group' %}"><span><a href="{% url 'people:group' g.pk %}">{{ g.name }}</a>{% if g.is_archived %} <span class="muted">({% trans "archived" %})</span>{% endif %}</span></td>
         {% if user.is_admin_role %}<td data-label="{% trans 'Teacher' %}">{{ g.owner }}</td>{% endif %}
         <td data-label="{% trans 'Active students' %}" class="num">{{ g.active_count }}</td>
         <td data-label="{% trans 'Last session' %}">{% if g.last_session %}{{ g.last_session|date:"SHORT_DATE_FORMAT" }}{% else %}<span class="muted">{% trans "none yet" %}</span>{% endif %}</td>
-        <td data-label="{% trans 'Actions' %}"><span class="actions"><a href="{% url 'people:group' g.pk %}">{% trans "Open group" %}</a> <a href="{% url 'people:group_edit' g.pk %}">{% trans "Edit" %}</a></span></td>
+        <td class="cell-actions"><span class="actions"><a href="{% url 'people:group' g.pk %}">{% trans "Open group" %}</a> <a href="{% url 'people:group_edit' g.pk %}">{% trans "Edit" %}</a></span></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -47,12 +47,12 @@
   {% endif %}
 
   <p class="muted">
-    <a href="{% url 'people:students' %}?group=none">{% blocktrans count n=ungrouped_count %}{{ n }} student without a group{% plural %}{{ n }} students without a group{% endblocktrans %}</a>
+    <a class="link-tap" href="{% url 'people:students' %}?group=none">{% blocktrans count n=ungrouped_count %}{{ n }} student without a group{% plural %}{{ n }} students without a group{% endblocktrans %}</a>
     &middot;
-    <a href="{% url 'people:students' %}">{% blocktrans count n=total_students %}{{ n }} student in total{% plural %}{{ n }} students in total{% endblocktrans %}</a>
+    <a class="link-tap" href="{% url 'people:students' %}">{% blocktrans count n=total_students %}{{ n }} student in total{% plural %}{{ n }} students in total{% endblocktrans %}</a>
     {% if archived_count %}
     &middot;
-    {% if show_archived %}<a href="{% url 'people:groups' %}">{% trans "Hide archived groups" %}</a>{% else %}<a href="{% url 'people:groups' %}?archived=1">{% blocktrans count n=archived_count %}Show {{ n }} archived group{% plural %}Show {{ n }} archived groups{% endblocktrans %}</a>{% endif %}
+    {% if show_archived %}<a class="link-tap" href="{% url 'people:groups' %}">{% trans "Hide archived groups" %}</a>{% else %}<a class="link-tap" href="{% url 'people:groups' %}?archived=1">{% blocktrans count n=archived_count %}Show {{ n }} archived group{% plural %}Show {{ n }} archived groups{% endblocktrans %}</a>{% endif %}
     {% endif %}
   </p>
 </div>

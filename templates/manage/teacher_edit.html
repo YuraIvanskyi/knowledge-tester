@@ -4,11 +4,11 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
 {% block content %}
 <div class="stack">
+  {% include "manage/_subnav.html" %}
   <div class="page-head">
     <h1>{{ target }}</h1>
     <a class="btn" href="{% url 'manage:teacher_password' target.pk %}">{% trans "Set or reset password" %}</a>
   </div>
-  {% include "manage/_subnav.html" %}
 
   <p class="muted">
     {% trans "Username" %}: <span class="mono">{{ target.username }}</span> &middot;

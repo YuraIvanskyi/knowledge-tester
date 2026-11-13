@@ -4,10 +4,10 @@
 {% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
 {% block content %}
 <div class="stack">
+  {% include "manage/_subnav.html" %}
   <div class="page-head">
     <h1>{% trans "Settings" %}</h1>
   </div>
-  {% include "manage/_subnav.html" %}
 
   <form method="post" class="form-narrow stack" novalidate>
     {% csrf_token %}

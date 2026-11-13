@@ -34,7 +34,7 @@
 
   {% if page.object_list %}
   <p class="muted">{% blocktrans count n=page.paginator.count %}{{ n }} student{% plural %}{{ n }} students{% endblocktrans %}</p>
-  <table class="table">
+  <table class="table table-compact row-edit">
     <thead>
       <tr>
         <th scope="col">{% trans "Student" %}</th>
@@ -47,11 +47,11 @@
     <tbody>
       {% for s in page.object_list %}
       <tr{% if not s.is_active %} class="row-inactive"{% endif %}>
-        <td data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
+        <td class="cell-title" data-label="{% trans 'Student' %}"><a href="{% url 'people:student' s.pk %}">{{ s.full_name }}</a></td>
         <td data-label="{% trans 'Group' %}">{% if s.group %}<a href="{% url 'people:group' s.group_id %}">{{ s.group.name }}</a>{% else %}<span class="muted">{% trans "none" %}</span>{% endif %}</td>
         {% if show_owner %}<td data-label="{% trans 'Teacher' %}">{{ s.owner }}</td>{% endif %}
         <td data-label="{% trans 'Status' %}">{% if s.is_active %}<span class="status-ok">{% trans "Active" %}</span>{% else %}<span class="muted">{% trans "Left the class" %}</span>{% endif %}</td>
-        <td data-label="{% trans 'Actions' %}"><a href="{% url 'people:student_edit' s.pk %}">{% trans "Edit" %}</a></td>
+        <td class="cell-actions"><a href="{% url 'people:student_edit' s.pk %}">{% trans "Edit" %}</a></td>
       </tr>
       {% endfor %}
     </tbody>

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load i18n static report_extras %}
-{% block title %}{{ student.full_name }}{% endblock %}
+{% block title %}{{ student.full_name }} - Knowledge Tester{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
 {% block content %}
 <div class="stack profile">
-  <p class="back"><a href="{{ back_url }}">&larr; {% if student.group %}{{ student.group.name }}{% else %}{% trans "Back to students" %}{% endif %}</a></p>
+  <p class="back"><a class="link-tap" href="{{ back_url }}">&larr; {% if student.group %}{{ student.group.name }}{% else %}{% trans "Back to students" %}{% endif %}</a></p>
 
   <header class="stack-sm">
     <div class="page-head">
