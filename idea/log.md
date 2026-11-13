@@ -4,6 +4,16 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-13: UX wave integration gate closed
+
+- **The "hanging" full `pytest` was not a hang.** Nearly every test creates a user, and Django 6's default PBKDF2 hasher costs about a second per user here; the suite needed 25+ minutes (earlier runs took about 80 s on a faster setup). `config/settings/test.py` now uses the MD5 hasher: **1206 tests in 27 s**, ruff and `manage.py check` clean. No test depended on the hasher.
+- **One real failure, environmental:** `test_bad_uploads_give_plain_messages` failed because the rebuilt venv had no openpyxl. A bare `uv sync` (used by `scripts/start.ps1`) removes the `xlsx` extra; `start.ps1` now syncs with `--extra xlsx`, and the README says so.
+- **End-to-end pass done** (headless Edge against a scratch instance, 11 of 11 checks): dashboard -> create form -> class session -> a student submits half-empty and sees the unanswered step -> confirms -> teacher cancels the attempt -> the student sees the cancelled note and retakes -> another student keeps working -> closing asks first ("1 student still works") -> auto-submitted -> review with "Save and go to the next" returns to the results. The attempt that "stayed in progress" in workstream C's script was the new confirmation step (a first submit lands on `/submit/`; the attempt finishes after "Submit anyway"), not a bug.
+- **Visual re-check** of Manage (teachers, new teacher, settings) at 390 and 1280 px: no overflow, nothing broken. Phone results page 1,859 px for 2 attempts, no sideways scroll.
+- README: navigation, cancel attempt, close confirmation, review, test notes.
+- **Still open:** tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly); Delete test / Export JSON to the page bottom on phones; the Phase 6 wave 2 items (ownership audit matrix, 32-taker load run, code review).
+- **Next:** wave 2 of Phase 6 (ownership audit and load run), then Phase 7 or the Phase 3/4 gaps.
+
 ## 2026-11-13: UX review wave (UX-01 to UX-18), built; integration gate open
 
 - **Method:** a UI/UX review driven through headless Edge over CDP at 390 and 1280 px (`scripts/ui_shots.mjs`), then a contracts doc ([specs/ux-review-contracts.md](specs/ux-review-contracts.md)), a frozen Wave 0 skeleton (commit c39a7bc) and five parallel workstreams with disjoint file ownership, committed one by one (D aff1c83, C 0abb19d, E 94d1783, B fc8d6a7, A 506bf7c).

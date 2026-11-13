@@ -1,6 +1,6 @@
 # UX review wave: plan and shared contracts
 
-- Status: Wave 0 and workstreams A to E built and committed (2026-11-13); integration gate open, see [../log.md](../log.md)
+- Status: Wave 0 and workstreams A to E built and committed (2026-11-13); integration gate closed 2026-11-13, see [../log.md](../log.md)
 - Expands: [plan.md §17](../plan.md#17-uiux-guidelines), §12.3, §12.6, §13.1, §13.2 · Tasks: UX-01 to UX-18
 - Read first: [prototype-contracts.md](prototype-contracts.md) (UI vocabulary, CSP, offline, i18n, ownership) and [people-contracts.md](people-contracts.md) (data rules). This file only adds what is new.
 

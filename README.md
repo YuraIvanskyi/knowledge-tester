@@ -49,7 +49,7 @@ scripts\check.ps1                            # ruff check, ruff format --check, 
 python -m uv run pytest apps/core apps/accounts tests
 ```
 
-pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
+The full suite (about 1,200 tests) takes under a minute. pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text, and a cheap password hasher (real PBKDF2 made the suite take 25+ minutes). Keep the `xlsx` extra installed (`uv sync --extra xlsx`; a bare `uv sync` removes it) or the XLSX import tests fail. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
 
 `tests/test_offline.py` renders key pages and scans `static/` for external URLs, inline `<style>`, `style=`, inline scripts and `on*=` handlers (the CSP is `default-src 'self'`). Add new pages to `page_responses` there.
 
@@ -85,6 +85,14 @@ Rules for contributors:
 - **Group sessions:** when a session is opened for a group, takers choose their name from the class list (names only) and, if "ask for a personal PIN" is on, type their PIN (5 wrong tries per student per 5 minutes). The attempt is linked to the student automatically. Anyone who has the session link can see the class list, so share it only with the class.
 - **Free-name sessions:** afterwards, "Link to students" on the session page suggests matches (same name, same words in another order, fuzzy) for the teacher to confirm.
 - **Student profile and gradebook:** the profile lists a student's linked attempts, averages per test project, notes, and CSV/PDF downloads; deleting a student either keeps their results (unlinked) or deletes them. The group gradebook is a students-by-sessions matrix of each student's best attempt, with CSV. A grade is marked provisional while any open answer behind it still waits for review.
+
+## Daily use: navigation and safeguards
+
+- **Navigation:** Tests · Sessions · People (· Manage for admins). Importing a test is a button on the Tests page and the dashboard. "Open session" sits next to every published test, on the dashboard, the tests list and the group page; it goes through a chooser (`/teach/sessions/new/`, `?group=<id>` pre-selects a class).
+- **Submitting with unanswered questions** asks once, on the server ("Submit anyway"); the timer's automatic submit never asks. A student's page also shows the save status, an offline strip and a warning one minute before time runs out.
+- **Cancel an attempt** (attempt sheet, "Cancel attempt"): the attempt no longer counts in results, the gradebook or the profile, and the student can take the test again while the session is open. It cannot be undone.
+- **Closing a session** asks first when somebody is still working; their answers so far are submitted automatically. A closed session can be reopened.
+- **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt".
 
 ## PDF sheets
 

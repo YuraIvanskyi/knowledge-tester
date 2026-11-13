@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built, integration gate open · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built and integrated · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -47,7 +47,7 @@ This board is the single source of truth for status. The task content lives in [
 
 ### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
 
-Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. All five workstreams are built and committed; the integration gate is still open (see "Open" below).
+Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. All five workstreams are built and committed; the integration gate is closed.
 
 - [x] Wave 0: skeleton (base.css and base.html fixes, phone card pattern, `void_attempt`, reserved URLs, `sessions.css` split) · 2026-11-13
 - [x] WS D, tests and dashboard: UX-06 (tests part), UX-08 · 2026-11-13
@@ -55,7 +55,7 @@ Findings of the 2026-11-13 UI/UX review. Not counted in the phase totals above. 
 - [x] WS E, people and admin: UX-06 (group part), UX-09, UX-14, UX-11 · 2026-11-13
 - [x] WS B, teacher sessions: UX-02, UX-04, UX-06 (sessions part), UX-16 · 2026-11-13
 - [x] WS A, student test page: UX-01 (taker part), UX-03, UX-05, UX-10, UX-15 · 2026-11-13
-- [~] Integration: translations merged and compiled (772 entries, `check` clean), ruff clean; **open:** full `pytest` run hangs, end-to-end pass not run yet, README and log entry for the wave
+- [x] Integration: translations merged and compiled (772 entries), full `pytest` 1206 passed in 27 s (the "hang" was PBKDF2 hashing in tests), end-to-end pass 11/11, README and log updated · 2026-11-13
 - [ ] Left over: tap targets of 21-24 px on inline table links and "Refresh" (UX-18, partly), Delete test / Export JSON to the page bottom (about 55 px on phones)
 
 ### Phase 0
