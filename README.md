@@ -2,12 +2,18 @@
 
 A local, offline-first "Google Forms for classrooms": teachers import or build tests, share them over the local network by link or QR code, get answers graded automatically, review open answers and export results. Students need only a phone browser.
 
+**Teachers:** the short guide in Ukrainian is [docs/quick-start.uk.md](docs/quick-start.uk.md) (install, run a lesson, what to do when phones cannot connect). A prompt that turns a PDF textbook into an importable test: [docs/llm/test-from-textbook.uk.prompt.md](docs/llm/test-from-textbook.uk.prompt.md).
+
 Planning, architecture and progress live in [idea/](idea/). Start with [idea/plan.md](idea/plan.md); status is in [idea/BOARD.md](idea/BOARD.md). Prototype contracts: [idea/specs/prototype-contracts.md](idea/specs/prototype-contracts.md).
 
 ## Requirements
 
 - Windows 10/11 (Linux and macOS also work), Python 3.12+, [uv](https://docs.astral.sh/uv/) (run as `python -m uv` if it is not on PATH).
 - No internet is needed at run time: there are no CDNs, web fonts or external calls.
+
+## Quick start (Windows)
+
+Install Python 3.12+, then double-click **`Start.cmd`**. It installs uv and the packages on the first run (internet needed once), backs up and updates the database, checks the firewall rule and the network profile (and offers to fix them, with elevation), starts the server and opens the browser. On a fresh data folder the browser shows the **first-run page**, where the first admin account is created (only reachable from the host computer; gone once any account exists). The rest of this file is for developers.
 
 ## Setup
 
@@ -19,7 +25,7 @@ python -m uv run manage.py migrate
 python -m uv run manage.py seed_demo      # demo users: teacher/teacher and admin/admin
 ```
 
-Without `seed_demo` create the first admin with `python -m uv run manage.py createsuperuser`; that admin then creates the teacher accounts in the browser at `/manage/`. Without the `xlsx` extra everything works except XLSX uploads (CSV and pasted lists still do).
+Without `seed_demo` the first admin is created in the browser on the first-run page (`/accounts/setup/`, host computer only) or with `python -m uv run manage.py createsuperuser`; that admin then creates the teacher accounts in the browser at `/manage/`. Without the `xlsx` extra everything works except XLSX uploads (CSV and pasted lists still do).
 
 Data (database, `kt.toml` with the generated secret key, media) lives in `%LOCALAPPDATA%\KnowledgeTester\` (`~/.local/share/knowledge-tester/` elsewhere). Override with `KT_DATA_DIR`. `serve` warns if that folder is inside OneDrive, Dropbox or Google Drive, because sync clients can corrupt SQLite.
 
@@ -28,10 +34,20 @@ Data (database, `kt.toml` with the generated secret key, media) lives in `%LOCAL
 ```powershell
 python -m uv run manage.py runserver        # development only, http://127.0.0.1:8000
 python -m uv run manage.py serve            # LAN mode (Waitress, DEBUG off)
-scripts\start.ps1                           # sync + migrate + serve in one go
+Start.cmd                                   # the launcher (double-click); same as scripts\start.ps1 [-Port 8000] [-NoBrowser] [-NoPrompt]
+scripts\allow-phones.ps1 [-MakePrivate]     # firewall rule for the port (asks for elevation itself)
 ```
 
-`serve [--port 8000] [--host 0.0.0.0] [--threads 8] [--no-qr]` prints the data folder, every LAN URL and a QR code of the first one. Stop it with Ctrl+C. `/healthz` answers `ok`.
+`serve [--port 8000] [--host 0.0.0.0] [--threads 8] [--no-qr] [--open]` collects the static files, makes a backup, prints the data folder, every LAN URL and a QR code of the first one; `--open` opens the teacher area in the host's browser. Stop it with Ctrl+C. `/healthz` answers `ok`.
+
+`start.ps1` keeps the virtual environment out of a synced folder by itself (it sets `UV_PROJECT_ENVIRONMENT` when the repository is inside OneDrive, Dropbox or Google Drive), continues with the installed packages when there is no internet, and opens the browser instead of starting a second server when one is already running on the port. The two launcher scripts are UTF-8 **with a BOM** (Windows PowerShell 5.1 garbles their Ukrainian text otherwise); keep them that way.
+
+## Backups
+
+- **Automatic:** when the server starts (at most once per 10 minutes; the launcher makes it before `migrate`) and every time a session is closed. Files go to `<data folder>/backups/kt-YYYYMMDD-HHMMSS-<start|close|manual|restore>.sqlite3`; the newest 20 are kept. They are made with SQLite's online backup API, so they are safe while students are working.
+- **By hand:** `/manage/backups/` (make one, download any) or `python -m uv run manage.py backup`.
+- **Restore** (server stopped): `python -m uv run manage.py restore --list`, then `manage.py restore <file name or path>`. The current database is backed up first (`...-restore.sqlite3`), so a restore can be undone. Run `migrate` afterwards.
+- There is no media yet (question images are not implemented), so the database file is everything. The code is `apps/core/backup.py`.
 
 ## Opening it from phones
 
@@ -60,7 +76,7 @@ scripts\check.ps1                            # ruff check, ruff format --check, 
 python -m uv run pytest apps/core apps/accounts tests
 ```
 
-The full suite (about 1,200 tests) takes under a minute. pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text, and a cheap password hasher (real PBKDF2 made the suite take 25+ minutes). Keep the `xlsx` extra installed (`uv sync --extra xlsx`; a bare `uv sync` removes it) or the XLSX import tests fail. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
+The full suite (about 1,560 tests) takes about a minute. pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text, and a cheap password hasher (real PBKDF2 made the suite take 25+ minutes). Keep the `xlsx` extra installed (`uv sync --extra xlsx`; a bare `uv sync` removes it) or the XLSX import tests fail. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
 
 `tests/test_offline.py` renders key pages and scans `static/` for external URLs, inline `<style>`, `style=`, inline scripts and `on*=` handlers (the CSP is `default-src 'self'`). Add new pages to `page_responses` there.
 
@@ -103,6 +119,7 @@ Rules for contributors:
 - **Submitting with unanswered questions** asks once, on the server ("Submit anyway"); the timer's automatic submit never asks. A student's page also shows the save status, an offline strip and a warning one minute before time runs out.
 - **Cancel an attempt** (attempt sheet, "Cancel attempt"): the attempt no longer counts in results, the gradebook or the profile, and the student can take the test again while the session is open. It cannot be undone.
 - **Closing a session** asks first when somebody is still working; their answers so far are submitted automatically. A closed session can be reopened.
+- **Adding time:** on the session page, "+5 / +10 / +15 min" extends the deadline of everyone who is still working (students who start later get the full time anyway). The student's page asks the server for the time left every 30 seconds and once more before the automatic submit (`static/js/timer.js`, an autosave request without answers), so the countdown follows; the same poll moves a student to the result page when the session was closed.
 - **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt".
 
 ## Load test
@@ -127,7 +144,8 @@ apps/grading/      pure scoring engine and grade scales
 apps/reports/      results, review of open answers, CSV
 templates/         shared templates (base.html is the UI kit shell)
 static/css/        base.css = UI kit (tokens, components, dark mode)
-scripts/           check.ps1, start.ps1, i18n.py (translation catalog tooling)
+scripts/           check.ps1, start.ps1 (the launcher behind Start.cmd), allow-phones.ps1, i18n.py (translation catalog tooling)
+docs/              quick-start.uk.md (teacher guide), exchange-format.md, llm/ (prompts), examples/
 locale/            uk/LC_MESSAGES/django.po + django.mo
 assets/fonts/      DejaVu Sans (regular, bold) + licence, embedded in PDF sheets
 tests/             cross-app tests (smoke, offline guard)

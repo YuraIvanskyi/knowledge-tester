@@ -4,6 +4,19 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-16: Classroom readiness: backups, launcher, first-run page, extra time
+
+- **Why:** a readiness review found the system working (1490 tests, lint clean) but with four gaps that matter in a real lesson: no backups at all, no way to give students more time, a start that needs a terminal and `createsuperuser`, and nothing that helps when phones cannot connect.
+- **Backups (KT-901):** `apps/core/backup.py` copies the database with SQLite's online backup API into `<data folder>/backups/` (reason in the file name, newest 20 kept): at server start, when a session is closed, from `/manage/backups/` (make, list, download) and with `manage.py backup`. `manage.py restore` checks the file (integrity, is it ours), saves the current database first and writes through the backup API so the live WAL stays valid. Restore is not offered in the browser on purpose.
+- **Extra time (KT-307):** `services.extend_time` and +5/+10/+15 min buttons on the session page for everyone still in progress; an attempt that ran out a moment ago counts from now. `timer.js` used to ignore every later answer from the server and submit at its own zero, so it now polls the autosave endpoint (no answers) every 30 s and once more right before the automatic submit, and moves the countdown when the server disagrees by more than 3 s. Side effect: closing a session moves a student who is still on the test page to the result page within half a minute.
+- **First run and launcher (KT-902):** with no accounts the login leads to `/accounts/setup/` (first admin, host computer only by `REMOTE_ADDR`, gone afterwards). `Start.cmd` -> `scripts/start.ps1`: finds or installs uv, keeps the venv out of OneDrive, falls back to the installed packages offline, backs up before `migrate`, detects a running instance, warns about a missing firewall rule or a public network profile and offers `scripts/allow-phones.ps1` (elevated). `serve --open` opens the browser.
+- **Found on the way:** `serve` collected static files only when the folder was empty, so after an update the old JS/CSS kept being served; it now runs `collectstatic` on every start. This machine's own Wi-Fi is marked Public, which alone would have kept phones out.
+- **Docs:** [docs/quick-start.uk.md](../docs/quick-start.uk.md) (teacher guide, Ukrainian) and [docs/llm/test-from-textbook.uk.prompt.md](../docs/llm/test-from-textbook.uk.prompt.md) (PDF textbook -> importable test; its JSON example is imported by a test).
+- **Verified live** (launcher on scratch data, real Waitress): HTTP script 20 checks (first run -> import -> session -> add time -> close -> backups -> download), headless Edge 16 of 16 (a visible tab picks up the added time from the poll; a background tab at 0:00 asks the server and stays in; without extra time the page submits itself; closing moves a working student to the result page). 1560 tests, ruff and `i18n check` clean, 805 catalog entries.
+- **Not verified:** real phones over Wi-Fi; the elevated path of `allow-phones.ps1` (it changes the firewall, so it was only parsed, not run); a first install on a machine without uv.
+- **Left for later, by decision:** `ALLOWED_HOSTS` and the diagnostics page (KT-005, KT-903), "one question per page" (stored, still ignored), the school name on sheets.
+- **Next:** a trial lesson with real phones.
+
 ## 2026-11-13: Tech-debt pass: two code reviews, 19 findings fixed
 
 - **Method:** `/code-review high` over all apps (two passes, 19 findings, every one reproduced or read in the code before fixing; none dismissed). Each fix has a regression test; the suite grew from 1423 to about 1500 tests and still runs in 30 s.

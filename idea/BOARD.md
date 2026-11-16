@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-13 · **Current work:** Phase 6 (People) on top of the working prototype; UX review wave built and integrated; two full code reviews fixed (see log) · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-16 · **Current work:** classroom readiness (backups, launcher and first-run page, extra time: built 2026-11-16, see log); next is a trial lesson on real phones · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -23,8 +23,8 @@ This board is the single source of truth for status. The task content lives in [
 | 6. People | Teacher admin, students, groups, profiles | In progress (6 of 8 built; wave-2 verification running) | 6 / 8 |
 | 7. Local LLM assistant | Imports and drafting with a local LLM | Backlog | 0 / 9 |
 | 8. Ukrainian | Full Ukrainian localization | Backlog | 0 / 4 |
-| 9. Hardening and packaging | Backups, launcher, security, docs | Backlog | 0 / 9 |
-| **Total** | | | **9 / 78** |
+| 9. Hardening and packaging | Backups, launcher, security, docs | In progress | 3 / 9 |
+| **Total** | | | **12 / 78** |
 
 ## Milestones
 
@@ -44,6 +44,17 @@ This board is the single source of truth for status. The task content lives in [
 - [~] Phase 6 wave 2: ownership audit done (`tests/test_ownership_audit.py`, 2026-11-13); load run done (32 and 100 takers, no errors, see log); still open: code review of the workstream seams
 
 ## Ready (listed in suggested order)
+
+### Before the first real lesson (from the 2026-11-16 readiness review)
+
+- [x] Backups: automatic (start, session close) and manual, newest 20 kept, `backup` / `restore` commands, Backups page in `/manage/` (KT-901) · 2026-11-16
+- [x] Launcher `Start.cmd` + first-run page for the first admin + firewall/network-profile help (KT-902) · 2026-11-16
+- [x] Extra time for students still working; the student's timer follows the server (KT-307, extend part) · 2026-11-16
+- [x] Teacher guide in Ukrainian (KT-907) and the textbook-PDF prompt (KT-108 follow-up) · 2026-11-16
+- [ ] **Trial lesson on real phones** over the classroom Wi-Fi (KT-005 manual check): only headless Edge has been used so far; the elevated path of `allow-phones.ps1` is also untested
+- [ ] "One question per page" is offered in the test settings but ignored when taking the test: implement or remove the checkbox
+- [ ] `ALLOWED_HOSTS` from the LAN addresses (KT-005); network diagnostics page (KT-903): the launcher and the guide cover the common cases for now
+- [ ] School name on printed sheets; a printed PDF checked on paper
 
 ### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
 
@@ -168,13 +179,13 @@ _Nothing yet._
 - [ ] KT-804 Ukrainian docs *(should)* · S
 
 ### Phase 9: Hardening and packaging
-- [ ] KT-901 Backups and restore · M
-- [ ] KT-902 One-click launcher and first-run setup · M
+- [x] KT-901 Backups and restore · M
+- [x] KT-902 One-click launcher and first-run setup · M
 - [ ] KT-903 Network diagnostics page · S
 - [ ] KT-904 Security review · M
 - [ ] KT-905 Performance pass · M
 - [ ] KT-906 Accessibility pass · S
-- [ ] KT-907 Teacher quick-start guide · S
+- [x] KT-907 Teacher quick-start guide · S
 - [ ] KT-908 Release checklist and v1.0 · S
 - [ ] KT-909 mDNS name and packaged Windows bundle *(could)* · M
 
@@ -189,6 +200,9 @@ _New ideas go here first, then into the plan once they're accepted._
 
 ## Done
 
+- [x] KT-901 Backups and restore (no media zip: there is no media yet) · 2026-11-16
+- [x] KT-902 Launcher and first-run setup (`Start.cmd`, `/accounts/setup/`, `allow-phones.ps1`) · 2026-11-16
+- [x] KT-907 Teacher quick-start guide ([docs/quick-start.uk.md](../docs/quick-start.uk.md)) · 2026-11-16
 - [x] KT-000 Planning groundwork: plan, board, ADRs, issue system · 2026-11-10
 - [x] KT-001 Repository and tooling bootstrap · 2026-11-11
 - [x] KT-002 Django project skeleton: `check` clean for dev and lan, `--deploy` shows only the HTTPS warnings, `kt.toml` secret key tested, settings table in the README · 2026-11-13

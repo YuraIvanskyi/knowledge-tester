@@ -325,3 +325,25 @@ def test_a_question_type_that_is_not_a_string_is_an_error(bad_type):
 def test_the_json_text_form_of_infinity_is_also_handled():
     text = json.dumps(doc(single())).replace('"text": "Q?"', '"text": "Q?", "points": Infinity')
     assert not import_document(text).ok
+
+
+def test_the_textbook_prompt_shows_a_file_that_imports_cleanly():
+    """docs/llm/test-from-textbook.uk.prompt.md teaches a chat AI by example: the example must
+    be a valid file with every question type, or every generated test inherits the mistake."""
+    import re
+    from pathlib import Path
+
+    prompt = Path(__file__).resolve().parents[3] / "docs/llm/test-from-textbook.uk.prompt.md"
+    blocks = re.findall(r"```json\n(.*?)\n```", prompt.read_text(encoding="utf-8"), re.S)
+    assert len(blocks) == 1
+    result = import_document(blocks[0])
+    assert result.ok and not result.report.warnings, result.report.as_text()
+    test = result.document["test"]
+    assert {q["type"] for q in test["questions"]} == {
+        "single_choice",
+        "multiple_choice",
+        "choose_n",
+        "short_answer",
+        "open",
+    }
+    assert test["language"] == "uk" and test["grading"]["scale"] == "ua_12"
