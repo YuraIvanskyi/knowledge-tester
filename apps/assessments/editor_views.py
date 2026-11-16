@@ -13,6 +13,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from apps.delivery.taker_views import render_preview
+from apps.exchange import variants as test_variants
 from apps.exchange.importer import import_document
 
 from . import editing, services
@@ -96,7 +97,10 @@ def test_settings(request, pk):
     )
 
 
-def _question_page(request, assessment, document, question_type, question_id, form, errors, is_new):
+def _question_page(
+    request, assessment, document, question_type, question_id, form, errors, is_new, variant=""
+):
+    test = document.get("test") or {}
     return render(
         request,
         "assessments/editor/question.html",
@@ -107,10 +111,12 @@ def _question_page(request, assessment, document, question_type, question_id, fo
             "is_choice": question_type in ("single_choice", "multiple_choice", "choose_n"),
             "question_id": question_id,
             "number": (
-                len(editing.questions_of(document)) + 1
+                len(editing.questions_of(document, variant)) + 1
                 if is_new
                 else _question_or_404(document, question_id)[0] + 1
             ),
+            "variant": variant,
+            "variant_label": test_variants.label(test, variant),
             "is_new": is_new,
             "form": form,
             "errors": errors,
@@ -120,42 +126,51 @@ def _question_page(request, assessment, document, question_type, question_id, fo
 
 def _handle_question(request, assessment, question_type, question_id, is_new):
     document = copy.deepcopy(assessment.document)
+    test = document.get("test") or {}
     if is_new:
         question_id = editing.next_question_id(document)
+        # A test with variants: the new question goes into the one named in the link
+        # (?variant=), else into the first.
+        ids = test_variants.variant_ids(test)
+        variant = request.GET.get("variant", "")
+        variant = variant if variant in ids else (ids[0] if ids else "")
     else:
         _index, existing = _question_or_404(document, question_id)
         question_type = existing["type"]
+        variant = editing.variant_of(document, question_id)
     errors: list[str] = []
 
     if request.method != "POST":
         form = editing.blank_form(question_type) if is_new else editing.form_from_question(existing)
         return _question_page(
-            request, assessment, document, question_type, question_id, form, errors, is_new
+            request, assessment, document, question_type, question_id, form, errors, is_new, variant
         )
 
     form = editing.form_from_post(request.POST, question_type)
     if request.POST.get("action") == "add_option":
         editing.pad_options(form, len(form["options"]) + 1)
         return _question_page(
-            request, assessment, document, question_type, question_id, form, errors, is_new
+            request, assessment, document, question_type, question_id, form, errors, is_new, variant
         )
 
     question, errors = editing.build_question(form, question_type, question_id)
     if question is None:
         editing.pad_options(form, editing.MIN_OPTION_ROWS if is_new else len(form["options"]))
         return _question_page(
-            request, assessment, document, question_type, question_id, form, errors, is_new
+            request, assessment, document, question_type, question_id, form, errors, is_new, variant
         )
 
     if is_new:
-        editing.add_question(document, question)
+        editing.add_question(document, question, variant)
     else:
         editing.replace_question(document, question_id, question)
     services.save_draft(assessment, document)
     messages.success(request, _("Question saved."))
     if request.POST.get("action") == "save_add" and is_new:
-        return redirect("assessments:question_new", pk=assessment.pk, question_type=question_type)
-    return redirect("assessments:detail", pk=assessment.pk)
+        url = reverse("assessments:question_new", args=[assessment.pk, question_type])
+        return redirect(f"{url}?variant={variant}" if variant else url)
+    url = reverse("assessments:detail", args=[assessment.pk])
+    return redirect(f"{url}#question-{question_id}")
 
 
 @login_required
@@ -213,6 +228,52 @@ def question_duplicate(request, pk, question_id):
 
 
 @login_required
+@require_POST
+def variant_add(request, pk):
+    """Add a variant as a copy of the last one; the teacher then changes its questions."""
+    assessment = _owned_assessment(request, pk)
+    document = copy.deepcopy(assessment.document)
+    new_id = editing.add_variant(document)
+    url = reverse("assessments:detail", args=[assessment.pk])
+    if new_id is None:
+        messages.error(request, _("A variant cannot be added to this test."))
+        return redirect(url)
+    services.save_draft(assessment, document)
+    messages.success(
+        request,
+        _("%(name)s added as a copy. Change its questions so that it differs.")
+        % {"name": test_variants.label(document["test"], new_id)},
+    )
+    return redirect(f"{url}#variant-{new_id}")
+
+
+@login_required
+def variant_delete(request, pk, variant_id):
+    assessment = _owned_assessment(request, pk)
+    document = copy.deepcopy(assessment.document)
+    test = document.get("test") or {}
+    variant = test_variants.find(test, variant_id)
+    if variant is None:
+        raise Http404("No such variant")
+    name = test_variants.label(test, variant_id)
+    if request.method == "POST":
+        editing.delete_variant(document, variant_id)
+        services.save_draft(assessment, document)
+        messages.success(request, _("%(name)s deleted.") % {"name": name})
+        return redirect("assessments:detail", pk=assessment.pk)
+    return render(
+        request,
+        "assessments/editor/confirm_delete_variant.html",
+        {
+            "assessment": assessment,
+            "name": name,
+            "count": len(variant.get("questions") or []),
+            "last_two": len(test_variants.variant_list(test)) == 2,
+        },
+    )
+
+
+@login_required
 def delete(request, pk):
     """Delete a test. Its sessions and their results go too, so this asks first."""
     assessment = _owned_assessment(request, pk)
@@ -237,8 +298,26 @@ def preview(request, pk):
     if not result.ok:
         messages.error(request, _("Fix the errors in the test before previewing it."))
         return redirect(back_url)
+    test = result.document["test"]
+    url = reverse("assessments:preview", args=[assessment.pk])
+    # A test with variants: the teacher chooses which one to look at (?variant=).
+    ids = test_variants.variant_ids(test)
+    variant = request.GET.get("variant", "")
+    variant = variant if variant in ids else (ids[0] if ids else "")
     return render_preview(
         request,
-        result.document["test"],
-        {"url": reverse("assessments:preview", args=[assessment.pk]), "back_url": back_url},
+        test,
+        {
+            "url": f"{url}?variant={variant}" if variant else url,
+            "back_url": back_url,
+            "variant": variant or None,
+            "variants": [
+                {
+                    "label": test_variants.label(test, v),
+                    "url": f"{url}?variant={v}",
+                    "current": v == variant,
+                }
+                for v in ids
+            ],
+        },
     )

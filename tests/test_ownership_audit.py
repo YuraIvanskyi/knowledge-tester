@@ -11,6 +11,7 @@ Rules checked:
 * an admin is not turned away by the ownership check (no 404 on GET).
 """
 
+import copy
 import re
 
 import pytest
@@ -51,6 +52,7 @@ DOCUMENT = {
 ARGS: dict[str, dict[str, str]] = {
     # Pages that address no object (their lists must be scoped to the viewer).
     "core:dashboard": {},
+    "core:help": {},
     "assessments:list": {},
     "assessments:create": {},
     "assessments:import": {},
@@ -69,6 +71,8 @@ ARGS: dict[str, dict[str, str]] = {
     "assessments:preview": {"pk": "assessment"},
     "assessments:export": {"pk": "assessment"},
     "assessments:settings": {"pk": "assessment"},
+    "assessments:variant_add": {"pk": "assessment"},
+    "assessments:variant_delete": {"pk": "assessment", "variant_id": "text:v1"},
     "assessments:question_new": {"pk": "assessment", "question_type": "text:single_choice"},
     "assessments:question_edit": {"pk": "assessment", "question_id": "text:q1"},
     "assessments:question_delete": {"pk": "assessment", "question_id": "text:q1"},
@@ -139,9 +143,18 @@ def boss(django_user_model):
 def world(owner):
     """One of everything, all owned by ``owner``."""
     project = Project.objects.create(owner=owner, title=f"{SECRET} project")
-    assessment = Assessment.objects.create(
-        project=project, title=f"{SECRET} test", document=DOCUMENT
-    )
+    # The draft has two variants (the published revision has none), so the variant routes have
+    # something to address; "q1" is still there, inside variant "v1".
+    draft = copy.deepcopy(DOCUMENT)
+    questions = draft["test"].pop("questions")
+    second = copy.deepcopy(questions)
+    for number, question in enumerate(second, start=1):
+        question["id"] = f"w{number}"
+    draft["test"]["variants"] = [
+        {"id": "v1", "title": f"{SECRET} variant", "questions": questions},
+        {"id": "v2", "title": "", "questions": second},
+    ]
+    assessment = Assessment.objects.create(project=project, title=f"{SECRET} test", document=draft)
     revision = Revision.objects.create(
         assessment=assessment, number=1, document=DOCUMENT, content_hash="x", created_by=owner
     )

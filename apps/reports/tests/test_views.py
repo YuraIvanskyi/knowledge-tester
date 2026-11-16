@@ -177,7 +177,9 @@ def test_session_distribution_buckets(login, sitting, attempts):
 
 
 def test_item_analysis(login, sitting, attempts):
-    items = login.get(reverse("reports:session", args=[sitting.pk])).context["items"]
+    groups = login.get(reverse("reports:session", args=[sitting.pk])).context["item_groups"]
+    assert [g["label"] for g in groups] == [""]  # a test without variants: one group
+    items = groups[0]["items"]
     by_id = {i["id"]: i for i in items}
     assert by_id["q1"]["percent"] == D("50.0")  # one of two correct
     assert by_id["q1"]["top_wrong"] == {"text": "Lviv", "count": 1}

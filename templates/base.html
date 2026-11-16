@@ -14,12 +14,13 @@
     <div class="topbar-inner">
       <a class="brand" href="{% url 'core:landing' %}">Knowledge Tester</a>
       {% block nav %}{% if user.is_authenticated %}
-      {% url 'assessments:list' as tests_url %}{% url 'delivery:list' as sessions_url %}{% url 'people:groups' as people_url %}{% url 'manage:home' as manage_url %}
+      {% url 'assessments:list' as tests_url %}{% url 'delivery:list' as sessions_url %}{% url 'people:groups' as people_url %}{% url 'manage:home' as manage_url %}{% url 'core:help' as help_url %}
       <nav class="nav" aria-label="{% trans 'Main' %}">
         {% if tests_url %}<a href="{{ tests_url }}"{% if request.resolver_match.app_name == 'assessments' %} aria-current="page"{% endif %}>{% trans "Tests" %}</a>{% endif %}
         {% if sessions_url %}<a href="{{ sessions_url }}"{% if request.resolver_match.app_name == 'delivery' or request.resolver_match.app_name == 'reports' %} aria-current="page"{% endif %}>{% trans "Sessions" %}</a>{% endif %}
         {% if people_url %}<a href="{{ people_url }}"{% if request.resolver_match.app_name == 'people' %} aria-current="page"{% endif %}>{% trans "People" %}</a>{% endif %}
         {% if manage_url and user.is_admin_role %}<a href="{{ manage_url }}"{% if request.resolver_match.app_name == 'manage' %} aria-current="page"{% endif %}>{% trans "Manage" %}</a>{% endif %}
+        {% if help_url %}<a href="{{ help_url }}"{% if request.resolver_match.url_name == 'help' %} aria-current="page"{% endif %}>{% trans "Help" %}</a>{% endif %}
       </nav>
       <div class="topbar-user">
         <span class="user-name">{{ user.get_username }}</span>

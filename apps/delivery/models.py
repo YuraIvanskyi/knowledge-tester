@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from apps.exchange import variants as test_variants
+
 # Unambiguous alphabet (no 0/O, 1/I/L), plan §12.1
 CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
 CODE_LENGTH = 6
@@ -58,6 +60,8 @@ class Attempt(models.Model):
         "people.Student", null=True, blank=True, on_delete=models.SET_NULL, related_name="attempts"
     )
     taker = models.JSONField(default=dict)  # taker field values, e.g. {"name": "..."}
+    # Id of the variant this taker got; empty when the test has no variants.
+    variant = models.CharField(max_length=40, blank=True)
     question_order = models.JSONField(default=list)  # list of question ids as shown
     option_orders = models.JSONField(default=dict)  # {question_id: [option ids]}
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.IN_PROGRESS)
@@ -81,6 +85,18 @@ class Attempt(models.Model):
     @property
     def is_finished(self) -> bool:
         return self.status != self.Status.IN_PROGRESS
+
+    @property
+    def test(self) -> dict:
+        """The test as this taker got it: plain ``questions`` (those of the attempt's variant).
+        Everything that reads, grades or prints one attempt uses this, never the revision's
+        test directly."""
+        return test_variants.view(self.sitting.revision.test, self.variant)
+
+    @property
+    def variant_label(self) -> str:
+        """ "Variant 2" (or the variant's own title); empty when the test has no variants."""
+        return test_variants.label(self.sitting.revision.test, self.variant)
 
 
 class Answer(models.Model):

@@ -52,12 +52,20 @@
     <h2>{% trans "Questions" %}</h2>
     {% if summary %}
     <p class="muted">
-      {% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
-      {% blocktrans with n=summary.points %}{{ n }} points{% endblocktrans %}
+      {% if summary.variants %}{% blocktrans count n=summary.variants|length %}{{ n }} variant{% plural %}{{ n }} variants{% endblocktrans %} &middot; {% trans "every student gets one of them, in turn" %}
+      {% else %}{% blocktrans count n=summary.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %},
+      {% blocktrans with n=summary.points %}{{ n }} points{% endblocktrans %}{% endif %}
       {% if summary.settings.time_limit_minutes %}&middot; {{ summary.settings.time_limit_minutes }} {% trans "min" %}{% endif %}
     </p>
     {% endif %}
-    {% if questions %}
+    {% for group in groups %}
+    {% if group.label %}
+    <div class="variant-head" id="variant-{{ group.id }}">
+      <h3>{{ group.label }} <span class="muted">({% blocktrans count n=group.rows|length %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}, {% blocktrans with n=group.points %}{{ n }} points{% endblocktrans %})</span></h3>
+      <a class="link-tap" href="{% url 'assessments:variant_delete' assessment.pk group.id %}">{% trans "Delete variant" %}</a>
+    </div>
+    {% endif %}
+    {% if group.rows %}
     <table class="table table-compact questions">
       <thead>
         <tr>
@@ -68,7 +76,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for q in questions %}
+      {% for q in group.rows %}
         <tr id="question-{{ q.id }}">
           <td class="cell-title"><span class="q-num">{{ q.number }}.</span> <a href="{% url 'assessments:question_edit' assessment.pk q.id %}">{{ q.text }}</a></td>
           <td data-label="{% trans 'Type' %}">{{ q.type_label }}</td>
@@ -97,12 +105,20 @@
     {% else %}
     <p class="muted">{% trans "No questions yet. Add the first one below." %}</p>
     {% endif %}
-    <h3>{% trans "Add a question" %}</h3>
+    <{% if group.label %}h4{% else %}h3{% endif %}>{% if group.label %}{% blocktrans with name=group.label %}Add a question to {{ name }}{% endblocktrans %}{% else %}{% trans "Add a question" %}{% endif %}</{% if group.label %}h4{% else %}h3{% endif %}>
     <div class="type-links">
       {% for value, label in question_types %}
-      <a class="btn" href="{% url 'assessments:question_new' assessment.pk value %}">{{ label }}</a>
+      <a class="btn" href="{% url 'assessments:question_new' assessment.pk value %}{% if group.id %}?variant={{ group.id }}{% endif %}">{{ label }}</a>
       {% endfor %}
     </div>
+    {% endfor %}
+    {% if can_add_variant %}
+    <form method="post" action="{% url 'assessments:variant_add' assessment.pk %}" class="stack-sm variant-add">
+      {% csrf_token %}
+      <p class="muted">{% if summary.variants %}{% trans "Another variant starts as a copy of the last one; then change its questions." %}{% else %}{% trans "Variants are parallel versions of the test: every student gets one of them, so neighbours answer different questions. A new variant starts as a copy of these questions; then change them." %}{% endif %}</p>
+      <div><button class="btn" type="submit">{% trans "Add a variant" %}</button></div>
+    </form>
+    {% endif %}
   </section>
 
   <section class="stack-sm">

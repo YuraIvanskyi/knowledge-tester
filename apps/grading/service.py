@@ -16,7 +16,7 @@ def grade_attempt(attempt) -> None:
     Idempotent. Creates missing Answer rows for unanswered questions. A set `manual_score`
     always wins over the automatic score.
     """
-    test = attempt.sitting.revision.test
+    test = attempt.test  # the attempt's variant
     grading_enabled = (test.get("grading") or {}).get("enabled", True)
     questions = {str(q["id"]): q for q in test.get("questions", [])}
 

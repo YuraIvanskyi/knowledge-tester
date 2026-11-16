@@ -56,6 +56,19 @@ class Assessment(models.Model):
     def owner(self):
         return self.project.owner
 
+    @property
+    def question_count(self) -> int:
+        """Questions a taker gets (of the first variant when the test has variants)."""
+        from apps.exchange import variants
+
+        return variants.question_count(self.document.get("test") or {})
+
+    @property
+    def variant_count(self) -> int:
+        from apps.exchange import variants
+
+        return len(variants.variant_list(self.document.get("test") or {}))
+
 
 class Revision(models.Model):
     """Immutable snapshot of a test, created on publish."""

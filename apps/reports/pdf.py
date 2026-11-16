@@ -110,6 +110,8 @@ def _taker_pairs(test: dict, attempt) -> list[tuple[str, str]]:
         seen.add(key)
         pairs.append((field.get("label") or key, str(taker.get(key, ""))))
     pairs += [(k, str(v)) for k, v in taker.items() if k not in seen]
+    if attempt.variant_label:
+        pairs.append((_("Variant"), attempt.variant_label))
     return pairs
 
 
@@ -280,7 +282,7 @@ def _question(pdf: SheetPdf, row, attempt, options: PdfOptions, grading_enabled:
 
 def _sheet(pdf: SheetPdf, attempt, options: PdfOptions, *, first: bool) -> None:
     sitting = attempt.sitting
-    test = sitting.revision.test
+    test = attempt.test  # the attempt's variant
     grading_enabled = (test.get("grading") or {}).get("enabled", True)
     rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
 

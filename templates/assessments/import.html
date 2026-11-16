@@ -11,7 +11,7 @@
 
   <form method="post" enctype="multipart/form-data" class="stack-sm">
     {% csrf_token %}
-    <p class="muted">{% trans "Paste a Knowledge Tester test (JSON) or choose a file. To have an AI write it for you, use the prompt in docs/llm/create-test.prompt.md." %}</p>
+    <p class="muted">{% trans "Paste a Knowledge Tester test (JSON) or choose a file." %} {% url 'core:help' as help_url %}{% blocktrans %}To have an AI write the test from a textbook, copy the prompt on the <a href="{{ help_url }}">Help</a> page.{% endblocktrans %}</p>
     <div class="field">
       <label for="id_document">{% trans "Test JSON" %}</label>
       <textarea id="id_document" name="document" class="json-input" spellcheck="false" autocomplete="off">{{ text }}</textarea>
@@ -72,6 +72,9 @@
       {% blocktrans with n=summary.points %}{{ n }} points{% endblocktrans %}
       {% for label, n in summary.types %}&middot; {{ label }}: {{ n }} {% endfor %}
     </p>
+    {% if summary.variants %}
+    <p>{% blocktrans count n=summary.variants|length %}{{ n }} variant{% plural %}{{ n }} variants{% endblocktrans %}: {% for v in summary.variants %}{{ v.label }} ({% blocktrans count n=v.count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}, {% blocktrans with n=v.points %}{{ n }} points{% endblocktrans %}){% if not forloop.last %}; {% endif %}{% endfor %}. {% trans "Every student gets one of them, in turn." %}</p>
+    {% endif %}
     <form method="post" class="stack-sm">
       {% csrf_token %}
       <textarea name="document" class="hidden-field" hidden>{{ text }}</textarea>

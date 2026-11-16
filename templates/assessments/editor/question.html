@@ -7,7 +7,7 @@
   <div class="page-head">
     <div>
       <h1>{% if is_new %}{% trans "New question" %}{% else %}{% trans "Edit question" %}{% endif %} {{ number }}</h1>
-      <p class="muted">{{ type_label }} &middot; {{ assessment.title }}</p>
+      <p class="muted">{{ type_label }} &middot; {{ assessment.title }}{% if variant_label %} &middot; {{ variant_label }}{% endif %}</p>
     </div>
     <a class="link-tap" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Back to the test" %}</a>
   </div>

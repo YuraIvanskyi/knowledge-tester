@@ -2,11 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from apps.assessments.models import Assessment
 from apps.assessments.services import with_latest_revision
 from apps.delivery.models import Sitting
 from apps.people import access as people_access
+
+from . import prompts
 
 RECENT = 5
 
@@ -36,6 +39,18 @@ def dashboard(request):
         "open_sessions": open_sittings.annotate(attempt_count=Count("attempts"))[:RECENT],
     }
     return render(request, "core/dashboard.html", context)
+
+
+@login_required
+def help_page(request):
+    """Prompts to copy into a chat AI (test from a textbook), so nobody has to look for them
+    in the program folder."""
+    pack = prompts.textbook_prompt()
+    return render(
+        request,
+        "core/help.html",
+        {"pack": pack, "path": pack.path, "import_url": reverse("assessments:import")},
+    )
 
 
 def healthz(request):

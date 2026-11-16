@@ -136,6 +136,16 @@ def _default_taker_fields() -> list[TakerField]:
     return [TakerField(key="name", label="Full name", required=True)]
 
 
+class Variant(_Base):
+    """One of several parallel versions of a test; every taker gets one of them."""
+
+    id: str | None = Field(None, min_length=1, max_length=40)
+    title: str = Field("", max_length=100)
+    questions: Annotated[list[Question], Field(min_length=1, max_length=200)]
+
+    _coerce_id = field_validator("id", mode="before")(_id_to_str)
+
+
 class TestBody(_Base):
     __test__ = False  # not a pytest class
 
@@ -145,7 +155,9 @@ class TestBody(_Base):
     settings: Settings = Field(default_factory=Settings)
     taker_fields: list[TakerField] = Field(default_factory=_default_taker_fields)
     grading: Grading = Field(default_factory=Grading)
-    questions: Annotated[list[Question], Field(min_length=1, max_length=200)]
+    # Exactly one of the two (checked by the importer, which also explains the mistake).
+    questions: Annotated[list[Question], Field(min_length=1, max_length=200)] | None = None
+    variants: Annotated[list[Variant], Field(min_length=1, max_length=10)] | None = None
 
 
 class TestDocument(_Base):

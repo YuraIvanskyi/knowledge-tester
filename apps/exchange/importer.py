@@ -30,6 +30,7 @@ from .document import (
     TestBody,
     TestDocument,
     Threshold,
+    Variant,
 )
 from .report import ValidationReport
 
@@ -63,6 +64,8 @@ def import_document(data: str | bytes | dict) -> ImportResult:
             report.error(path, message)
         return ImportResult(None, report)
 
+    if not _check_shape(doc, report):
+        return ImportResult(None, report)
     _assign_ids(doc, report)
     _check_semantics(doc, report)
     if not report.ok:
@@ -148,13 +151,24 @@ def _warn_unknown_fields(raw: dict, report: ValidationReport) -> None:
     if isinstance(test.get("grading"), dict):
         each(test["grading"].get("thresholds"), Threshold, "test.grading.thresholds")
 
-    questions = test.get("questions")
-    if not isinstance(questions, list):
-        return
+    groups = [("test.questions", test.get("questions"))]
+    if isinstance(test.get("variants"), list):
+        each(test["variants"], Variant, "test.variants")
+        groups += [
+            (f"test.variants[{k}].questions", v.get("questions"))
+            for k, v in enumerate(test["variants"])
+            if isinstance(v, dict)
+        ]
+    for prefix, questions in groups:
+        if isinstance(questions, list):
+            _warn_unknown_question_fields(prefix, questions, report, each)
+
+
+def _warn_unknown_question_fields(prefix: str, questions: list, report, each) -> None:
     for i, q in enumerate(questions):
         if not isinstance(q, dict):
             continue
-        path = f"test.questions[{i}]"
+        path = f"{prefix}[{i}]"
         qtype = q.get("type")
         known = set(Question.model_fields)
         used = (
@@ -269,29 +283,90 @@ def _describe_error(err: dict) -> tuple[str, str]:
 # ---------------------------------------------------------------------------------------------
 
 
+def _check_shape(doc: TestDocument, report: ValidationReport) -> bool:
+    """A test has "questions" or "variants". False stops the import (errors are reported)."""
+    test = doc.test
+    if test.questions is None and test.variants is None:
+        report.error("test.questions", 'required field "questions" is missing.')
+        return False
+    if test.questions is not None and test.variants is not None:
+        report.error(
+            "test.variants",
+            'a test has either "questions" or "variants", not both. Put every question '
+            'into a variant, or remove "variants".',
+        )
+        return False
+    if test.variants is not None and len(test.variants) == 1:
+        report.warn(
+            "test.variants",
+            "only one variant, so the test is imported without variants.",
+        )
+        test.questions = test.variants[0].questions
+        test.variants = None
+    return True
+
+
+def _question_groups(test: TestBody) -> list[tuple[str, list[Question]]]:
+    """(path, questions) per list of questions: one for a plain test, one per variant."""
+    if test.variants is None:
+        return [("test.questions", test.questions or [])]
+    return [(f"test.variants[{k}].questions", v.questions) for k, v in enumerate(test.variants)]
+
+
 def _assign_ids(doc: TestDocument, report: ValidationReport) -> None:
-    questions = doc.test.questions
-    seen: dict[str, int] = {}
-    for i, q in enumerate(questions):
-        if q.id is None:
+    variants = doc.test.variants or []
+    seen_variants: dict[str, int] = {}
+    for k, variant in enumerate(variants):
+        if variant.id is None:
             continue
-        if q.id in seen:
+        if variant.id in seen_variants:
             report.error(
-                f"test.questions[{i}]",
-                f'id "{q.id}" is already used by test.questions[{seen[q.id]}]. '
-                'Ids must be unique: change this "id" or remove it to get one generated.',
+                f"test.variants[{k}]",
+                f'id "{variant.id}" is already used by test.variants[{seen_variants[variant.id]}]. '
+                'Variant ids must be unique: change this "id" or remove it to get one generated.',
             )
-        seen.setdefault(q.id, i)
+        seen_variants.setdefault(variant.id, k)
+    used_variants = set(seen_variants)
+    number = 0
+    for variant in variants:
+        if variant.id is None:
+            number += 1
+            while f"v{number}" in used_variants:
+                number += 1
+            variant.id = f"v{number}"
+            used_variants.add(variant.id)
+
+    # Question ids are unique in the whole test, also across variants: an answer is stored
+    # under the question id alone.
+    groups = _question_groups(doc.test)
+    seen: dict[str, str] = {}
+    for path, questions in groups:
+        for i, q in enumerate(questions):
+            if q.id is None:
+                continue
+            if q.id in seen:
+                report.error(
+                    f"{path}[{i}]",
+                    f'id "{q.id}" is already used by {seen[q.id]}. '
+                    'Ids must be unique: change this "id" or remove it to get one generated.',
+                )
+            seen.setdefault(q.id, f"{path}[{i}]")
     used = set(seen)
     counter = 0
-    for q in questions:
-        if q.id is None:
-            counter += 1
-            while f"q{counter}" in used:
+    for _, questions in groups:
+        for q in questions:
+            if q.id is None:
                 counter += 1
-            q.id = f"q{counter}"
-            used.add(q.id)
+                while f"q{counter}" in used:
+                    counter += 1
+                q.id = f"q{counter}"
+                used.add(q.id)
 
+    for path, questions in groups:
+        _assign_option_ids(path, questions, report)
+
+
+def _assign_option_ids(path: str, questions: list[Question], report: ValidationReport) -> None:
     for i, q in enumerate(questions):
         if not q.options:
             continue
@@ -300,7 +375,7 @@ def _assign_ids(doc: TestDocument, report: ValidationReport) -> None:
             if opt.id is not None:
                 if opt.id in opt_seen:
                     report.error(
-                        f'test.questions[{i}] (id "{q.id}", {q.type})',
+                        f'{path}[{i}] (id "{q.id}", {q.type})',
                         f'option id "{opt.id}" is used more than once (options[{opt_seen[opt.id]}] '
                         f"and options[{j}]). Option ids must be unique within a question.",
                     )
@@ -323,8 +398,10 @@ def _parse_number(text: str) -> float | None:
 
 def _check_semantics(doc: TestDocument, report: ValidationReport) -> None:
     test = doc.test
-    for i, q in enumerate(test.questions):
-        _check_question(q, f'test.questions[{i}] (id "{q.id}", {q.type})', report)
+    groups = _question_groups(test)
+    for path, questions in groups:
+        for i, q in enumerate(questions):
+            _check_question(q, f'{path}[{i}] (id "{q.id}", {q.type})', report)
 
     keys: set[str] = set()
     for i, field in enumerate(test.taker_fields):
@@ -336,8 +413,18 @@ def _check_semantics(doc: TestDocument, report: ValidationReport) -> None:
         keys.add(field.key)
 
     _check_grading(test.grading, report)
-    if test.grading.enabled and all(q.points == 0 for q in test.questions):
+    everything = [q for _, questions in groups for q in questions]
+    if test.grading.enabled and all(q.points == 0 for q in everything):
         report.warn("test.questions", "every question has 0 points, so nothing will be graded.")
+    if test.variants:
+        totals = [_num(sum(q.points for q in v.questions)) for v in test.variants]
+        if len(set(totals)) > 1:
+            listed = ", ".join(f"{v.id}: {t}" for v, t in zip(test.variants, totals, strict=True))
+            report.warn(
+                "test.variants",
+                f"the variants are worth different numbers of points ({listed}). Grades are "
+                "based on percent, so this works, but equal totals are easier to explain.",
+            )
 
 
 def _check_question(q: Question, where: str, report: ValidationReport) -> None:
@@ -514,16 +601,23 @@ def _normalise(doc: TestDocument) -> dict:
             {"min_percent": _num(x.min_percent), "label": x.label}
             for x in t.grading.thresholds or []
         ]
-    return {
-        "format": FORMAT_NAME,
-        "version": FORMAT_VERSION,
-        "test": {
-            "title": t.title,
-            "description": t.description,
-            "language": t.language,
-            "settings": t.settings.model_dump(),
-            "taker_fields": [f.model_dump() for f in t.taker_fields],
-            "grading": grading,
-            "questions": [_normalise_question(q) for q in t.questions],
-        },
+    test: dict[str, Any] = {
+        "title": t.title,
+        "description": t.description,
+        "language": t.language,
+        "settings": t.settings.model_dump(),
+        "taker_fields": [f.model_dump() for f in t.taker_fields],
+        "grading": grading,
     }
+    if t.variants:
+        test["variants"] = [
+            {
+                "id": v.id,
+                "title": v.title,
+                "questions": [_normalise_question(q) for q in v.questions],
+            }
+            for v in t.variants
+        ]
+    else:
+        test["questions"] = [_normalise_question(q) for q in t.questions or []]
+    return {"format": FORMAT_NAME, "version": FORMAT_VERSION, "test": test}

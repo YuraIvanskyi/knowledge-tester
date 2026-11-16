@@ -8,6 +8,8 @@
   <p>{{ test.title }} <span class="muted">({% trans "revision" %} {{ revision.number }})</span></p>
   <ul class="facts">
     <li>{% blocktrans count n=question_count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</li>
+    {% if variant_count %}
+    <li>{% blocktrans count n=variant_count %}{{ n }} variant, given to students in turn{% plural %}{{ n }} variants, given to students in turn{% endblocktrans %}</li>{% endif %}
     <li>{% if time_limit %}{% blocktrans %}Time limit: {{ time_limit }} min{% endblocktrans %}{% else %}{% trans "No time limit" %}{% endif %}</li>
   </ul>
   <form method="post" class="stack">

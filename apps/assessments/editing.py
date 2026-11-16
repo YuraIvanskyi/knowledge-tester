@@ -15,6 +15,7 @@ from typing import Any
 
 from django.utils.translation import gettext as _
 
+from apps.exchange import variants as test_variants
 from apps.exchange.document import CHOICE_TYPES, FORMAT_NAME, FORMAT_VERSION
 from apps.exchange.importer import import_document
 
@@ -40,19 +41,44 @@ def blank_document(title: str, language: str) -> dict:
     }
 
 
-def questions_of(document: dict) -> list[dict]:
-    return document.setdefault("test", {}).setdefault("questions", [])
+def questions_of(document: dict, variant_id: str | None = None) -> list[dict]:
+    """The editable list of questions: the test's own, or those of one variant (the first
+    when `variant_id` names none)."""
+    test = document.setdefault("test", {})
+    variants = test_variants.variant_list(test)
+    if not variants:
+        return test.setdefault("questions", [])
+    chosen = test_variants.find(test, variant_id) or variants[0]
+    return chosen.setdefault("questions", [])
 
 
-def find_question(document: dict, question_id: str) -> tuple[int, dict] | None:
-    for index, question in enumerate(questions_of(document)):
-        if question.get("id") == question_id:
-            return index, question
+def locate(document: dict, question_id: str) -> tuple[list[dict], int, dict] | None:
+    """(the list that holds it, its index there, the question), searching every variant."""
+    test = document.setdefault("test", {})
+    variants = test_variants.variant_list(test)
+    lists = [v.setdefault("questions", []) for v in variants] or [questions_of(document)]
+    for questions in lists:
+        for index, question in enumerate(questions):
+            if question.get("id") == question_id:
+                return questions, index, question
     return None
 
 
+def find_question(document: dict, question_id: str) -> tuple[int, dict] | None:
+    found = locate(document, question_id)
+    return None if found is None else (found[1], found[2])
+
+
+def variant_of(document: dict, question_id: str) -> str:
+    """Id of the variant that holds the question; "" for a test without variants."""
+    for variant in test_variants.variant_list(document.get("test") or {}):
+        if any(q.get("id") == question_id for q in variant.get("questions") or []):
+            return str(variant.get("id", ""))
+    return ""
+
+
 def next_question_id(document: dict) -> str:
-    used = {q.get("id") for q in questions_of(document)}
+    used = {q.get("id") for q in test_variants.all_questions(document.get("test") or {})}
     number = len(used) + 1
     while f"q{number}" in used:
         number += 1
@@ -276,32 +302,32 @@ def build_question(
 # ---------------------------------------------------------------------------------------------
 
 
-def add_question(document: dict, question: dict) -> None:
-    questions_of(document).append(question)
+def add_question(document: dict, question: dict, variant_id: str | None = None) -> None:
+    questions_of(document, variant_id).append(question)
 
 
 def replace_question(document: dict, question_id: str, question: dict) -> bool:
-    found = find_question(document, question_id)
+    found = locate(document, question_id)
     if found is None:
         return False
-    questions_of(document)[found[0]] = question
+    found[0][found[1]] = question
     return True
 
 
 def delete_question(document: dict, question_id: str) -> bool:
-    found = find_question(document, question_id)
+    found = locate(document, question_id)
     if found is None:
         return False
-    del questions_of(document)[found[0]]
+    del found[0][found[1]]
     return True
 
 
 def move_question(document: dict, question_id: str, direction: str) -> bool:
-    found = find_question(document, question_id)
+    """Up or down within its own list (a question never moves to another variant)."""
+    found = locate(document, question_id)
     if found is None or direction not in ("up", "down"):
         return False
-    questions = questions_of(document)
-    index = found[0]
+    questions, index = found[0], found[1]
     target = index - 1 if direction == "up" else index + 1
     if not 0 <= target < len(questions):
         return False
@@ -311,14 +337,62 @@ def move_question(document: dict, question_id: str, direction: str) -> bool:
 
 def duplicate_question(document: dict, question_id: str) -> str | None:
     """Insert a copy right after the original. Returns the new id."""
-    found = find_question(document, question_id)
+    found = locate(document, question_id)
     if found is None:
         return None
-    index, original = found
+    questions, index, original = found
     copy_ = copy.deepcopy(original)
     copy_["id"] = next_question_id(document)
-    questions_of(document).insert(index + 1, copy_)
+    questions.insert(index + 1, copy_)
     return copy_["id"]
+
+
+# ---------------------------------------------------------------------------------------------
+# Variants
+# ---------------------------------------------------------------------------------------------
+
+
+def add_variant(document: dict, source_id: str | None = None) -> str | None:
+    """Add a variant as a copy of an existing one (the last, unless `source_id` names another),
+    to be edited afterwards. A test without variants becomes one with two: its questions are
+    variant 1. Returns the new variant's id, or None when there is nothing to copy or the
+    limit is reached."""
+    test = document.setdefault("test", {})
+    variants = test_variants.variant_list(test)
+    if len(variants) >= test_variants.MAX_VARIANTS:
+        return None
+    if not variants:
+        if not test.get("questions"):
+            return None
+        variants = [{"id": "v1", "title": "", "questions": test.pop("questions")}]
+        test["variants"] = variants
+    source = test_variants.find(test, source_id) or variants[-1]
+    used = set(test_variants.variant_ids(test))
+    number = len(variants) + 1
+    while f"v{number}" in used:
+        number += 1
+    new = {"id": f"v{number}", "title": "", "questions": []}
+    variants.append(new)
+    for question in source.get("questions") or []:
+        copy_ = copy.deepcopy(question)
+        copy_["id"] = next_question_id(document)
+        new["questions"].append(copy_)
+    return new["id"]
+
+
+def delete_variant(document: dict, variant_id: str) -> bool:
+    """Remove a variant with its questions. When one variant is left, the test goes back to
+    plain questions."""
+    test = document.setdefault("test", {})
+    variants = test_variants.variant_list(test)
+    target = test_variants.find(test, variant_id)
+    if target is None:
+        return False
+    variants.remove(target)
+    if len(variants) <= 1:
+        test["questions"] = variants[0].get("questions", []) if variants else []
+        del test["variants"]
+    return True
 
 
 # ---------------------------------------------------------------------------------------------
@@ -466,7 +540,10 @@ def apply_settings(test: dict, form: dict) -> tuple[dict | None, list[str]]:
     probe = {
         "format": FORMAT_NAME,
         "version": FORMAT_VERSION,
-        "test": {**updated, "questions": [{"type": "open", "text": "x"}]},
+        "test": {
+            **{k: v for k, v in updated.items() if k not in ("questions", "variants")},
+            "questions": [{"type": "open", "text": "x"}],
+        },
     }
     result = import_document(probe)
     if not result.ok:

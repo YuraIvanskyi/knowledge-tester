@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_POST
 
+from apps.exchange import variants as test_variants
 from apps.exchange.importer import import_document
 from apps.exchange.serializer import export_document
 
@@ -32,9 +33,30 @@ def _owned_assessment(request, pk):
     return get_object_or_404(services.visible_assessments(request.user), pk=pk)
 
 
-def _question_rows(document: dict) -> list[dict]:
+def _question_groups(document: dict) -> list[dict]:
+    """The questions as the test page lists them: one group for a plain test (id ""), one
+    per variant otherwise."""
+    test = document.get("test") or {}
+    variants = test_variants.variant_list(test)
+    if not variants:
+        return [{"id": "", "label": "", "rows": _question_rows(test.get("questions") or [])}]
+    groups = []
+    for variant in variants:
+        rows = _question_rows(variant.get("questions") or [])
+        groups.append(
+            {
+                "id": variant.get("id", ""),
+                "label": test_variants.label(test, variant.get("id")),
+                "rows": rows,
+                "points": sum(r["points"] for r in rows),
+            }
+        )
+    return groups
+
+
+def _question_rows(questions: list[dict]) -> list[dict]:
     rows = []
-    for number, q in enumerate(document.get("test", {}).get("questions", []), start=1):
+    for number, q in enumerate(questions, start=1):
         text = q.get("text", "")
         rows.append(
             {
@@ -51,8 +73,17 @@ def _question_rows(document: dict) -> list[dict]:
 
 def _summary(document: dict) -> dict:
     test = document["test"]
-    questions = test["questions"]
+    # Counts are those of one taker's test: the first variant when there are several.
+    questions = test_variants.view(test, None)["questions"]
     return {
+        "variants": [
+            {
+                "label": test_variants.label(test, v["id"]),
+                "count": len(v["questions"]),
+                "points": sum(q["points"] for q in v["questions"]),
+            }
+            for v in test_variants.variant_list(test)
+        ],
         "title": test["title"],
         "description": test["description"],
         "language": test["language"],
@@ -152,7 +183,10 @@ def detail(request, pk):
         "latest_revision": latest,
         "report": result.report,
         "valid": result.ok,
-        "questions": _question_rows(assessment.document),
+        "groups": _question_groups(assessment.document),
+        "can_add_variant": bool(test_variants.all_questions(assessment.document.get("test") or {}))
+        and len(test_variants.variant_list(assessment.document.get("test") or {}))
+        < test_variants.MAX_VARIANTS,
         "question_types": list(TYPE_LABELS.items()),
         "summary": _summary(result.document) if result.ok else None,
         "revisions": revisions,

@@ -18,6 +18,7 @@
             <p class="pick-title">{{ o.assessment.title }}</p>
             <p class="muted pick-facts">
               {% blocktrans count n=o.question_count %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}
+              {% if o.variant_count %}&middot; {% blocktrans count n=o.variant_count %}{{ n }} variant{% plural %}{{ n }} variants{% endblocktrans %}{% endif %}
               &middot; {% if o.time_limit %}{% blocktrans with time_limit=o.time_limit %}Time limit: {{ time_limit }} min{% endblocktrans %}{% else %}{% trans "No time limit" %}{% endif %}
               &middot; {% trans "revision" %} {{ o.revision.number }}
             </p>

@@ -184,3 +184,10 @@
 .name-picker select {
   min-height: 48px;
 }
+
+/* Which variant of the test this taker has (tests with variants only). */
+.variant-tag {
+  margin: 0;
+  font-weight: 600;
+  color: var(--muted);
+}

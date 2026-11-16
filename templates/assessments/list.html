@@ -31,7 +31,7 @@
         <tr>
           <td class="cell-title"><a href="{% url 'assessments:detail' t.pk %}">{{ t.title }}</a></td>
           <td data-label="{% trans 'Status' %}">{{ t.get_status_display }}{% if t.has_unpublished_changes and t.status == 'published' %} ({% trans "unpublished changes" %}){% endif %}</td>
-          <td data-label="{% trans 'Questions' %}" class="num">{{ t.document.test.questions|length }}</td>
+          <td data-label="{% trans 'Questions' %}" class="num">{{ t.question_count }}{% if t.variant_count %} <span class="muted">&times; {{ t.variant_count }}</span>{% endif %}</td>
           <td data-label="{% trans 'Updated' %}">{{ t.updated_at|date:"SHORT_DATE_FORMAT" }}</td>
           <td class="cell-actions">{% if t.status == 'published' and t.latest_revision_pk %}<a class="link-tap" href="{% url 'delivery:create' t.latest_revision_pk %}">{% trans "Open session" %}</a>{% endif %}</td>
         </tr>

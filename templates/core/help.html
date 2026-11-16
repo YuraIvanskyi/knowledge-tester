@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Help" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/help.css' %}">{% endblock %}
+{% block content %}
+<div class="stack help">
+  <div class="page-head">
+    <h1>{% trans "Help" %}</h1>
+  </div>
+
+  <section class="stack-sm" aria-labelledby="ai-h">
+    <h2 id="ai-h">{% trans "A test from a textbook with an AI assistant" %}</h2>
+    <p>{% trans "A chat assistant that reads PDF files (Claude, ChatGPT, Gemini and others) can write the test for you. You check it and import it here." %}</p>
+    <ol class="help-steps">
+      <li>{% trans "Open a new chat with the assistant and attach the PDF of the textbook (or only the chapter you need)." %}</li>
+      <li>{% trans "Copy the prompt below, fill in the lines in square brackets under “ПАРАМЕТРИ ТЕСТУ” (subject, pages, number of questions, number of variants, time) and send it." %}</li>
+      <li>{% blocktrans %}Copy the answer and paste it on the <a href="{{ import_url }}">Import a test</a> page. If the import reports errors, copy them back into the same chat.{% endblocktrans %}</li>
+      <li>{% trans "Read the test before the lesson (the Preview button): assistants make mistakes. The “Ключ” request below gives you the answers with quotes from the textbook." %}</li>
+    </ol>
+
+    {% if pack.prompt %}
+    <div class="field">
+      <label for="prompt-main">{% trans "Prompt" %} <span class="muted">({% trans "in Ukrainian; the test is written in the language of the textbook" %})</span></label>
+      <textarea id="prompt-main" class="prompt-box" rows="16" readonly spellcheck="false">{{ pack.prompt }}</textarea>
+    </div>
+    <p class="row copy-row">
+      <button type="button" class="btn btn-primary" data-copy="prompt-main" data-done="{% trans 'Copied' %}" data-failed="{% trans 'Select the text and copy it by hand' %}">{% trans "Copy the prompt" %}</button>
+      <span class="copy-status muted" role="status" aria-live="polite"></span>
+      <noscript><span class="muted">{% trans "Click into the text, select everything (Ctrl+A) and copy it (Ctrl+C)." %}</span></noscript>
+    </p>
+    {% else %}
+    <p class="alert alert-warn" role="alert">{% blocktrans %}The prompt file was not found. It should be at {{ path }} in the program folder.{% endblocktrans %}</p>
+    {% endif %}
+  </section>
+
+  {% if pack.follow_ups %}
+  <section class="stack-sm" aria-labelledby="more-h">
+    <h2 id="more-h">{% trans "Follow-up requests" %}</h2>
+    <p class="muted">{% trans "Send them in the same chat, after the test is written." %}</p>
+    {% for item in pack.follow_ups %}
+    <div class="field">
+      <label for="prompt-{{ forloop.counter }}">{{ item.title }}</label>
+      <textarea id="prompt-{{ forloop.counter }}" class="prompt-box prompt-short" rows="4" readonly spellcheck="false">{{ item.text }}</textarea>
+    </div>
+    <p class="row copy-row">
+      <button type="button" class="btn" data-copy="prompt-{{ forloop.counter }}" data-done="{% trans 'Copied' %}" data-failed="{% trans 'Select the text and copy it by hand' %}">{% trans "Copy" %}</button>
+      <span class="copy-status muted" role="status" aria-live="polite"></span>
+    </p>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <section class="stack-sm" aria-labelledby="variants-h">
+    <h2 id="variants-h">{% trans "Variants" %}</h2>
+    <p>{% trans "A test can have several variants: parallel versions with different questions. Every student gets one of them, in turn, so neighbours answer different questions. Ask the assistant for them with the “Кількість варіантів” line of the prompt, or press “Add a variant” on the page of a test and change the copied questions." %}</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/copy.js' %}" defer></script>{% endblock %}

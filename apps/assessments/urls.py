@@ -14,6 +14,12 @@ urlpatterns = [
     path("<int:pk>/preview/", editor_views.preview, name="preview"),
     path("<int:pk>/export/", views.export, name="export"),
     path("<int:pk>/settings/", editor_views.test_settings, name="settings"),
+    path("<int:pk>/variants/add/", editor_views.variant_add, name="variant_add"),
+    path(
+        "<int:pk>/variants/<str:variant_id>/delete/",
+        editor_views.variant_delete,
+        name="variant_delete",
+    ),
     path(
         "<int:pk>/questions/new/<str:question_type>/",
         editor_views.question_new,

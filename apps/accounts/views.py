@@ -13,6 +13,8 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 
+from apps.core.lan import lan_ipv4_addresses
+
 from . import services
 from .forms import RegisterForm, SetupForm
 from .models import SystemSettings, User
@@ -40,6 +42,18 @@ def needs_setup() -> bool:
     return not User.objects.exists()
 
 
+def _from_this_computer(request) -> bool:
+    """Loopback, or one of this computer's own LAN addresses (the teacher typed the address that
+    the start window printed instead of localhost: the connection still starts here)."""
+    address = request.META.get("REMOTE_ADDR") or ""
+    if address in LOCAL_ADDRESSES:
+        return True
+    try:
+        return address in lan_ipv4_addresses()
+    except Exception:  # noqa: BLE001 - never a reason to fail the page
+        return False
+
+
 @never_cache
 def setup(request):
     """First run: create the first admin account in the browser, on the host computer only.
@@ -49,7 +63,7 @@ def setup(request):
     """
     if not needs_setup():
         return redirect("accounts:login")
-    if request.META.get("REMOTE_ADDR") not in LOCAL_ADDRESSES:
+    if not _from_this_computer(request):
         return render(request, "registration/setup.html", {"form": None}, status=403)
     form = SetupForm(request.POST or None)
     if request.method == "POST" and form.is_valid():

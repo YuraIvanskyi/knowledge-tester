@@ -10,6 +10,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from django.utils.translation import gettext as _
 
 from apps.delivery.models import Answer, Attempt
+from apps.exchange import variants as test_variants
 
 FINISHED = (Attempt.Status.SUBMITTED, Attempt.Status.AUTO_SUBMITTED)
 CHOICE_TYPES = ("single_choice", "multiple_choice", "choose_n")
@@ -236,8 +237,27 @@ def summarize(attempts: list[Attempt]) -> Summary:
     return summary
 
 
+def item_analysis_by_variant(test: dict, attempts: list[Attempt]) -> list[dict]:
+    """Item analysis per variant: [{"label", "takers", "items"}]. A plain test gives one
+    group with an empty label. Every variant is counted over its own takers only."""
+    if not test_variants.has_variants(test):
+        return [{"label": "", "takers": None, "items": item_analysis(test, attempts)}]
+    groups = []
+    for variant_id in test_variants.variant_ids(test):
+        own = [a for a in attempts if a.variant == variant_id]
+        groups.append(
+            {
+                "label": test_variants.label(test, variant_id),
+                "takers": sum(1 for a in own if a.status in FINISHED),
+                "items": item_analysis(test_variants.view(test, variant_id), own),
+            }
+        )
+    return groups
+
+
 def item_analysis(test: dict, attempts: list[Attempt]) -> list[dict]:
-    """Percent correct per question over the finished attempts, plus the top wrong option."""
+    """Percent correct per question over the finished attempts, plus the top wrong option.
+    `test` has plain questions (one variant's view) and `attempts` are its takers."""
     finished_ids = [a.pk for a in attempts if a.status in FINISHED]
     answers = Answer.objects.filter(attempt_id__in=finished_ids)
     total = len(finished_ids)

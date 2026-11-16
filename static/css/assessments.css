@@ -193,3 +193,23 @@
     flex: 1 1 calc(50% - var(--space-2));
   }
 }
+
+/* Tests with variants: a heading row per variant on the test page. */
+.variant-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.variant-head h3 {
+  margin: 0;
+}
+.variant-add {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}

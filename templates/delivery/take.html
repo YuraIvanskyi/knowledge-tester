@@ -7,8 +7,12 @@
 <div class="taker" lang="{{ test.language|default:'en' }}">
   {% if preview %}
   <p class="alert alert-warn" role="note"><strong>{% trans "Preview." %}</strong> {% trans "This is how students see the test. Nothing is saved or graded." %} <a href="{{ preview.back_url }}">{% trans "Back to the test" %}</a></p>
+  {% if preview.variants %}
+  <p class="row preview-variants">{% for v in preview.variants %}{% if v.current %}<strong>{{ v.label }}</strong>{% else %}<a class="link-tap" href="{{ v.url }}">{{ v.label }}</a>{% endif %}{% endfor %}</p>
+  {% endif %}
   {% endif %}
   <h1>{{ sitting.title|default:test.title }}</h1>
+  {% if variant_label %}<p class="variant-tag">{{ variant_label }}</p>{% endif %}
   {% if unstarted and test.description %}<p>{{ test.description }}</p>{% endif %}
   {% if unstarted %}<p class="muted">{% blocktrans count n=total %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</p>{% endif %}
   {% if unstarted and time_limit %}<p class="muted">{% blocktrans %}Time limit: {{ time_limit }} min. The clock starts when you begin answering.{% endblocktrans %}</p>{% endif %}

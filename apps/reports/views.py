@@ -15,6 +15,7 @@ from django.views.decorators.http import require_http_methods
 from apps.core.text import csv_safe
 from apps.delivery import services
 from apps.delivery.models import Answer, Attempt, Sitting
+from apps.exchange import variants as test_variants
 from apps.grading.service import grade_attempt
 
 from . import data, pdf
@@ -71,7 +72,8 @@ def session_results(request, sitting_pk: int):
             "summary": data.summarize(attempts),
             "rows": [{"attempt": a, "name": data.taker_name(a)} for a in shown],
             "any_provisional": any(a.pending_reviews and a.score is not None for a in shown),
-            "items": data.item_analysis(test, attempts),
+            "item_groups": data.item_analysis_by_variant(test, attempts),
+            "has_variants": test_variants.has_variants(test),
             "status": status,
             "sort": sort,
             "columns": columns,
@@ -149,7 +151,7 @@ def _save_review_rows(request, attempt: Attempt, rows) -> tuple[int, dict]:
 def attempt_sheet(request, pk: int):
     attempt = _attempt_or_404(request.user, pk)
     sitting = attempt.sitting
-    test = sitting.revision.test
+    test = attempt.test  # the attempt's variant
     errors: dict[str, tuple[str, str, str]] = {}
 
     if request.method == "POST":
@@ -241,6 +243,8 @@ def attempt_void(request, pk: int):
 def _taker_rows(test: dict, attempt: Attempt) -> list[tuple[str, str]]:
     taker = attempt.taker or {}
     rows, seen = [], set()
+    if attempt.variant_label:
+        rows.append((_("Variant"), attempt.variant_label))
     for field in test.get("taker_fields", []):
         key = field.get("key")
         seen.add(key)
@@ -274,9 +278,27 @@ def _csv_taker_fields(test: dict, attempts: list[Attempt]) -> list[dict]:
 def session_csv(request, sitting_pk: int):
     sitting = _sitting_or_404(request.user, sitting_pk)
     test = sitting.revision.test
-    questions = test.get("questions", [])
     attempts = list(sitting.attempts.all())
     fields = _csv_taker_fields(test, attempts)
+    # One column per question. With variants the takers answered different questions, so a
+    # column is "question N of the taker's variant" and a Variant column says which one.
+    with_variants = test_variants.has_variants(test)
+    if with_variants:
+        per_variant = {
+            v: test_variants.view(test, v).get("questions", [])
+            for v in test_variants.variant_ids(test)
+        }
+        width = max((len(q) for q in per_variant.values()), default=0)
+        question_headers = [f"{n}." for n in range(1, width + 1)]
+    else:
+        questions = test.get("questions", [])
+        width = len(questions)
+        question_headers = [f"{n}. {q['id']}" for n, q in enumerate(questions, start=1)]
+
+    def question_ids(attempt) -> list[str]:
+        own = per_variant.get(attempt.variant, []) if with_variants else questions
+        ids = [str(q["id"]) for q in own]
+        return ids + [""] * (width - len(ids))
 
     points: dict[tuple[int, str], Decimal | None] = {}
     for a in Answer.objects.filter(attempt__sitting=sitting):
@@ -288,6 +310,7 @@ def session_csv(request, sitting_pk: int):
     writer = csv.writer(response)
     writer.writerow(
         [f.get("label") or f["key"] for f in fields]
+        + ([_("Variant")] if with_variants else [])
         + [
             _("Status"),
             _("Started"),
@@ -298,11 +321,12 @@ def session_csv(request, sitting_pk: int):
             _("Grade"),
             _("Pending reviews"),
         ]
-        + [f"{n}. {q['id']}" for n, q in enumerate(questions, start=1)]
+        + question_headers
     )
     for a in attempts:
         writer.writerow(
             [csv_safe((a.taker or {}).get(f["key"], "")) for f in fields]
+            + ([csv_safe(a.variant_label)] if with_variants else [])
             + [
                 a.status,
                 a.started_at.isoformat(timespec="seconds"),
@@ -314,8 +338,8 @@ def session_csv(request, sitting_pk: int):
                 a.pending_reviews,
             ]
             + [
-                "" if points.get((a.pk, str(q["id"]))) is None else points[(a.pk, str(q["id"]))]
-                for q in questions
+                "" if points.get((a.pk, qid)) is None else points[(a.pk, qid)]
+                for qid in question_ids(a)
             ]
         )
     return response

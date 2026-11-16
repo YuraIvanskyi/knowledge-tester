@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 from apps.assessments import services as assessment_services
 from apps.assessments.models import Revision
 from apps.core import backup, lan
+from apps.exchange import variants as test_variants
 from apps.people.access import students_for
 
 from . import linking, roster, services
@@ -60,7 +61,8 @@ def session_pick(request):
             {
                 "assessment": assessment,
                 "revision": revision,
-                "question_count": len(test.get("questions", [])),
+                "question_count": test_variants.question_count(test),
+                "variant_count": len(test_variants.variant_list(test)),
                 "time_limit": services.time_limit_minutes(test),
                 "has_changes": assessment.has_unpublished_changes,
             }
@@ -106,7 +108,8 @@ def session_create(request, revision_pk: int):
         "revision": revision,
         "test": test,
         "time_limit": services.time_limit_minutes(test),
-        "question_count": len(test.get("questions", [])),
+        "question_count": test_variants.question_count(test),
+        "variant_count": len(test_variants.variant_list(test)),
     }
     return render(request, "delivery/create.html", context)
 

@@ -78,6 +78,8 @@
         "weight": {
           "anyOf": [
             {
+              "maximum": 1000000,
+              "minimum": -1000000,
               "type": "number"
             },
             {
@@ -129,6 +131,7 @@
         },
         "points": {
           "default": 1,
+          "maximum": 1000000,
           "minimum": 0,
           "title": "Points",
           "type": "number"
@@ -267,6 +270,7 @@
         "tolerance": {
           "anyOf": [
             {
+              "maximum": 1000000000000.0,
               "minimum": 0,
               "type": "number"
             },
@@ -420,18 +424,42 @@
           "$ref": "#/$defs/Grading"
         },
         "questions": {
-          "items": {
-            "$ref": "#/$defs/Question"
-          },
-          "maxItems": 200,
-          "minItems": 1,
-          "title": "Questions",
-          "type": "array"
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Question"
+              },
+              "maxItems": 200,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Questions"
+        },
+        "variants": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Variant"
+              },
+              "maxItems": 10,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variants"
         }
       },
       "required": [
-        "title",
-        "questions"
+        "title"
       ],
       "title": "TestBody",
       "type": "object"
@@ -456,6 +484,45 @@
         "label"
       ],
       "title": "Threshold",
+      "type": "object"
+    },
+    "Variant": {
+      "description": "One of several parallel versions of a test; every taker gets one of them.",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "title": {
+          "default": "",
+          "maxLength": 100,
+          "title": "Title",
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "questions"
+      ],
+      "title": "Variant",
       "type": "object"
     }
   },

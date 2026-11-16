@@ -69,6 +69,7 @@
         <tr>
           <th scope="col"{% if columns.name.aria %} aria-sort="{{ columns.name.aria }}"{% endif %}><a href="?sort={{ columns.name.next }}&amp;status={{ status }}">{% trans "Name" %}{% if columns.name.arrow %} <span aria-hidden="true">{{ columns.name.arrow }}</span>{% endif %}</a></th>
           <th scope="col"{% if columns.time.aria %} aria-sort="{{ columns.time.aria }}"{% endif %}><a href="?sort={{ columns.time.next }}&amp;status={{ status }}">{% trans "Started" %}{% if columns.time.arrow %} <span aria-hidden="true">{{ columns.time.arrow }}</span>{% endif %}</a></th>
+          {% if has_variants %}<th scope="col">{% trans "Variant" %}</th>{% endif %}
           <th scope="col">{% trans "Status" %}</th>
           {% if grading_enabled %}
           <th scope="col" class="num"{% if columns.score.aria %} aria-sort="{{ columns.score.aria }}"{% endif %}><a href="?sort={{ columns.score.next }}&amp;status={{ status }}">{% trans "Score" %}{% if columns.score.arrow %} <span aria-hidden="true">{{ columns.score.arrow }}</span>{% endif %}</a></th>
@@ -82,6 +83,7 @@
         <tr>
           <td class="cell-title" data-label="{% trans 'Name' %}"><a class="row-link" href="{% url 'reports:attempt' r.attempt.pk %}">{{ r.name }}</a></td>
           <td data-label="{% trans 'Started' %}">{{ r.attempt.started_at|date:"d.m.Y H:i" }}</td>
+          {% if has_variants %}<td data-label="{% trans 'Variant' %}">{{ r.attempt.variant_label|default:"&ndash;" }}</td>{% endif %}
           <td data-label="{% trans 'Status' %}">{{ r.attempt.get_status_display }}{% if r.attempt.pending_reviews and r.attempt.status != "voided" %} <span class="status-warn">({% trans "needs review" %})</span>{% endif %}</td>
           {% if grading_enabled %}
           <td class="num" data-label="{% trans 'Score' %}">{% if r.attempt.score is not None %}{{ r.attempt.score|numd }} / {{ r.attempt.max_score|numd }}{% if r.attempt.percent is not None %} ({{ r.attempt.percent }} %){% endif %}{% if r.attempt.pending_reviews and r.attempt.status != "voided" %}<span class="status-warn" aria-hidden="true"> *</span><span class="visually-hidden"> {% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
@@ -101,6 +103,8 @@
   {% if grading_enabled and summary.takers %}
   <section class="stack" aria-labelledby="items-h">
     <h2 id="items-h">{% trans "Questions" %}</h2>
+    {% for group in item_groups %}
+    {% if group.label %}<h3>{{ group.label }} <span class="muted">({% blocktrans count n=group.takers %}{{ n }} finished attempt{% plural %}{{ n }} finished attempts{% endblocktrans %})</span></h3>{% endif %}
     <table class="table table-compact results-table">
       <thead>
         <tr>
@@ -110,7 +114,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for i in items %}
+        {% for i in group.items %}
         <tr>
           <td class="cell-title" data-label="{% trans 'Question' %}">{{ i.number }}. {{ i.text|truncatechars:90 }}</td>
           <td class="num" data-label="{% trans 'Correct' %}">{% if i.percent is not None %}{{ i.percent }} %{% else %}&ndash;{% endif %}</td>
@@ -119,6 +123,7 @@
         {% endfor %}
       </tbody>
     </table>
+    {% endfor %}
   </section>
   {% endif %}
 </div>

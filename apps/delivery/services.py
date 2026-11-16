@@ -5,11 +5,15 @@ from __future__ import annotations
 import logging
 import random
 import secrets
+import uuid
 from datetime import timedelta
 
+from django.core.cache import cache
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.translation import gettext
+
+from apps.exchange import variants as test_variants
 
 from .models import CODE_ALPHABET, CODE_LENGTH, Answer, Attempt, Sitting
 
@@ -94,8 +98,32 @@ def taker_display(attempt: Attempt, fields: list[dict]) -> str:
     return "-"
 
 
+def new_token(sitting: Sitting | None, test: dict) -> uuid.UUID:
+    """A fresh attempt token. For a test with variants the token decides the variant
+    (`variants.for_token`), so tokens are handed out in turn: every page that is opened gets
+    the next variant, starting from a random one. The class is split evenly and nobody can
+    tell beforehand which variant they get. Without a session (teacher preview) or without a
+    working cache it is plain chance."""
+    ids = test_variants.variant_ids(test)
+    token = uuid.uuid4()
+    if len(ids) < 2 or sitting is None:
+        return token
+    key = f"kt_variant_turn_{sitting.pk}"
+    try:
+        cache.add(key, random.randrange(len(ids)), timeout=None)
+        wanted = ids[cache.incr(key) % len(ids)]
+    except Exception:  # noqa: BLE001 - a cache hiccup must not stop a student
+        return token
+    for _attempt in range(200):  # on average len(ids) tries
+        if test_variants.for_token(test, token) == wanted:
+            break
+        token = uuid.uuid4()
+    return token
+
+
 def shuffled_orders(test: dict, seed: str) -> tuple[list[str], dict[str, list[str]]]:
-    """Question order and per-question option order, generated once per attempt (seeded)."""
+    """Question order and per-question option order, generated once per attempt (seeded).
+    `test` is the taker's view (`variants.view`): plain questions."""
     rng = random.Random(seed)
     settings = test.get("settings") or {}
     questions = test.get("questions", [])
@@ -124,10 +152,11 @@ def start_attempt(sitting: Sitting, taker: dict, token=None, student=None) -> At
             if existing.sitting_id == sitting.pk:
                 return existing
             token = None  # somebody else's token: shuffle with a fresh one
-    test = sitting.revision.test
+    full_test = sitting.revision.test
     attempt = Attempt(sitting=sitting, taker=taker, student=student)
-    if token is not None:
-        attempt.token = token
+    attempt.token = token if token is not None else new_token(sitting, full_test)
+    attempt.variant = test_variants.for_token(full_test, attempt.token)
+    test = test_variants.view(full_test, attempt.variant)
     attempt.question_order, attempt.option_orders = shuffled_orders(test, str(attempt.token))
     minutes = time_limit_minutes(test)
     try:
@@ -346,7 +375,8 @@ def session_stats(sitting: Sitting) -> dict:
 
     test = sitting.revision.test
     fields = taker_fields(test)
-    total = len(test.get("questions", []))
+    total = test_variants.question_count(test)
+    with_variants = test_variants.has_variants(test)
     attempts = (
         sitting.attempts.exclude(status=Attempt.Status.VOIDED)
         .select_related("student__group")
@@ -365,6 +395,9 @@ def session_stats(sitting: Sitting) -> dict:
                 "status": attempt.status,
                 "status_label": str(attempt.get_status_display()),
                 "answered": attempt.answered,
+                # variants may differ in length: the total is the attempt's own
+                "total": len(attempt.question_order) or total,
+                "variant": test_variants.label(test, attempt.variant) if with_variants else "",
                 # the roster class of a linked student, shown next to the name
                 "group": attempt.student.group.name
                 if attempt.student_id and attempt.student.group_id

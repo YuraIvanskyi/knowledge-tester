@@ -74,9 +74,9 @@
       <tbody id="takers-body" data-total="{{ stats.total_questions }}" data-of="{% trans 'of' %}">
         {% for t in stats.takers %}
           <tr>
-            <td class="cell-title"><span>{{ t.name }}{% if t.group %}<span class="muted"> ({{ t.group }})</span>{% endif %}</span></td>
+            <td class="cell-title"><span>{{ t.name }}{% if t.group %}<span class="muted"> ({{ t.group }})</span>{% endif %}{% if t.variant %}<span class="muted"> &middot; {{ t.variant }}</span>{% endif %}</span></td>
             <td data-label="{% trans 'Status' %}">{% if t.status != "in_progress" %}<span class="status-ok">{{ t.status_label }}</span>{% else %}{{ t.status_label }}{% endif %}</td>
-            <td data-label="{% trans 'Answered' %}" class="num">{{ t.answered }} {% trans "of" %} {{ stats.total_questions }}</td>
+            <td data-label="{% trans 'Answered' %}" class="num">{{ t.answered }} {% trans "of" %} {{ t.total }}</td>
           </tr>
         {% endfor %}
       </tbody>

@@ -41,6 +41,12 @@
         group.textContent = " (" + t.group + ")";
         nameText.appendChild(group);
       }
+      if (t.variant) {
+        var variant = document.createElement("span");
+        variant.className = "muted";
+        variant.textContent = " · " + t.variant;
+        nameText.appendChild(variant);
+      }
       nameCell.appendChild(nameText);
       tr.appendChild(nameCell);
       var statusCell = cell(labels.status);
@@ -54,7 +60,8 @@
       }
       tr.appendChild(statusCell);
       var answeredCell = cell(labels.answered, "num");
-      answeredCell.textContent = t.answered + " " + of + " " + data.total_questions;
+      // variants may differ in length: every taker has their own total
+      answeredCell.textContent = t.answered + " " + of + " " + (t.total || data.total_questions);
       tr.appendChild(answeredCell);
       body.appendChild(tr);
     });

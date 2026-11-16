@@ -12,6 +12,8 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
+from apps.exchange import variants as test_variants
+
 from . import roster, services
 from .models import Attempt, Sitting
 
@@ -46,7 +48,10 @@ def _get_attempt(request, sitting: Sitting) -> Attempt | None:
         token = uuid.UUID(raw)
     except ValueError:
         return None
-    return Attempt.objects.filter(sitting=sitting, token=token).first()
+    attempt = Attempt.objects.filter(sitting=sitting, token=token).first()
+    if attempt is not None:
+        attempt.sitting = sitting  # already loaded with its revision: attempt.test needs both
+    return attempt
 
 
 def _attempt_of_page(request, sitting: Sitting, page_token) -> tuple[Attempt | None, bool]:
@@ -57,6 +62,8 @@ def _attempt_of_page(request, sitting: Sitting, page_token) -> tuple[Attempt | N
     attempt = _get_attempt(request, sitting)
     if attempt is None and page_token is not None:
         attempt = Attempt.objects.filter(sitting=sitting, token=page_token).first()
+        if attempt is not None:
+            attempt.sitting = sitting
         return attempt, attempt is not None
     return attempt, False
 
@@ -118,7 +125,7 @@ def _build_questions(attempt: Attempt, test: dict, values: dict[str, object]) ->
 
 
 def _render_take(request, sitting, attempt, missing=None, unanswered=None):
-    test = sitting.revision.test
+    test = attempt.test
     questions = _build_questions(attempt, test, _answer_values(attempt))
     context = {
         "sitting": sitting,
@@ -128,6 +135,7 @@ def _render_take(request, sitting, attempt, missing=None, unanswered=None):
         "total": len(questions),
         "answered": sum(1 for q in questions if q["value"] is not None),
         "seconds_left": _seconds_left(attempt),
+        "variant_label": attempt.variant_label,
         "missing": missing or [],
         "unanswered": unanswered or [],
     }
@@ -169,12 +177,25 @@ def _identity_context(sitting, test, data) -> dict:
 
 
 def _render_unstarted(
-    request, sitting, test, errors=None, data=None, token=None, preview=None, cancelled=False
+    request,
+    sitting,
+    test,
+    errors=None,
+    data=None,
+    token=None,
+    preview=None,
+    cancelled=False,
+    variant=None,
 ):
     """The test itself as the landing page: identity fields on top, questions below.
-    The attempt is created on the first autosave or on submit, using this page's token."""
+    The attempt is created on the first autosave or on submit, using this page's token.
+    The token also decides the variant, so the attempt gets the questions shown here.
+    `variant` forces one (teacher preview only)."""
     data = data if data is not None else {}
-    token = token or uuid.uuid4()
+    full_test = test
+    token = token or services.new_token(sitting, full_test)
+    variant_id = variant or test_variants.for_token(full_test, token)
+    test = test_variants.view(full_test, variant_id)
     order, option_orders = services.shuffled_orders(test, str(token))
     stub = SimpleNamespace(question_order=order, option_orders=option_orders)
     getlist = data.getlist if hasattr(data, "getlist") else lambda key: []
@@ -195,6 +216,7 @@ def _render_unstarted(
         "answered": sum(1 for q in questions if q["value"] is not None),
         "seconds_left": None,
         "time_limit": services.time_limit_minutes(test),  # clock starts with the attempt
+        "variant_label": test_variants.label(full_test, variant_id),
         "missing": [],
         "unanswered": [],
         "preview": preview,
@@ -211,7 +233,15 @@ def render_preview(request, test: dict, preview: dict):
     """
     posted = request.POST if request.method == "POST" else None
     token = _parse_token(posted.get("attempt_token")) if posted is not None else None
-    return _render_unstarted(request, None, test, data=posted, token=token, preview=preview)
+    return _render_unstarted(
+        request,
+        None,
+        test,
+        data=posted,
+        token=token,
+        preview=preview,
+        variant=preview.get("variant"),
+    )
 
 
 # --- entering and starting ---------------------------------------------------------------------
@@ -294,7 +324,7 @@ def session(request, code: str):
         **_identity_context(sitting, test, posted),
         "sitting": sitting,
         "test": test,
-        "question_count": len(test.get("questions", [])),
+        "question_count": test_variants.question_count(test),
         "time_limit": services.time_limit_minutes(test),
         "closed": closed,
         "previous": attempt,
@@ -362,7 +392,7 @@ def save(request, code: str):
     if attempt.is_finished:
         url = reverse("taker:done", kwargs={"code": sitting.code})
         return JsonResponse({"done": True, "url": url}, status=409)
-    services.save_answers(attempt, sitting.revision.test, answers)
+    services.save_answers(attempt, attempt.test, answers)
     response = JsonResponse(
         {
             "done": False,
@@ -417,6 +447,7 @@ def submit(request, code: str):
     if attempt.is_finished:
         return reply(redirect("taker:done", code=sitting.code))
 
+    test = attempt.test  # from here on: this taker's variant
     within_grace = not services.is_past_deadline(attempt, services.SUBMIT_GRACE)
     # Only overwrite autosaved answers when the full form was actually posted.
     if request.POST.get("form_sent") and within_grace:
@@ -497,7 +528,7 @@ def done(request, code: str):
         return redirect("taker:session", code=sitting.code)
     if not attempt.is_finished and not services.enforce_deadline(attempt):
         return redirect("taker:take", code=sitting.code)
-    test = sitting.revision.test
+    test = attempt.test
     show = (test.get("settings") or {}).get("show_result", "score")
     voided = attempt.status == Attempt.Status.VOIDED
     context = {
@@ -506,6 +537,7 @@ def done(request, code: str):
         "attempt": attempt,
         "voided": voided,
         "auto": attempt.status == Attempt.Status.AUTO_SUBMITTED,
+        "variant_label": attempt.variant_label,
         "show_score": show in ("score", "full") and attempt.score is not None and not voided,
         "review": _full_review(attempt, test) if show == "full" and not voided else [],
         "can_retry": (voided or _max_attempts(test) > 1) and sitting.status == Sitting.Status.OPEN,

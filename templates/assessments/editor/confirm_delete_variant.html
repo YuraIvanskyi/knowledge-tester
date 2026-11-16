@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Delete variant" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/assessments.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% blocktrans %}Delete {{ name }}?{% endblocktrans %}</h1>
+  <p>{% blocktrans count n=count %}Its {{ n }} question is deleted with it.{% plural %}Its {{ n }} questions are deleted with it.{% endblocktrans %}</p>
+  {% if last_two %}<p>{% trans "One variant will be left, so the test becomes a test without variants: every student gets the same questions." %}</p>{% endif %}
+  <p class="muted">{% trans "Published revisions and finished sessions are not affected. The variant is removed from the draft only." %}</p>
+  <form method="post" class="row">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">{% trans "Delete variant" %}</button>
+    <a class="btn" href="{% url 'assessments:detail' assessment.pk %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

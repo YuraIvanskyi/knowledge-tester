@@ -88,3 +88,12 @@ def test_login_without_accounts_goes_to_setup(anon_client):
 
 def test_students_still_reach_the_landing_page_before_setup(anon_client):
     assert anon_client.get("/").status_code == 200
+
+
+def test_the_hosts_own_lan_address_counts_as_the_host(strong_password, monkeypatch):
+    """The teacher opened http://192.168.1.5:8000 on the host itself instead of localhost."""
+    monkeypatch.setattr("apps.accounts.views.lan_ipv4_addresses", lambda: ["192.168.1.5"])
+    host = Client(REMOTE_ADDR="192.168.1.5")
+    assert host.get(SETUP).status_code == 200
+    assert Client(REMOTE_ADDR="192.168.1.57").get(SETUP).status_code == 403
+    assert host.post(SETUP, data(strong_password))["Location"] == reverse("core:dashboard")

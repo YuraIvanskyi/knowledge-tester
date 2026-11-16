@@ -335,7 +335,13 @@ def test_the_textbook_prompt_shows_a_file_that_imports_cleanly():
 
     prompt = Path(__file__).resolve().parents[3] / "docs/llm/test-from-textbook.uk.prompt.md"
     blocks = re.findall(r"```json\n(.*?)\n```", prompt.read_text(encoding="utf-8"), re.S)
-    assert len(blocks) == 1
+    assert len(blocks) == 2  # the full example, then the short one with variants
+    with_variants = import_document(blocks[1])
+    assert with_variants.ok and not with_variants.report.warnings
+    assert [v["title"] for v in with_variants.document["test"]["variants"]] == [
+        "Варіант 1",
+        "Варіант 2",
+    ]
     result = import_document(blocks[0])
     assert result.ok and not result.report.warnings, result.report.as_text()
     test = result.document["test"]
