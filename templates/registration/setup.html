@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "First start" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="container-narrow stack">
+  <h1>{% trans "First start" %}</h1>
+  {% if form is None %}
+  <div class="alert alert-warn" role="alert">{% trans "The program is not set up yet. The first account can only be created on the computer that runs it: open this page there." %}</div>
+  {% else %}
+  <p>{% trans "Create your account. It is the administrator of this program: you will make tests and run sessions with it, and you can add accounts for other teachers later." %}</p>
+  <form method="post" class="stack" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-bad" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>
+    {% endif %}
+    {% for field in form %}{% include "manage/_field.html" %}{% endfor %}
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Create my account" %}</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

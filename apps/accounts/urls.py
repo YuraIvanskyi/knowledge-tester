@@ -10,4 +10,5 @@ urlpatterns = [
     # Logout accepts POST only (Django 5+); the nav bar renders a small form.
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.register, name="register"),
+    path("setup/", views.setup, name="setup"),
 ]

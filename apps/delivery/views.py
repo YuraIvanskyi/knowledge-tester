@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 
 from apps.assessments import services as assessment_services
 from apps.assessments.models import Revision
-from apps.core import lan
+from apps.core import backup, lan
 from apps.people.access import students_for
 
 from . import linking, roster, services
@@ -167,6 +167,7 @@ def session_share(request, pk: int):
         "is_open": sitting.status == Sitting.Status.OPEN,
         "group_info": roster.group_summary(sitting) if sitting.group_id else None,
         "present": request.GET.get("present") == "1",
+        "extend_choices": services.EXTEND_CHOICES if stats["timed"] else (),
         # picks the font size class that keeps the URL on one line (see sessions.css)
         "url_size": next((n for n in (30, 34, 38, 42, 48, 56, 64, 80) if len(url) <= n), 96),
     }
@@ -216,6 +217,8 @@ def session_close(request, pk: int):
             request, "delivery/confirm_close.html", {"sitting": sitting, "working": working}
         )
     count = services.close_sitting(sitting)
+    # The results of a lesson exist now: keep a copy (plan §19.4). Never blocks the teacher.
+    backup.backup_quietly("close")
     if count:
         messages.success(
             request,
@@ -228,6 +231,34 @@ def session_close(request, pk: int):
         )
     else:
         messages.success(request, _("Session closed."))
+    return redirect("delivery:share", pk=sitting.pk)
+
+
+@login_required
+@require_POST
+def session_extend(request, pk: int):
+    """Add time for everybody who is still working (a fire drill, a dropped connection)."""
+    sitting = _own_sitting(request, pk)
+    raw = request.POST.get("minutes", "")
+    minutes = int(raw) if raw.isascii() and raw.isdecimal() and len(raw) <= 3 else 0
+    if minutes not in services.EXTEND_CHOICES or sitting.status != Sitting.Status.OPEN:
+        messages.error(request, _("Time can only be added while the session is open."))
+        return redirect("delivery:share", pk=sitting.pk)
+    count = services.extend_time(sitting, minutes)
+    if count:
+        messages.success(
+            request,
+            ngettext(
+                "%(minutes)d more minutes for %(count)d student who is still working. "
+                "The timer on the phone updates within half a minute.",
+                "%(minutes)d more minutes for %(count)d students who are still working. "
+                "The timers on the phones update within half a minute.",
+                count,
+            )
+            % {"minutes": minutes, "count": count},
+        )
+    else:
+        messages.info(request, _("Nobody is working against the clock right now."))
     return redirect("delivery:share", pk=sitting.pk)
 
 

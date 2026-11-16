@@ -14,4 +14,7 @@ urlpatterns = [
     path("teachers/<int:pk>/password/", views.teacher_password, name="teacher_password"),
     path("teachers/<int:pk>/active/", views.teacher_active, name="teacher_active"),
     path("settings/", views.settings_page, name="settings"),
+    path("backups/", views.backups, name="backups"),
+    path("backups/new/", views.backup_create, name="backup_create"),
+    path("backups/<str:name>", views.backup_download, name="backup_download"),
 ]

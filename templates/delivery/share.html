@@ -83,6 +83,14 @@
     </table>
   </section>
 
+  {% if is_open and extend_choices %}
+  <form method="post" action="{% url 'delivery:extend' sitting.pk %}" class="row extend-time" aria-label="{% trans 'Add time' %}">
+    {% csrf_token %}
+    <span>{% trans "Add time for everyone still working:" %}</span>
+    {% for m in extend_choices %}<button type="submit" name="minutes" value="{{ m }}" class="btn">{% blocktrans with n=m %}+{{ n }} min{% endblocktrans %}</button>{% endfor %}
+  </form>
+  {% endif %}
+
   <div class="row share-actions">
     {% if is_open %}
       <form method="post" action="{% url 'delivery:close' sitting.pk %}">

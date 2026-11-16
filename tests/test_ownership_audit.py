@@ -79,6 +79,7 @@ ARGS: dict[str, dict[str, str]] = {
     "delivery:share": {"pk": "sitting"},
     "delivery:stats": {"pk": "sitting"},
     "delivery:close": {"pk": "sitting"},
+    "delivery:extend": {"pk": "sitting"},
     "delivery:reopen": {"pk": "sitting"},
     "delivery:delete": {"pk": "sitting"},
     "delivery:link": {"pk": "sitting"},

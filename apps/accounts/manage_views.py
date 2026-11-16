@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from django.db.models import Count
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -15,6 +16,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from apps.assessments.models import Assessment
+from apps.core import backup
 from apps.delivery.models import Sitting
 
 from . import services
@@ -202,3 +204,45 @@ def settings_page(request):
     if row.allow_registration and row.registration_code:
         register_url = request.build_absolute_uri(reverse("accounts:register"))
     return render(request, "manage/settings.html", {"form": form, "register_url": register_url})
+
+
+# --- backups ------------------------------------------------------------------------------------
+
+
+@admin_required
+def backups(request):
+    context = {
+        "backups": backup.list_backups(),
+        "folder": backup.backup_dir(),
+        "keep": backup.KEEP,
+        "has_database": backup.database_path() is not None,
+    }
+    return render(request, "manage/backups.html", context)
+
+
+@admin_required
+@require_POST
+def backup_create(request):
+    try:
+        made = backup.create_backup("manual")
+    except backup.BackupError as error:
+        messages.error(request, _("The backup failed: %(error)s") % {"error": error})
+    else:
+        if made is None:
+            messages.error(request, _("There is no database file to back up."))
+        else:
+            messages.success(request, _("Backup “%(name)s” created.") % {"name": made.name})
+    return redirect("manage:backups")
+
+
+@admin_required
+def backup_download(request, name: str):
+    found = backup.find_backup(name)
+    if found is None:
+        raise Http404
+    return FileResponse(
+        found.path.open("rb"),
+        as_attachment=True,
+        filename=found.name,
+        content_type="application/vnd.sqlite3",
+    )

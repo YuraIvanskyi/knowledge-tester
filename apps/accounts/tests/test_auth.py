@@ -2,7 +2,7 @@ from django.test import Client
 from django.urls import reverse
 
 
-def test_login_page_renders(client):
+def test_login_page_renders(client, teacher):
     response = client.get(reverse("accounts:login"))
     assert response.status_code == 200
     html = response.content.decode()

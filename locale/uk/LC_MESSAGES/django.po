@@ -20,7 +20,7 @@ msgstr "Введіть пароль."
 msgid "The two passwords do not match."
 msgstr "Паролі не збігаються."
 
-#: apps/accounts/forms.py:63 apps/accounts/forms.py:251
+#: apps/accounts/forms.py:63 apps/accounts/forms.py:251 apps/accounts/forms.py:303
 msgid "Password again"
 msgstr "Пароль ще раз"
 
@@ -32,7 +32,7 @@ msgstr "Ім’я в застосунку"
 msgid "Used to log in. It cannot be changed later."
 msgstr "Потрібне для входу. Пізніше його не можна змінити."
 
-#: apps/accounts/forms.py:75 apps/accounts/forms.py:247
+#: apps/accounts/forms.py:75 apps/accounts/forms.py:247 apps/accounts/forms.py:292
 msgid "For example: Olena Kovalenko."
 msgstr "Наприклад: Олена Коваленко."
 
@@ -41,7 +41,7 @@ msgid "At least 8 characters. Or leave it empty and create the account with a ge
 msgstr ""
 "Щонайменше 8 символів. Або залиште порожнім і створіть обліковий запис зі згенерованим паролем."
 
-#: apps/accounts/forms.py:93 apps/accounts/forms.py:273 apps/accounts/views.py:98
+#: apps/accounts/forms.py:93 apps/accounts/forms.py:273 apps/accounts/views.py:139
 msgid "This username is already taken."
 msgstr "Це ім’я користувача вже зайняте."
 
@@ -117,33 +117,53 @@ msgstr "Код запрошення має містити щонайменше %
 msgid "The invite code is not correct."
 msgstr "Код запрошення неправильний."
 
-#: apps/accounts/manage_views.py:99
+#: apps/accounts/forms.py:299
+msgid "Used to log in. Short and in Latin letters is easiest, for example: olena."
+msgstr "Потрібне для входу. Найзручніше коротке, латинськими літерами, наприклад: olena."
+
+#: apps/accounts/forms.py:307
+msgid "At least 8 characters. Write it down: nobody can reset the first password for you."
+msgstr "Щонайменше 8 символів. Запишіть його: перший пароль ніхто не зможе скинути за вас."
+
+#: apps/accounts/manage_views.py:101
 msgid "Account “%(name)s” created."
 msgstr "Обліковий запис «%(name)s» створено."
 
-#: apps/accounts/manage_views.py:126
+#: apps/accounts/manage_views.py:128
 msgid "Changes saved."
 msgstr "Зміни збережено."
 
-#: apps/accounts/manage_views.py:147
+#: apps/accounts/manage_views.py:149
 msgid "The password of “%(name)s” was changed."
 msgstr "Пароль користувача «%(name)s» змінено."
 
-#: apps/accounts/manage_views.py:176
+#: apps/accounts/manage_views.py:178
 msgid "“%(name)s” can log in again."
 msgstr "«%(name)s» знову може входити."
 
-#: apps/accounts/manage_views.py:180
+#: apps/accounts/manage_views.py:182
 msgid "“%(name)s” can no longer log in. Their data is kept."
 msgstr "«%(name)s» більше не може входити. Дані збережено."
 
-#: apps/accounts/manage_views.py:197
+#: apps/accounts/manage_views.py:199
 msgid "Settings saved with a new invite code."
 msgstr "Налаштування збережено з новим кодом запрошення."
 
-#: apps/accounts/manage_views.py:199 apps/assessments/editor_views.py:82
+#: apps/accounts/manage_views.py:201 apps/assessments/editor_views.py:81
 msgid "Settings saved."
 msgstr "Налаштування збережено."
+
+#: apps/accounts/manage_views.py:229
+msgid "The backup failed: %(error)s"
+msgstr "Не вдалося зробити резервну копію: %(error)s"
+
+#: apps/accounts/manage_views.py:232
+msgid "There is no database file to back up."
+msgstr "Немає файлу бази даних, який можна скопіювати."
+
+#: apps/accounts/manage_views.py:234
+msgid "Backup “%(name)s” created."
+msgstr "Резервну копію «%(name)s» створено."
 
 #: apps/accounts/models.py:8
 msgid "Admin"
@@ -161,13 +181,13 @@ msgstr "Ви не можете змінити власну роль. Попро�
 msgid "This is the last active admin. Make someone else an admin first."
 msgstr "Це останній активний адміністратор. Спершу призначте адміністратором когось іншого."
 
-#: apps/accounts/views.py:48
-msgid "Too many failed sign-in attempts. Wait a few minutes."
-msgstr "Забагато невдалих спроб входу. Зачекайте кілька хвилин."
-
-#: apps/accounts/views.py:102
+#: apps/accounts/views.py:66 apps/accounts/views.py:143
 msgid "Your account is ready. Welcome!"
 msgstr "Ваш обліковий запис готовий. Ласкаво просимо!"
+
+#: apps/accounts/views.py:89
+msgid "Too many failed sign-in attempts. Wait a few minutes."
+msgstr "Забагато невдалих спроб входу. Зачекайте кілька хвилин."
 
 #: apps/assessments/editing.py:210
 msgid "Points must be a number, for example 1 or 1.5."
@@ -201,27 +221,27 @@ msgstr "Прохідний бал має бути відсотком від 0 д
 msgid "Give the test a title."
 msgstr "Вкажіть назву тесту."
 
-#: apps/assessments/editor_views.py:58
+#: apps/assessments/editor_views.py:57
 msgid "Test created. Add the first question."
 msgstr "Тест створено. Додайте перше запитання."
 
-#: apps/assessments/editor_views.py:156
+#: apps/assessments/editor_views.py:155
 msgid "Question saved."
 msgstr "Запитання збережено."
 
-#: apps/assessments/editor_views.py:182
+#: apps/assessments/editor_views.py:181
 msgid "Question deleted."
 msgstr "Запитання видалено."
 
-#: apps/assessments/editor_views.py:212
+#: apps/assessments/editor_views.py:211
 msgid "Question duplicated."
 msgstr "Запитання дубльовано."
 
-#: apps/assessments/editor_views.py:223
+#: apps/assessments/editor_views.py:222
 msgid "Test \"%(title)s\" deleted."
 msgstr "Тест «%(title)s» видалено."
 
-#: apps/assessments/editor_views.py:239
+#: apps/assessments/editor_views.py:238
 msgid "Fix the errors in the test before previewing it."
 msgstr "Виправте помилки в тесті, перш ніж переглядати його."
 
@@ -299,36 +319,40 @@ msgstr ""
 "базу даних SQLite. Перенесіть її за межі такої папки (задайте KT_DATA_DIR; типове значення — "
 "%(default)s)."
 
-#: apps/core/management/commands/serve.py:52
+#: apps/core/management/commands/serve.py:60
 msgid "Collecting static files..."
 msgstr "Збирання статичних файлів..."
 
-#: apps/core/management/commands/serve.py:56
+#: apps/core/management/commands/serve.py:64
 msgid "Data folder: %(path)s"
 msgstr "Папка з даними: %(path)s"
 
-#: apps/core/management/commands/serve.py:59
+#: apps/core/management/commands/serve.py:67 apps/core/management/commands/serve.py:108
 msgid "WARNING: %(text)s"
 msgstr "УВАГА: %(text)s"
 
-#: apps/core/management/commands/serve.py:62
+#: apps/core/management/commands/serve.py:72
 msgid "Open on this computer or on phones in the same network:"
 msgstr "Відкрийте на цьому комп’ютері або на телефонах у тій самій мережі:"
 
-#: apps/core/management/commands/serve.py:70
+#: apps/core/management/commands/serve.py:80
 msgid "If phones cannot connect, run once as administrator (PowerShell):"
 msgstr ""
 "Якщо телефони не можуть підключитися, виконайте один раз від імені адміністратора (PowerShell):"
 
-#: apps/core/management/commands/serve.py:74
+#: apps/core/management/commands/serve.py:84
 msgid "Press Ctrl+C to stop."
 msgstr "Натисніть Ctrl+C, щоб зупинити."
 
-#: apps/core/management/commands/serve.py:84
+#: apps/core/management/commands/serve.py:98
 msgid "Stopped."
 msgstr "Зупинено."
 
-#: apps/core/management/commands/serve.py:96
+#: apps/core/management/commands/serve.py:111
+msgid "Backup: %(path)s"
+msgstr "Резервна копія: %(path)s"
+
+#: apps/core/management/commands/serve.py:133
 msgid "Scan to open %(url)s"
 msgstr "Скануйте, щоб відкрити %(url)s"
 
@@ -481,42 +505,67 @@ msgstr[2] ""
 "%(n)d учнів цього класу ще не мають PIN-коду й не можуть бути вибрані в цій сесії. Створіть PIN-"
 "коди на сторінці класу."
 
-#: apps/delivery/views.py:190
+#: apps/delivery/views.py:191
 msgid "Session reopened. Students can join again with the same link and code."
 msgstr "Сесію відкрито знову. Учні можуть приєднатися за тим самим посиланням і кодом."
 
-#: apps/delivery/views.py:200
+#: apps/delivery/views.py:201
 msgid "Session deleted."
 msgstr "Сесію видалено."
 
-#: apps/delivery/views.py:222
+#: apps/delivery/views.py:225
 msgid "Session closed. %(count)d unfinished attempt was submitted automatically."
 msgid_plural "Session closed. %(count)d unfinished attempts were submitted automatically."
 msgstr[0] "Сесію закрито. %(count)d незавершену спробу надіслано автоматично."
 msgstr[1] "Сесію закрито. %(count)d незавершені спроби надіслано автоматично."
 msgstr[2] "Сесію закрито. %(count)d незавершених спроб надіслано автоматично."
 
-#: apps/delivery/views.py:230
+#: apps/delivery/views.py:233
 msgid "Session closed."
 msgstr "Сесію закрито."
 
-#: apps/delivery/views.py:239
+#: apps/delivery/views.py:245
+msgid "Time can only be added while the session is open."
+msgstr "Додати час можна лише поки сесія відкрита."
+
+#: apps/delivery/views.py:251
+msgid ""
+"%(minutes)d more minutes for %(count)d student who is still working. The timer on the phone "
+"updates within half a minute."
+msgid_plural ""
+"%(minutes)d more minutes for %(count)d students who are still working. The timers on the phones "
+"update within half a minute."
+msgstr[0] ""
+"Додано %(minutes)d хв для %(count)d учня, який ще працює. Таймер на телефоні оновиться протягом "
+"пів хвилини."
+msgstr[1] ""
+"Додано %(minutes)d хв для %(count)d учнів, які ще працюють. Таймери на телефонах оновляться "
+"протягом пів хвилини."
+msgstr[2] ""
+"Додано %(minutes)d хв для %(count)d учнів, які ще працюють. Таймери на телефонах оновляться "
+"протягом пів хвилини."
+
+#: apps/delivery/views.py:261
+msgid "Nobody is working against the clock right now."
+msgstr "Зараз ніхто не працює з обмеженням часу."
+
+#: apps/delivery/views.py:270
 msgid "same name"
 msgstr "те саме ім’я"
 
-#: apps/delivery/views.py:240
+#: apps/delivery/views.py:271
 msgid "same words"
 msgstr "ті самі слова"
 
-#: apps/delivery/views.py:241
+#: apps/delivery/views.py:272
 msgid "similar"
 msgstr "схоже"
 
-#: apps/delivery/views.py:262
+#: apps/delivery/views.py:293
 msgid "No class"
 msgstr "Без класу"
 
-#: apps/delivery/views.py:344
+#: apps/delivery/views.py:375
 msgid ""
 "One of the chosen students is not available (any more). Nothing was saved. Check the list and try "
 "again."
@@ -524,14 +573,14 @@ msgstr ""
 "Одного з вибраних учнів недоступно (вже). Нічого не збережено. Перевірте список і спробуйте ще "
 "раз."
 
-#: apps/delivery/views.py:352
+#: apps/delivery/views.py:383
 msgid "Saved: %(n)d attempt updated."
 msgid_plural "Saved: %(n)d attempts updated."
 msgstr[0] "Збережено: оновлено %(n)d спробу."
 msgstr[1] "Збережено: оновлено %(n)d спроби."
 msgstr[2] "Збережено: оновлено %(n)d спроб."
 
-#: apps/delivery/views.py:360
+#: apps/delivery/views.py:391
 msgid "Nothing to change."
 msgstr "Нічого змінювати."
 
@@ -1055,7 +1104,7 @@ msgid "Delete question %(n)s"
 msgstr "Видалити запитання %(n)s"
 
 #: templates/assessments/detail.html:88 templates/delivery/list.html:30
-#: templates/delivery/share.html:102
+#: templates/delivery/share.html:110
 msgid "Delete"
 msgstr "Видалити"
 
@@ -1648,7 +1697,7 @@ msgid "Open sessions"
 msgstr "Відкриті сесії"
 
 #: templates/core/dashboard.html:37 templates/delivery/pick.html:36
-#: templates/delivery/share.html:101 templates/people/roster/group.html:88
+#: templates/delivery/share.html:109 templates/people/roster/group.html:88
 msgid "All sessions"
 msgstr "Усі сесії"
 
@@ -1701,7 +1750,7 @@ msgstr "Приєднатися"
 msgid "Teacher log in"
 msgstr "Вхід для вчителя"
 
-#: templates/delivery/_identity.html:9
+#: apps/accounts/forms.py:290 templates/delivery/_identity.html:9
 msgid "Your name"
 msgstr "Ваше ім’я"
 
@@ -1746,7 +1795,7 @@ msgid "Ask your teacher for the access code."
 msgstr "Запитайте код доступу у вчителя."
 
 #: templates/delivery/confirm_close.html:3 templates/delivery/confirm_close.html:16
-#: templates/delivery/share.html:90
+#: templates/delivery/share.html:98
 msgid "Close session"
 msgstr "Закрити сесію"
 
@@ -1899,7 +1948,7 @@ msgid "No open session has the code \"%(entered)s\". Check the code and try agai
 msgstr "Відкритої сесії з кодом «%(entered)s» не знайдено. Перевірте код і спробуйте ще раз."
 
 #: templates/delivery/link.html:3 templates/delivery/link.html:9 templates/delivery/list.html:30
-#: templates/delivery/share.html:99 templates/reports/session.html:16
+#: templates/delivery/share.html:107 templates/reports/session.html:16
 msgid "Link to students"
 msgstr "Прив’язати до учнів"
 
@@ -1907,7 +1956,7 @@ msgstr "Прив’язати до учнів"
 msgid "Session page"
 msgstr "Сторінка сесії"
 
-#: templates/delivery/link.html:14 templates/delivery/list.html:30 templates/delivery/share.html:98
+#: templates/delivery/link.html:14 templates/delivery/list.html:30 templates/delivery/share.html:106
 #: templates/reports/session.html:3 templates/reports/session.html:10
 msgid "Results"
 msgstr "Результати"
@@ -2161,11 +2210,23 @@ msgstr "Дано відповідей"
 msgid "of"
 msgstr "з"
 
-#: templates/delivery/share.html:95
+#: templates/delivery/share.html:87
+msgid "Add time"
+msgstr "Додати час"
+
+#: templates/delivery/share.html:89
+msgid "Add time for everyone still working:"
+msgstr "Додати час усім, хто ще працює:"
+
+#: templates/delivery/share.html:90
+msgid "+%(n)s min"
+msgstr "+%(n)s хв"
+
+#: templates/delivery/share.html:103
 msgid "Reopen session"
 msgstr "Відкрити сесію знову"
 
-#: templates/delivery/share.html:100
+#: templates/delivery/share.html:108
 msgid "Presentation mode"
 msgstr "Режим показу"
 
@@ -2255,6 +2316,87 @@ msgstr "Вчителі"
 msgid "Settings"
 msgstr "Налаштування"
 
+#: templates/manage/_subnav.html:6 templates/manage/backups.html:3 templates/manage/backups.html:9
+msgid "Backups"
+msgstr "Резервні копії"
+
+#: templates/manage/backups.html:13
+msgid "Back up now"
+msgstr "Зробити копію зараз"
+
+#: templates/manage/backups.html:18
+msgid ""
+"A backup is a copy of the whole database: tests, sessions, answers, classes and accounts. One is "
+"made every time the program starts and every time a session is closed. The newest %(n)s are kept."
+msgstr ""
+"Резервна копія — це копія всієї бази даних: тести, сесії, відповіді, класи й облікові записи. Вона"
+" створюється під час кожного запуску програми та щоразу, коли закривається сесія. Зберігаються "
+"%(n)s найновіших."
+
+#: templates/manage/backups.html:19
+msgid "Folder with the backups:"
+msgstr "Папка з резервними копіями:"
+
+#: templates/manage/backups.html:20
+msgid ""
+"From time to time download a backup and keep it on a USB stick or another computer: a copy on the "
+"same disk does not help if the laptop breaks."
+msgstr ""
+"Час від часу завантажуйте копію й зберігайте її на флешці або іншому комп'ютері: копія на тому "
+"самому диску не допоможе, якщо ноутбук зламається."
+
+#: templates/manage/backups.html:26 templates/manage/backups.html:35
+msgid "Made"
+msgstr "Створено"
+
+#: templates/manage/backups.html:27 templates/manage/backups.html:36
+msgid "When"
+msgstr "Коли"
+
+#: templates/manage/backups.html:28 templates/manage/backups.html:37
+msgid "Size"
+msgstr "Розмір"
+
+#: templates/manage/backups.html:29
+msgid "File"
+msgstr "Файл"
+
+#: templates/manage/backups.html:36
+msgid "at start"
+msgstr "під час запуску"
+
+#: templates/manage/backups.html:36
+msgid "session closed"
+msgstr "закрито сесію"
+
+#: templates/manage/backups.html:36
+msgid "before a restore"
+msgstr "перед відновленням"
+
+#: templates/manage/backups.html:36
+msgid "by hand"
+msgstr "вручну"
+
+#: templates/manage/backups.html:38 templates/people/profile/student.html:158
+msgid "Download"
+msgstr "Завантажити"
+
+#: templates/manage/backups.html:44
+msgid "No backups yet."
+msgstr "Резервних копій ще немає."
+
+#: templates/manage/backups.html:48
+msgid "Restoring a backup"
+msgstr "Відновлення з копії"
+
+#: templates/manage/backups.html:49
+msgid ""
+"Restoring replaces all current data, so it is done outside the browser: stop the program, then run"
+" this command in the program folder (the current data is backed up first):"
+msgstr ""
+"Відновлення замінює всі поточні дані, тому воно робиться не в браузері: зупиніть програму й "
+"виконайте цю команду в папці програми (поточні дані спершу буде збережено в окрему копію):"
+
 #: templates/manage/home.html:10 templates/manage/teacher_create.html:3
 #: templates/manage/teacher_create.html:9 templates/manage/teachers.html:10
 #: templates/manage/teachers.html:76
@@ -2327,6 +2469,10 @@ msgstr "Створити обліковий запис для нового вч�
 msgid "Set the school name and the registration rules."
 msgstr "Вказати назву школи та правила реєстрації."
 
+#: templates/manage/home.html:53
+msgid "Make or download a backup of all data."
+msgstr "Зробити або завантажити резервну копію всіх даних."
+
 #: templates/manage/settings.html:17
 msgid "Registration page:"
 msgstr "Сторінка реєстрації:"
@@ -2361,9 +2507,10 @@ msgstr ""
 msgid "Set or reset password"
 msgstr "Встановити або скинути пароль"
 
-#: apps/accounts/forms.py:69 apps/accounts/forms.py:238 templates/manage/teacher_edit.html:14
-#: templates/manage/teacher_password.html:15 templates/manage/teachers.html:27
-#: templates/manage/teachers.html:40 templates/registration/login.html:14
+#: apps/accounts/forms.py:69 apps/accounts/forms.py:238 apps/accounts/forms.py:296
+#: templates/manage/teacher_edit.html:14 templates/manage/teacher_password.html:15
+#: templates/manage/teachers.html:27 templates/manage/teachers.html:40
+#: templates/registration/login.html:14
 msgid "Username"
 msgstr "Ім’я користувача"
 
@@ -2374,8 +2521,9 @@ msgstr[0] "%(n)s сесія"
 msgstr[1] "%(n)s сесії"
 msgstr[2] "%(n)s сесій"
 
-#: apps/accounts/forms.py:62 apps/accounts/forms.py:250 templates/manage/teacher_password.html:3
-#: templates/manage/teachers.html:49 templates/registration/login.html:19
+#: apps/accounts/forms.py:62 apps/accounts/forms.py:250 apps/accounts/forms.py:302
+#: templates/manage/teacher_password.html:3 templates/manage/teachers.html:49
+#: templates/registration/login.html:19
 msgid "Password"
 msgstr "Пароль"
 
@@ -2811,10 +2959,6 @@ msgstr "Простий текст, до %(n)s символів. Ваші нот�
 #: templates/people/profile/student.html:153
 msgid "Save notes"
 msgstr "Зберегти нотатки"
-
-#: templates/people/profile/student.html:158
-msgid "Download"
-msgstr "Завантажити"
 
 #: templates/people/profile/student.html:162 templates/reports/_pdf_form.html:24
 msgid "Paper"
@@ -3410,13 +3554,33 @@ msgstr ""
 msgid "Ask your administrator for the invite code."
 msgstr "Попросіть код запрошення в адміністратора."
 
-#: templates/registration/register.html:18
+#: templates/registration/register.html:18 templates/registration/setup.html:18
 msgid "Create my account"
 msgstr "Створити мій обліковий запис"
 
 #: templates/registration/register.html:21
 msgid "I already have an account"
 msgstr "У мене вже є обліковий запис"
+
+#: templates/registration/setup.html:3 templates/registration/setup.html:7
+msgid "First start"
+msgstr "Перший запуск"
+
+#: templates/registration/setup.html:9
+msgid ""
+"The program is not set up yet. The first account can only be created on the computer that runs it:"
+" open this page there."
+msgstr ""
+"Програму ще не налаштовано. Перший обліковий запис можна створити лише на комп'ютері, де вона "
+"запущена: відкрийте цю сторінку там."
+
+#: templates/registration/setup.html:11
+msgid ""
+"Create your account. It is the administrator of this program: you will make tests and run sessions"
+" with it, and you can add accounts for other teachers later."
+msgstr ""
+"Створіть свій обліковий запис. Це адміністратор програми: з ним ви створюватимете тести й "
+"проводитимете сесії, а згодом зможете додати облікові записи іншим учителям."
 
 #: templates/reports/_pdf_form.html:3
 msgid "Download all as PDF"

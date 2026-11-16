@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Backups" %} - Knowledge Tester{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/manage.css' %}">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "manage/_subnav.html" %}
+  <div class="page-head">
+    <h1>{% trans "Backups" %}</h1>
+    {% if has_database %}
+    <form method="post" action="{% url 'manage:backup_create' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">{% trans "Back up now" %}</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <p>{% blocktrans with n=keep %}A backup is a copy of the whole database: tests, sessions, answers, classes and accounts. One is made every time the program starts and every time a session is closed. The newest {{ n }} are kept.{% endblocktrans %}</p>
+  <p>{% trans "Folder with the backups:" %} <span class="mono wrap">{{ folder }}</span></p>
+  <p class="muted">{% trans "From time to time download a backup and keep it on a USB stick or another computer: a copy on the same disk does not help if the laptop breaks." %}</p>
+
+  {% if backups %}
+  <table class="table table-compact">
+    <thead>
+      <tr>
+        <th scope="col">{% trans "Made" %}</th>
+        <th scope="col">{% trans "When" %}</th>
+        <th scope="col" class="num">{% trans "Size" %}</th>
+        <th scope="col">{% trans "File" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in backups %}
+      <tr>
+        <td class="cell-title" data-label="{% trans 'Made' %}"><span><time datetime="{{ b.created|date:'c' }}">{{ b.created|date:"SHORT_DATETIME_FORMAT" }}</time></span></td>
+        <td data-label="{% trans 'When' %}">{% if b.reason == "start" %}{% trans "at start" %}{% elif b.reason == "close" %}{% trans "session closed" %}{% elif b.reason == "restore" %}{% trans "before a restore" %}{% else %}{% trans "by hand" %}{% endif %}</td>
+        <td data-label="{% trans 'Size' %}" class="num">{{ b.size|filesizeformat }}</td>
+        <td class="cell-actions"><a class="btn" href="{% url 'manage:backup_download' b.name %}">{% trans "Download" %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">{% trans "No backups yet." %}</p>
+  {% endif %}
+
+  <section class="stack-sm">
+    <h2>{% trans "Restoring a backup" %}</h2>
+    <p>{% trans "Restoring replaces all current data, so it is done outside the browser: stop the program, then run this command in the program folder (the current data is backed up first):" %}</p>
+    <p class="mono wrap">python -m uv run manage.py restore {% if backups %}{{ backups.0.name }}{% else %}kt-....sqlite3{% endif %}</p>
+  </section>
+</div>
+{% endblock %}

@@ -46,7 +46,7 @@ def test_register_is_404_when_on_without_a_code(anon_client):
     assert anon_client.post(URL, data(code="")).status_code == 404
 
 
-def test_login_page_links_to_register_only_when_enabled(anon_client):
+def test_login_page_links_to_register_only_when_enabled(anon_client, teacher):
     login = reverse("accounts:login")
     assert URL not in text(anon_client.get(login))
     row = SystemSettings.load()

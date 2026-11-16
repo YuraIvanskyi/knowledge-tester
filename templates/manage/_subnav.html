@@ -3,5 +3,6 @@
   <a href="{% url 'manage:home' %}"{% if current == 'home' %} aria-current="page"{% endif %}>{% trans "Overview" %}</a>
   <a href="{% url 'manage:teachers' %}"{% if current == 'teachers' or current == 'teacher_create' or current == 'teacher_edit' or current == 'teacher_password' %} aria-current="page"{% endif %}>{% trans "Teachers" %}</a>
   <a href="{% url 'manage:settings' %}"{% if current == 'settings' %} aria-current="page"{% endif %}>{% trans "Settings" %}</a>
+  <a href="{% url 'manage:backups' %}"{% if current == 'backups' %} aria-current="page"{% endif %}>{% trans "Backups" %}</a>
 </nav>
 {% endwith %}

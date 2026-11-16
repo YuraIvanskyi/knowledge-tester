@@ -9,7 +9,7 @@ def test_healthz(client):
     assert client.get("/healthz").status_code == 200
 
 
-def test_login_page_renders(client):
+def test_login_page_renders(client, teacher):
     assert client.get(reverse("accounts:login")).status_code == 200
 
 

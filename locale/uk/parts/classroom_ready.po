@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Used to log in. Short and in Latin letters is easiest, for example: olena."
+msgstr "Потрібне для входу. Найзручніше коротке, латинськими літерами, наприклад: olena."
+
+msgid "At least 8 characters. Write it down: nobody can reset the first password for you."
+msgstr "Щонайменше 8 символів. Запишіть його: перший пароль ніхто не зможе скинути за вас."
+
+msgid "The backup failed: %(error)s"
+msgstr "Не вдалося зробити резервну копію: %(error)s"
+
+msgid "There is no database file to back up."
+msgstr "Немає файлу бази даних, який можна скопіювати."
+
+msgid "Backup “%(name)s” created."
+msgstr "Резервну копію «%(name)s» створено."
+
+msgid "Backup: %(path)s"
+msgstr "Резервна копія: %(path)s"
+
+msgid "Time can only be added while the session is open."
+msgstr "Додати час можна лише поки сесія відкрита."
+
+msgid "%(minutes)d more minutes for %(count)d student who is still working. The timer on the phone updates within half a minute."
+msgid_plural "%(minutes)d more minutes for %(count)d students who are still working. The timers on the phones update within half a minute."
+msgstr[0] "Додано %(minutes)d хв для %(count)d учня, який ще працює. Таймер на телефоні оновиться протягом пів хвилини."
+msgstr[1] "Додано %(minutes)d хв для %(count)d учнів, які ще працюють. Таймери на телефонах оновляться протягом пів хвилини."
+msgstr[2] "Додано %(minutes)d хв для %(count)d учнів, які ще працюють. Таймери на телефонах оновляться протягом пів хвилини."
+
+msgid "Nobody is working against the clock right now."
+msgstr "Зараз ніхто не працює з обмеженням часу."
+
+msgid "Add time"
+msgstr "Додати час"
+
+msgid "Add time for everyone still working:"
+msgstr "Додати час усім, хто ще працює:"
+
+msgid "+%(n)s min"
+msgstr "+%(n)s хв"
+
+msgid "Backups"
+msgstr "Резервні копії"
+
+msgid "Back up now"
+msgstr "Зробити копію зараз"
+
+msgid "A backup is a copy of the whole database: tests, sessions, answers, classes and accounts. One is made every time the program starts and every time a session is closed. The newest %(n)s are kept."
+msgstr "Резервна копія — це копія всієї бази даних: тести, сесії, відповіді, класи й облікові записи. Вона створюється під час кожного запуску програми та щоразу, коли закривається сесія. Зберігаються %(n)s найновіших."
+
+msgid "Folder with the backups:"
+msgstr "Папка з резервними копіями:"
+
+msgid "From time to time download a backup and keep it on a USB stick or another computer: a copy on the same disk does not help if the laptop breaks."
+msgstr "Час від часу завантажуйте копію й зберігайте її на флешці або іншому комп'ютері: копія на тому самому диску не допоможе, якщо ноутбук зламається."
+
+msgid "Made"
+msgstr "Створено"
+
+msgid "When"
+msgstr "Коли"
+
+msgid "Size"
+msgstr "Розмір"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "at start"
+msgstr "під час запуску"
+
+msgid "session closed"
+msgstr "закрито сесію"
+
+msgid "before a restore"
+msgstr "перед відновленням"
+
+msgid "by hand"
+msgstr "вручну"
+
+msgid "No backups yet."
+msgstr "Резервних копій ще немає."
+
+msgid "Restoring a backup"
+msgstr "Відновлення з копії"
+
+msgid "Restoring replaces all current data, so it is done outside the browser: stop the program, then run this command in the program folder (the current data is backed up first):"
+msgstr "Відновлення замінює всі поточні дані, тому воно робиться не в браузері: зупиніть програму й виконайте цю команду в папці програми (поточні дані спершу буде збережено в окрему копію):"
+
+msgid "Make or download a backup of all data."
+msgstr "Зробити або завантажити резервну копію всіх даних."
+
+msgid "First start"
+msgstr "Перший запуск"
+
+msgid "The program is not set up yet. The first account can only be created on the computer that runs it: open this page there."
+msgstr "Програму ще не налаштовано. Перший обліковий запис можна створити лише на комп'ютері, де вона запущена: відкрийте цю сторінку там."
+
+msgid "Create your account. It is the administrator of this program: you will make tests and run sessions with it, and you can add accounts for other teachers later."
+msgstr "Створіть свій обліковий запис. Це адміністратор програми: з ним ви створюватимете тести й проводитимете сесії, а згодом зможете додати облікові записи іншим учителям."

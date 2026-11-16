@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 
 from . import services
-from .forms import RegisterForm
+from .forms import RegisterForm, SetupForm
 from .models import SystemSettings, User
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,42 @@ def registration_is_open() -> SystemSettings | None:
     return None
 
 
+LOCAL_ADDRESSES = ("127.0.0.1", "::1", "::ffff:127.0.0.1")
+
+
+def needs_setup() -> bool:
+    """True until the first account exists (a fresh data folder)."""
+    return not User.objects.exists()
+
+
+@never_cache
+def setup(request):
+    """First run: create the first admin account in the browser, on the host computer only.
+
+    Once any account exists the page is gone. A phone on the network that finds the server
+    before the teacher does only sees where to go, never the form.
+    """
+    if not needs_setup():
+        return redirect("accounts:login")
+    if request.META.get("REMOTE_ADDR") not in LOCAL_ADDRESSES:
+        return render(request, "registration/setup.html", {"form": None}, status=403)
+    form = SetupForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        with transaction.atomic():
+            # Re-checked under the write lock: two browser tabs must not both create "the first".
+            if User.objects.select_for_update().exists():
+                return redirect("accounts:login")
+            user = User.objects.create_superuser(
+                form.cleaned_data["username"],
+                password=form.new_password,
+                display_name=form.cleaned_data["display_name"],
+            )
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        messages.success(request, _("Your account is ready. Welcome!"))
+        return redirect("core:dashboard")
+    return render(request, "registration/setup.html", {"form": form})
+
+
 class LoginView(DjangoLoginView):
     """Django's login, plus a "Register" link when self-registration is on.
 
@@ -41,6 +77,11 @@ class LoginView(DjangoLoginView):
 
     template_name = "registration/login.html"
     redirect_authenticated_user = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if needs_setup():
+            return redirect("accounts:setup")
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if services.LOGIN_PER_CLIENT.blocked(services.client_ident(request)):

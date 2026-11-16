@@ -279,3 +279,42 @@ class RegisterForm(PasswordChoiceMixin, forms.Form):
 
     def clean_display_name(self):
         return self.cleaned_data["display_name"].strip()
+
+
+class SetupForm(PasswordChoiceMixin, forms.Form):
+    """First run: the very first account (an admin). Offered only while no account exists."""
+
+    allow_generate = False
+
+    display_name = forms.CharField(
+        label=_("Your name"),
+        max_length=User._meta.get_field("display_name").max_length,
+        help_text=_("For example: Olena Kovalenko."),
+        widget=forms.TextInput(attrs={"autocomplete": "name", "autofocus": True}),
+    )
+    username = forms.CharField(
+        label=_("Username"),
+        max_length=User._meta.get_field("username").max_length,
+        validators=User._meta.get_field("username").validators,
+        help_text=_("Used to log in. Short and in Latin letters is easiest, for example: olena."),
+        widget=forms.TextInput(attrs={"autocapitalize": "none", "autocomplete": "username"}),
+    )
+    password1 = _password_field(_("Password"))
+    password2 = _password_field(_("Password again"))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password1"].help_text = _(
+            "At least 8 characters. Write it down: nobody can reset the first password for you."
+        )
+
+    def clean(self):
+        cleaned = super().clean()
+        self.clean_password_choice(User(username=cleaned.get("username") or ""))
+        return cleaned
+
+    def clean_username(self):
+        return User.normalize_username(self.cleaned_data["username"])
+
+    def clean_display_name(self):
+        return self.cleaned_data["display_name"].strip()

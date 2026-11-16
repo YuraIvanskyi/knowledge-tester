@@ -248,6 +248,32 @@ def enforce_deadline(attempt: Attempt) -> bool:
     return attempt.is_finished
 
 
+EXTEND_CHOICES = (5, 10, 15)  # minutes a teacher can add in one step
+
+
+def extend_time(sitting: Sitting, minutes: int) -> int:
+    """Give every attempt that is still in progress ``minutes`` more. Returns how many.
+
+    An attempt whose time ran out a moment ago but that is not submitted yet counts from now,
+    so "5 more minutes" always means at least 5 minutes. Attempts without a time limit, and
+    students who start later (they get the full time anyway), are not touched.
+    """
+    if minutes <= 0:
+        return 0
+    extra = timedelta(minutes=minutes)
+    count = 0
+    with transaction.atomic():
+        attempts = sitting.attempts.select_for_update().filter(
+            status=Attempt.Status.IN_PROGRESS, deadline_at__isnull=False
+        )
+        now = timezone.now()
+        for attempt in attempts:
+            attempt.deadline_at = max(attempt.deadline_at, now) + extra
+            attempt.save(update_fields=["deadline_at"])
+            count += 1
+    return count
+
+
 def close_sitting(sitting: Sitting) -> int:
     """Close a session and finalise all of its in-progress attempts. Returns how many."""
     if sitting.status != Sitting.Status.CLOSED:
@@ -347,6 +373,7 @@ def session_stats(sitting: Sitting) -> dict:
         )
         linked += 1 if attempt.student_id else 0
     return {
+        "timed": time_limit_minutes(test) is not None,
         "joined": len(takers),
         "linked": linked,
         "in_progress": in_progress,
