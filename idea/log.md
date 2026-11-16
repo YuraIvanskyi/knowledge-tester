@@ -4,6 +4,17 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-16: Variants of a test, and a Help page with the prompt
+
+- **Format:** a test has `questions` or `variants: [{id?, title?, questions}]` (2 to 10), never both; settings and grading are shared. Question ids are unique in the whole test (an answer is stored under the question id alone), generated ids keep counting across variants, variant ids are `v1`, `v2`, ... One variant is folded into a plain test with a warning; unequal point totals warn. Schema regenerated; example `docs/examples/variants.json`.
+- **One rule in the code:** `apps/exchange/variants.py` has `view(test, variant_id)`, the same test with the plain questions of one variant. `Attempt.variant` (migration 0003) stores which one, and `attempt.test` returns the view; taking, autosave, submit, grading, the attempt sheet and the PDF read that, so they needed almost no change. Session-level code (counts, live table, statistics, CSV) uses the helpers.
+- **Who gets which:** the questions are on the page before the attempt exists, and the attempt takes the page's token, so the variant is a pure function of the token (`for_token`). To split a class evenly, `services.new_token` keeps a per-session counter in the cache (random start) and draws tokens until one maps to the variant whose turn it is. Measured in the browser: four students in a row got 1, 2, 1, 2. A reload gives the next variant (the attempt does not exist yet); once the first answer is saved the variant is fixed. Answers posted for another variant's questions are not stored.
+- **Teacher side:** the test page lists each variant with its own "add a question" links, "Add a variant" (a copy of the last one, to be edited) and "Delete variant" (one left = plain test again); preview has a variant switcher; the session results get a Variant column, statistics per variant over its own takers, the CSV a Variant column with question columns by position; sheets and PDFs name the variant.
+- **Help page** (`/teach/help/`, in the menu, linked from Import): the textbook prompt in a read-only box with a Copy button, and the follow-up requests. `apps/core/prompts.py` cuts them out of `docs/llm/test-from-textbook.uk.prompt.md`, so the file stays the single source. The copy button uses `execCommand` first because the Clipboard API does not exist on plain HTTP; with a real click over the LAN address it reports "Copied". The prompt now has a "number of variants" parameter, rules for equivalent variants and a second JSON example (both examples are imported by a test).
+- **Also:** the first-run page accepts the host's own LAN address, not only localhost.
+- **Verified:** 1635 tests, ruff and `i18n check` clean (844 entries); headless Edge over the LAN address, 25 of 25 (help page and copy, import with variants, add/delete a variant, preview switcher, four students split 2/2 with different questions, live table, results).
+- **Not done:** renaming a variant in the browser (titles come from the file; otherwise "Variant N" in the reader's language); the gradebook does not show the variant; the prompt has still not been run on a real PDF.
+
 ## 2026-11-16: Classroom readiness: backups, launcher, first-run page, extra time
 
 - **Why:** a readiness review found the system working (1490 tests, lint clean) but with four gaps that matter in a real lesson: no backups at all, no way to give students more time, a start that needs a terminal and `createsuperuser`, and nothing that helps when phones cannot connect.

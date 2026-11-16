@@ -76,7 +76,7 @@ scripts\check.ps1                            # ruff check, ruff format --check, 
 python -m uv run pytest apps/core apps/accounts tests
 ```
 
-The full suite (about 1,560 tests) takes about a minute. pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text, and a cheap password hasher (real PBKDF2 made the suite take 25+ minutes). Keep the `xlsx` extra installed (`uv sync --extra xlsx`; a bare `uv sync` removes it) or the XLSX import tests fail. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
+The full suite (about 1,640 tests) takes about a minute. pytest uses `config.settings.test`, which sets English as the default language so that older tests can assert English text, and a cheap password hasher (real PBKDF2 made the suite take 25+ minutes). Keep the `xlsx` extra installed (`uv sync --extra xlsx`; a bare `uv sync` removes it) or the XLSX import tests fail. The application itself (`dev`, `lan`) defaults to Ukrainian. Tests of Ukrainian behaviour select it explicitly (see `apps/core/tests/test_i18n.py`).
 
 `tests/test_offline.py` renders key pages and scans `static/` for external URLs, inline `<style>`, `style=`, inline scripts and `on*=` handlers (the CSP is `default-src 'self'`). Add new pages to `page_responses` there.
 
@@ -120,6 +120,8 @@ Rules for contributors:
 - **Cancel an attempt** (attempt sheet, "Cancel attempt"): the attempt no longer counts in results, the gradebook or the profile, and the student can take the test again while the session is open. It cannot be undone.
 - **Closing a session** asks first when somebody is still working; their answers so far are submitted automatically. A closed session can be reopened.
 - **Adding time:** on the session page, "+5 / +10 / +15 min" extends the deadline of everyone who is still working (students who start later get the full time anyway). The student's page asks the server for the time left every 30 seconds and once more before the automatic submit (`static/js/timer.js`, an autosave request without answers), so the countdown follows; the same poll moves a student to the result page when the session was closed.
+- **Variants:** a test can hold several parallel versions (`test.variants` in the file, or "Add a variant" on the test page, which copies the questions to be changed). Every taker gets one, handed out in turn from a random start, so the class is split evenly; the taker sees the variant's name, and results, sheets and the CSV say who had which. Format: [docs/exchange-format.md](docs/exchange-format.md).
+- **Help page (`/teach/help/`, in the menu):** the prompt that turns a PDF textbook into an importable test, with a Copy button, plus the follow-up requests. The text is cut out of `docs/llm/test-from-textbook.uk.prompt.md` at run time (`apps/core/prompts.py`), so there is one source.
 - **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt".
 
 ## Load test
@@ -137,7 +139,7 @@ config/            Django project (settings: base, dev, lan)
 apps/core/         landing, dashboard, healthz, `serve` command, LAN/IP helpers
 apps/accounts/     custom User (admin/teacher roles), login, /manage/ admin area, registration
 apps/assessments/  projects and tests (Test Document JSON), publishing
-apps/exchange/     JSON import/export and validation
+apps/exchange/     JSON import/export and validation; variants.py = helpers for tests with variants
 apps/delivery/     sessions, share/QR screen, taker flow, group name picker, linking
 apps/people/       groups, students, roster import, profile, gradebook, ownership helpers
 apps/grading/      pure scoring engine and grade scales
@@ -156,5 +158,6 @@ idea/              plan, ADRs, issues, board
 
 - UI rules (plan section 17): system fonts, one accent colour, no gradients or shadows, radius at most 6px, no emoji, tap targets of 44px, inputs of 16px or more. The CSS vocabulary is documented in the contracts file.
 - No inline styles or scripts (CSP). Wrap user-visible strings for translation (see Translations).
+- Code that works for **one attempt** (taking, grading, sheets) reads `attempt.test`, which is the test with the plain `questions` of that taker's variant; never `sitting.revision.test["questions"]`, which does not exist for a test with variants. Code for a whole test or session uses `apps.exchange.variants` (`all_questions`, `view`, `question_count`, `label`).
 - Every teacher view needs `@login_required` and an ownership check (404 for foreign ids). Pages under `/manage/` use `apps.accounts.permissions.admin_required`.
 - Run `scripts\check.ps1` before committing.

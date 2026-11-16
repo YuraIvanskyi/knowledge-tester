@@ -51,6 +51,8 @@ This board is the single source of truth for status. The task content lives in [
 - [x] Launcher `Start.cmd` + first-run page for the first admin + firewall/network-profile help (KT-902) · 2026-11-16
 - [x] Extra time for students still working; the student's timer follows the server (KT-307, extend part) · 2026-11-16
 - [x] Teacher guide in Ukrainian (KT-907) and the textbook-PDF prompt (KT-108 follow-up) · 2026-11-16
+- [x] Variants of a test: format, import, editor (add as a copy, delete), handing out in turn, grading, results, CSV, PDF, prompt · 2026-11-16
+- [x] Help page in the menu with the textbook prompt to copy · 2026-11-16
 - [ ] **Trial lesson on real phones** over the classroom Wi-Fi (KT-005 manual check): only headless Edge has been used so far; the elevated path of `allow-phones.ps1` is also untested
 - [ ] "One question per page" is offered in the test settings but ignored when taking the test: implement or remove the checkbox
 - [ ] `ALLOWED_HOSTS` from the LAN addresses (KT-005); network diagnostics page (KT-903): the launcher and the guide cover the common cases for now
@@ -191,6 +193,8 @@ _Nothing yet._
 
 ### Unplanned / ideas
 _New ideas go here first, then into the plan once they're accepted._
+
+- Variants, follow-ups: rename a variant in the browser; a parameter form on the Help page that fills the prompt's brackets; choose a fixed variant per student in a class session; gradebook column per variant
 
 - Additional question types: true/false, matching, ordering, rating (plan §9.1)
 - Math formulas (KaTeX, loaded only when a test uses it)
