@@ -11,8 +11,12 @@ indent_size = 4
 [*.{html,css,js,json,yml,yaml,toml,md}]
 indent_size = 2
 
-[*.{ps1,bat}]
+[*.{ps1,bat,cmd}]
 end_of_line = crlf
+
+# Windows PowerShell 5.1 reads a file without a BOM as ANSI and garbles Cyrillic text.
+[*.ps1]
+charset = utf-8-bom
 
 [*.md]
 trim_trailing_whitespace = false
