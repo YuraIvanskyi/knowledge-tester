@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# F-07: the test as a printable PDF for a written (paper) test.
+# apps/reports/paper_pdf.py
+
+msgid "(%(n)s point)"
+msgid_plural "(%(n)s points)"
+msgstr[0] "(%(n)s бал)"
+msgstr[1] "(%(n)s бали)"
+msgstr[2] "(%(n)s балів)"
+
+msgctxt "fractional number of points"
+msgid "(%(n)s points)"
+msgstr "(%(n)s бала)"
+
+msgid "Choose one answer."
+msgstr "Оберіть одну відповідь."
+
+msgid "○ – mark one answer"
+msgstr "○ – позначте одну відповідь"
+
+msgid "□ – mark as many as the question asks"
+msgstr "□ – позначте стільки, скільки просить питання"
+
+msgid "write other answers on the lines"
+msgstr "інші відповіді пишіть у рядках"
+
+msgid "Open question: the teacher grades it."
+msgstr "Відкрите питання: оцінює вчитель."
+
+msgid "Answer key"
+msgstr "Ключ відповідей"
+
+msgid "For the teacher. Do not hand out."
+msgstr "Для вчителя. Учням не роздавати."
+
+msgid "written test"
+msgstr "письмова робота"
+
+# apps/assessments/paper_views.py
+
+msgid "Cannot print: the test has errors. See the list below."
+msgstr "Не вдається надрукувати: у тесті є помилки. Перелік нижче."
+
+# templates/assessments/_paper_form.html
+
+msgid "Print for a written test"
+msgstr "Друк для письмової роботи"
+
+msgid "Answer sheets to print: the test as it is now, in its own order, with blanks for the name and boxes or lines for the answers."
+msgstr "Бланки для друку: тест у теперішньому вигляді, питання в його власному порядку, з рядками для імені та кружечками, квадратиками чи рядками для відповідей."
+
+msgid "All variants"
+msgstr "Усі варіанти"
+
+msgid "Copies of each variant"
+msgstr "Примірників кожного варіанта"
+
+msgid "Copies"
+msgstr "Примірників"
+
+msgid "Every copy starts on a new page, so a class set prints in one go."
+msgstr "Кожен примірник починається з нової сторінки, тож комплект на клас друкується за один раз."
+
+msgid "Add the answer key at the end (for the teacher)"
+msgstr "Додати ключ відповідей у кінці (для вчителя)"

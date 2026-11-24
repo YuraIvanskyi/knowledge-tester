@@ -213,3 +213,33 @@
   padding-top: 0.75rem;
   border-top: 1px solid var(--border);
 }
+
+/* "Print for a written test" box on the test page: a button in the action row; once opened it
+   takes the whole row, so the form sits under the buttons instead of beside them. */
+.paper-box > summary {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.paper-box > summary::-webkit-details-marker {
+  display: none;
+}
+
+.paper-box[open] {
+  flex-basis: 100%;
+}
+
+.paper-box[open] > summary {
+  border-color: var(--text);
+}
+
+.paper-form {
+  margin-top: var(--space-3);
+  max-width: 28rem;
+}
+
+.paper-form input[type="number"] {
+  max-width: 8rem;
+}

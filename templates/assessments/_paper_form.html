@@ -1,0 +1,35 @@
+{% load i18n %}
+{% comment %}
+  Print the test for a written (paper) test: a GET form for assessments:paper_pdf.
+  Needs `assessment` and `groups` (one per variant, with id and label, from the detail view).
+{% endcomment %}
+<details class="paper-box">
+  <summary class="btn">{% trans "Print for a written test" %}</summary>
+  <form method="get" action="{% url 'assessments:paper_pdf' assessment.pk %}" class="stack-sm paper-form">
+    <input type="hidden" name="opts" value="1">
+    <p class="muted">{% trans "Answer sheets to print: the test as it is now, in its own order, with blanks for the name and boxes or lines for the answers." %}</p>
+    {% if groups.0.label %}
+    <div class="field">
+      <label for="paper-variant">{% trans "Variants" %}</label>
+      <select id="paper-variant" name="variant">
+        <option value="all" selected>{% trans "All variants" %}</option>
+        {% for group in groups %}<option value="{{ group.id }}">{{ group.label }}</option>{% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="field">
+      <label for="paper-copies">{% if groups.0.label %}{% trans "Copies of each variant" %}{% else %}{% trans "Copies" %}{% endif %}</label>
+      <input type="number" id="paper-copies" name="copies" value="1" min="1" max="40" inputmode="numeric">
+      <span class="help">{% trans "Every copy starts on a new page, so a class set prints in one go." %}</span>
+    </div>
+    <div class="field">
+      <label for="paper-paper">{% trans "Paper" %}</label>
+      <select id="paper-paper" name="paper">
+        <option value="A4" selected>A4</option>
+        <option value="Letter">Letter</option>
+      </select>
+    </div>
+    <label class="choice"><input type="checkbox" name="key" value="1"> {% trans "Add the answer key at the end (for the teacher)" %}</label>
+    <div><button class="btn" type="submit">{% trans "Download PDF" %}</button></div>
+  </form>
+</details>

@@ -46,6 +46,7 @@
     {% endif %}
     {% if valid %}<a class="btn" href="{% url 'assessments:preview' assessment.pk %}">{% trans "Preview" %}</a>{% endif %}
     <a class="btn" href="{% url 'assessments:settings' assessment.pk %}">{% trans "Test settings" %}</a>
+    {% if valid %}{% include "assessments/_paper_form.html" %}{% endif %}
   </div>
 
   <section class="stack-sm">
