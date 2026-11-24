@@ -1,6 +1,6 @@
 # Spec: classroom-test feedback wave (F-01 to F-10)
 
-- Status: Agreed (2026-11-24)
+- Status: Built (2026-11-24); all ten items done, see the log entry of that day for what is open
 - Source: the list of features found while testing in a classroom (2026-11-24)
 - Method: frozen skeleton (this doc, `Attempt.away_*`, `taker:away`, reserved URLs), then three
   workstreams with disjoint file ownership; the orchestrator merges translations, runs the full

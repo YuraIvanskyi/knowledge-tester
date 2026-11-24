@@ -116,13 +116,18 @@ Rules for contributors:
 ## Daily use: navigation and safeguards
 
 - **Navigation:** Tests · Sessions · People (· Manage for admins). Importing a test is a button on the Tests page and the dashboard. "Open session" sits next to every published test, on the dashboard, the tests list and the group page; it goes through a chooser (`/teach/sessions/new/`, `?group=<id>` pre-selects a class).
-- **Submitting with unanswered questions** asks once, on the server ("Submit anyway"); the timer's automatic submit never asks. A student's page also shows the save status, an offline strip and a warning one minute before time runs out.
+- **The student's page:** Submit sits at the end of the questions (the bottom bar holds the answered count, the save status and the timer; Enter in a field never submits). A row of small numbered buttons jumps to any question and shows which are answered. "One question per page" in the test settings shows one question at a time with Previous / Next (`static/js/questions.js`; without JavaScript every question shows). Once the attempt exists, a line at the top says who is answering.
+- **Submitting with unanswered questions** asks once, right above Submit ("Submit anyway"): in the page with JavaScript, on the server without it; the timer's automatic submit never asks. A student's page also shows the save status, an offline strip and a warning one minute before time runs out.
+- **Leaving the test page** (another tab or app, the phone locked, a notification opened) is counted with the time away (`static/js/away.js` -> `taker:away` -> `Attempt.away_count` / `away_seconds`). The student is told it is recorded; the teacher sees it on the session page, the attempt sheet, the results table and in the CSV. It is reported by the student's browser, so treat it as a hint, not proof.
+- **Shared devices:** the done page offers "Another student on this device" (`taker:another`), which forgets the browser's finished attempt so the next student can start; the per-name and per-student attempt limits still apply.
+- **Hand-in notes:** the session page and presentation mode pop up the name of every student who hands in, for 5 seconds (at most three at once).
 - **Cancel an attempt** (attempt sheet, "Cancel attempt"): the attempt no longer counts in results, the gradebook or the profile, and the student can take the test again while the session is open. It cannot be undone.
 - **Closing a session** asks first when somebody is still working; their answers so far are submitted automatically. A closed session can be reopened.
 - **Adding time:** on the session page, "+5 / +10 / +15 min" extends the deadline of everyone who is still working (students who start later get the full time anyway). The student's page asks the server for the time left every 30 seconds and once more before the automatic submit (`static/js/timer.js`, an autosave request without answers), so the countdown follows; the same poll moves a student to the result page when the session was closed.
 - **Variants:** a test can hold several parallel versions (`test.variants` in the file, or "Add a variant" on the test page, which copies the questions to be changed). Every taker gets one, handed out in turn from a random start, so the class is split evenly; the taker sees the variant's name, and results, sheets and the CSV say who had which. Format: [docs/exchange-format.md](docs/exchange-format.md).
 - **Help page (`/teach/help/`, in the menu):** the prompt that turns a PDF textbook into an importable test, with a Copy button, plus the follow-up requests. The text is cut out of `docs/llm/test-from-textbook.uk.prompt.md` at run time (`apps/core/prompts.py`), so there is one source.
-- **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt".
+- **Review:** one Save for the whole sheet, or "Save and go to the next unreviewed attempt". The arrows at the top of a sheet (and the keyboard's left and right arrow keys) step through the results in the order of the results table, keeping its filter and sort; unsaved points ask before leaving.
+- **New tests** start with a 30-minute time limit (`editing.NEW_TEST_TIME_LIMIT`); imported tests keep what their file says.
 
 ## Load test
 
@@ -131,6 +136,8 @@ Rules for contributors:
 ## PDF sheets
 
 `apps/reports/pdf.py` builds PDFs with fpdf2 and the bundled DejaVu Sans (Latin and Cyrillic, embedded as a subset; licence in `assets/fonts/LICENSE_DEJAVU`). A sheet is one attempt: taker details, score and grade, then the questions with points and a result word. Options: compact or full (every option marked), A4 or Letter, show correct answers / comments / unanswered questions, shorten long questions, and for a whole session "continuous" (no page break between sheets). Entry points are `reports:attempt_pdf` and `reports:session_pdf` (`?status=` picks finished, needs_review or all). The labels follow the UI language of whoever downloads it. Tests read the text back with `pypdf` (a dev dependency).
+
+**Paper test** (`apps/reports/paper_pdf.py`, `assessments:paper_pdf`, "Print for a written test" on the test page): the test as it is in the editor, printed for a written test. Every copy has blanks for the taker fields and the date, the questions in their own order with points, circles (one answer) or squares (several) before lettered options, one line for a short answer and ruled lines for an open one; a question is never split across pages. Options: one variant or all, 1 to 40 copies of each (every copy starts a new page and has its own page numbers), A4 or Letter, and an answer key on separate pages at the end. The labels follow the test's language (uk or en), since students read it.
 
 ## Layout
 

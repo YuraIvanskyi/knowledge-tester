@@ -2,7 +2,7 @@
 
 This board is the single source of truth for status. The task content lives in [plan.md §21](plan.md#21-roadmap), and detail lives in [issues/](issues/).
 
-**Last updated:** 2026-11-16 · **Current work:** classroom readiness (backups, launcher and first-run page, extra time: built 2026-11-16, see log); next is a trial lesson on real phones · **Next milestone:** M3, class records (end of Phase 6)
+**Last updated:** 2026-11-24 · **Current work:** feedback wave from classroom testing (F-01 to F-10, built 2026-11-24, see log); next is a trial lesson on real phones · **Next milestone:** M3, class records (end of Phase 6)
 
 > The prototype ([log](log.md)) already covers most of Phases 1 to 5 in simplified form (JSON-document model, importer, browser editor, sessions with QR, taker flow, grading, review, results, CSV, PDF sheets, Ukrainian UI). The phase tables below still describe the original plan; items are only ticked when done to the plan's standard.
 
@@ -54,9 +54,26 @@ This board is the single source of truth for status. The task content lives in [
 - [x] Variants of a test: format, import, editor (add as a copy, delete), handing out in turn, grading, results, CSV, PDF, prompt · 2026-11-16
 - [x] Help page in the menu with the textbook prompt to copy · 2026-11-16
 - [ ] **Trial lesson on real phones** over the classroom Wi-Fi (KT-005 manual check): only headless Edge has been used so far; the elevated path of `allow-phones.ps1` is also untested
-- [ ] "One question per page" is offered in the test settings but ignored when taking the test: implement or remove the checkbox
+- [x] "One question per page" works when taking the test (F-08) · 2026-11-24
 - [ ] `ALLOWED_HOSTS` from the LAN addresses (KT-005); network diagnostics page (KT-903): the launcher and the guide cover the common cases for now
 - [ ] School name on printed sheets; a printed PDF checked on paper
+
+### Feedback wave from classroom testing (contracts: [specs/feedback-wave-contracts.md](specs/feedback-wave-contracts.md))
+
+Not counted in the phase totals above.
+
+- [x] F-01 Submit out of the sticky bar, at the end of the form · 2026-11-24
+- [x] F-02 "Submit anyway" no longer takes the place of the name: confirm above Submit, "who is answering" line · 2026-11-24
+- [x] F-03 Small numbered buttons to move between questions · 2026-11-24
+- [x] F-04 Leaving the test page counted (times, time away), shown to the teacher · 2026-11-24
+- [x] F-05 Hand-in note with the name on the session screen, 5 s · 2026-11-24
+- [x] F-06 New tests start with 30 minutes · 2026-11-24
+- [x] F-07 Paper test PDF with optional answer key · 2026-11-24
+- [x] F-08 One question per page · 2026-11-24
+- [x] F-09 Arrows (and arrow keys) between results · 2026-11-24
+- [x] F-10 "Another student on this device" after handing in · 2026-11-24
+- [ ] Check on real phones: away count (app switch, lock screen, iOS Safari), paging, hand-in notes on a projector
+- [ ] Left over: away count on the attempt PDF; departures before the first save are lost when the student submits without answering; timer submit at 0 stored as "submitted" when it arrives a moment early (older)
 
 ### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
 

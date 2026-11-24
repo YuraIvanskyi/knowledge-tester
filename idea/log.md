@@ -4,6 +4,18 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-24: Feedback wave from classroom testing (F-01 to F-10)
+
+- **Input:** ten items found while testing; plan and contracts in [specs/feedback-wave-contracts.md](specs/feedback-wave-contracts.md). Method as before: skeleton (98b04fc: `Attempt.away_count` / `away_seconds`, migration 0004, `services.record_away`, `taker:away`, reserved `taker:another` and `assessments:paper_pdf`, 30-minute default), then three workstreams with disjoint files, each checked on its own live server and headless Edge; commits 0aa6b45 (paper PDF), da467c8 (teacher screens), c0d58de (student page).
+- **Student page:** Submit left the sticky bar for the end of the form (Enter in a field no longer submits); the "questions left empty" step now sits above Submit, inline with JavaScript and server-rendered without it. The reported "Submit anyway covers the name" was reproduced: after Submit the name fields vanished and the panel took their place at the top; now a "who is answering" line stays there. A row of small numbered buttons replaces the "Question N" links and drives "one question per page", which was ignored until now (client-side paging, all questions without JavaScript, preview pages too). Done page: "Another student on this device".
+- **Leaving the page:** `away.js` treats a hidden page, or a window without focus for over 1 s, as away; the departure is sent at once, the time on return; reports made before the attempt exists are queued. Measured end to end: a leave before typing the name plus one while working arrived as 2 times, 5 s. The teacher sees a badge on the session page, a fact on the sheet, a results column and two CSV columns.
+- **Teacher screens:** hand-in notes on the session page and in presentation mode (5 s, at most three at once, poll 3 s in presentation mode; old submissions never pop up); previous / next on the attempt sheet in the results table's order with filter and sort, plus the arrow keys.
+- **Paper test PDF:** "Print for a written test" on the test page: copies per variant with their own page numbers, blanks, circles / squares, answer lines, optional answer key; labels in the test's language.
+- **New tests** start with 30 minutes; the prompts default to 30. Imports keep their own value.
+- 1723 tests pass (one flaky check fixed: the preview test looked for "a1" in a page that carries a random UUID); 43 new Ukrainian strings, catalog 887 entries.
+- **Learned:** headless Edge does not hide a page when another browser context comes to the front, so leaving was checked by faking `visibilitychange`; a real phone is still the real test.
+- **Open:** real phones (app switch, lock screen, iOS Safari) for the away count and the paging; departures before the first save are lost if the student submits without ever answering; on a computer, clicking the address bar for over 1 s counts as leaving; the attempt PDF does not show the away count; a long open question on the paper PDF moves whole to the next page and can leave white space; seen along the way, older: a timer submit at 0 that arrives a moment early is stored as "submitted", not "auto-submitted", and without JavaScript the timer shows raw seconds.
+
 ## 2026-11-16: Variants of a test, and a Help page with the prompt
 
 - **Format:** a test has `questions` or `variants: [{id?, title?, questions}]` (2 to 10), never both; settings and grading are shared. Question ids are unique in the whole test (an answer is stored under the question id alone), generated ids keep counting across variants, variant ids are `v1`, `v2`, ... One variant is folded into a plain test with a warning; unequal point totals warn. Schema regenerated; example `docs/examples/variants.json`.

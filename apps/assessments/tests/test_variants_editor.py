@@ -1,6 +1,7 @@
 """Variants on the test pages and in the browser editor."""
 
 import copy
+import re
 
 import pytest
 from django.contrib.auth import get_user_model
@@ -222,12 +223,17 @@ def test_delete_variant_asks_first_and_explains_the_last_two(client_t, two):
     )
 
 
+def _without_tokens(html: str) -> str:
+    """The page carries a random attempt token (a UUID): "a1" may occur in it by chance."""
+    return re.sub(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "", html)
+
+
 def test_preview_shows_the_chosen_variant_and_links_to_the_others(client_t, two):
     url = reverse("assessments:preview", args=[two.pk])
-    first = client_t.get(url).content.decode()
+    first = _without_tokens(client_t.get(url).content.decode())
     assert "a1" in first and "b1" not in first
     assert "<strong>Variant 1</strong>" in first and f'href="{url}?variant=v2"' in first
-    second = client_t.get(f"{url}?variant=v2").content.decode()
+    second = _without_tokens(client_t.get(f"{url}?variant=v2").content.decode())
     assert "b1" in second and "a1" not in second and "<strong>Variant 2</strong>" in second
     assert f'action="{url}?variant=v2"' in second
     assert client_t.get(f"{url}?variant=nope").status_code == 200
