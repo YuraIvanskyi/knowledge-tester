@@ -8,11 +8,20 @@
 {% block content %}
 <div class="stack sheet">
   <form id="review-form" method="post" class="no-print">{% csrf_token %}</form>
-  <div class="row row-between no-print">
-    <a class="link-tap" href="{% url 'reports:session' sitting.pk %}">&larr; {% trans "All results" %}</a>
+  <div class="row row-between no-print sheet-top">
+    <div class="row sheet-nav">
+      <a class="link-tap" href="{% url 'reports:session' sitting.pk %}{{ results_qs }}">&larr; {% trans "All results" %}</a>
+      {% if nav.total > 1 %}
+      <nav class="sheet-steps" aria-label="{% trans 'Step through the results' %}" data-unsaved="{% trans 'Points or comments on this sheet are not saved yet. Leave the sheet anyway?' %}">
+        {% if nav.previous %}<a class="btn" id="sheet-prev" rel="prev" href="{% url 'reports:attempt' nav.previous.pk %}{{ results_qs }}" aria-label="{% trans 'Previous result' %}" title="{% trans 'Previous result' %} (&larr;)"><span aria-hidden="true">&larr;</span></a>{% else %}<span class="btn" aria-hidden="true" aria-disabled="true">&larr;</span>{% endif %}
+        <span class="sheet-pos">{% blocktrans with n=nav.position total=nav.total %}{{ n }} of {{ total }}{% endblocktrans %}</span>
+        {% if nav.next %}<a class="btn" id="sheet-next" rel="next" href="{% url 'reports:attempt' nav.next.pk %}{{ results_qs }}" aria-label="{% trans 'Next result' %}" title="{% trans 'Next result' %} (&rarr;)"><span aria-hidden="true">&rarr;</span></a>{% else %}<span class="btn" aria-hidden="true" aria-disabled="true">&rarr;</span>{% endif %}
+      </nav>
+      {% endif %}
+    </div>
     <div class="row">
       {% include "reports/_pdf_form.html" with action=pdf_url batch=False %}
-      {% if next_attempt %}<a class="btn" href="{% url 'reports:attempt' next_attempt.pk %}">{% trans "Next unreviewed attempt" %}</a>{% endif %}
+      {% if next_attempt %}<a class="btn" href="{% url 'reports:attempt' next_attempt.pk %}{{ results_qs }}">{% trans "Next unreviewed attempt" %}</a>{% endif %}
       {% if not voided %}<a class="btn btn-danger" href="{% url 'reports:attempt_void' attempt.pk %}">{% trans "Cancel attempt" %}</a>{% endif %}
     </div>
   </div>
@@ -26,6 +35,7 @@
       <div><dt>{{ label }}</dt><dd>{{ value|default:"&ndash;" }}</dd></div>
       {% endfor %}
       {% if attempt.submitted_at %}<div><dt>{% trans "Submitted" %}</dt><dd>{{ attempt.submitted_at|date:"d.m.Y H:i" }}</dd></div>{% endif %}
+      <div><dt>{% trans "Left the test page" %}</dt><dd{% if attempt.away_count %} class="status-warn" title="{{ away_text }}"{% endif %}>{{ away_fact }}</dd></div>
     </dl>
 
     {% if grading_enabled %}
@@ -109,3 +119,4 @@
   {% endif %}
 </div>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/sheetnav.js' %}" defer></script>{% endblock %}

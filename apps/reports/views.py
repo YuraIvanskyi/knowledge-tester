@@ -70,7 +70,17 @@ def session_results(request, sitting_pk: int):
             "test": test,
             "grading_enabled": (test.get("grading") or {}).get("enabled", True),
             "summary": data.summarize(attempts),
-            "rows": [{"attempt": a, "name": data.taker_name(a)} for a in shown],
+            "rows": [
+                {
+                    "attempt": a,
+                    "name": data.taker_name(a),
+                    "away_short": _away_short(a),
+                    "away_text": services.away_text(a.away_count, a.away_seconds),
+                }
+                for a in shown
+            ],
+            "any_away": any(a.away_count for a in shown),
+            "sheet_qs": data.results_query(status, sort),
             "any_provisional": any(a.pending_reviews and a.score is not None for a in shown),
             "item_groups": data.item_analysis_by_variant(test, attempts),
             "has_variants": test_variants.has_variants(test),
@@ -87,6 +97,22 @@ def session_results(request, sitting_pk: int):
             "first_pending": pending_attempt,
         },
     )
+
+
+def _away_short(attempt: Attempt) -> str:
+    """ "3 · 1:20": times the taker left the test page and the time away, for badges."""
+    if not attempt.away_count:
+        return ""
+    return f"{attempt.away_count} · {services.away_clock(attempt.away_seconds)}"
+
+
+def _away_fact(attempt: Attempt) -> str:
+    """The attempt sheet's line about leaving the test page."""
+    if not attempt.away_count:
+        return _("never")
+    return ngettext(
+        "%(count)d time (%(time)s)", "%(count)d times (%(time)s)", attempt.away_count
+    ) % {"count": attempt.away_count, "time": services.away_duration(attempt.away_seconds)}
 
 
 def _parse_points(raw: str, max_points: Decimal) -> Decimal | None:
@@ -153,6 +179,9 @@ def attempt_sheet(request, pk: int):
     sitting = attempt.sitting
     test = attempt.test  # the attempt's variant
     errors: dict[str, tuple[str, str, str]] = {}
+    # The results table the teacher came from (filter and sort): back, previous and next follow it.
+    status, sort = data.parse_results_query(request.GET)
+    results_qs = data.results_query(status, sort)
 
     if request.method == "POST":
         rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
@@ -174,21 +203,24 @@ def attempt_sheet(request, pk: int):
             if request.POST.get("action") == "next":
                 following = data.next_unreviewed_attempt(attempt)
                 if following is not None:
-                    return redirect("reports:attempt", pk=following.pk)
+                    return redirect(reverse("reports:attempt", args=[following.pk]) + results_qs)
                 if attempt.pending_reviews:
                     messages.info(request, _("No other attempt waits for review."))
                 else:
                     messages.success(request, _("Everything in this session is reviewed."))
-                return redirect("reports:session", sitting_pk=sitting.pk)
+                return redirect(reverse("reports:session", args=[sitting.pk]) + results_qs)
             if not saved:
                 messages.info(request, _("Nothing to save: no points were entered."))
-            return redirect(request.path)
+            return redirect(request.path + results_qs)
 
     rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
     for row in rows:
         failed = errors.get(str(row.question["id"]))
         if failed:
             row.error, row.form_points, row.form_comment = failed
+    siblings = list(
+        sitting.attempts.only("pk", "taker", "status", "score", "started_at", "pending_reviews")
+    )
     return render(
         request,
         "reports/attempt.html",
@@ -205,6 +237,10 @@ def attempt_sheet(request, pk: int):
             "voided": attempt.status == Attempt.Status.VOIDED,
             "next_attempt": data.next_unreviewed_attempt(attempt),
             "pdf_url": reverse("reports:attempt_pdf", args=[attempt.pk]),
+            "nav": data.neighbours(attempt, siblings, status, sort),
+            "results_qs": results_qs,
+            "away_fact": _away_fact(attempt),
+            "away_text": services.away_text(attempt.away_count, attempt.away_seconds),
         },
     )
 
@@ -320,6 +356,8 @@ def session_csv(request, sitting_pk: int):
             _("Percent"),
             _("Grade"),
             _("Pending reviews"),
+            _("Left the page (times)"),
+            _("Away (seconds)"),
         ]
         + question_headers
     )
@@ -336,6 +374,8 @@ def session_csv(request, sitting_pk: int):
                 "" if a.percent is None else a.percent,
                 csv_safe(a.grade),
                 a.pending_reviews,
+                a.away_count,
+                a.away_seconds,
             ]
             + [
                 "" if points.get((a.pk, qid)) is None else points[(a.pk, qid)]

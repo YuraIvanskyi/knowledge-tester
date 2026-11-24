@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# F-04: leaving the test page, as the teacher sees it
+
+msgid "%(h)d h %(m)d min"
+msgstr "%(h)d год %(m)d хв"
+
+msgid "%(m)d min %(s)d s"
+msgstr "%(m)d хв %(s)d с"
+
+msgid "%(s)d s"
+msgstr "%(s)d с"
+
+msgid "Left the test page %(count)d time, %(time)s in total"
+msgid_plural "Left the test page %(count)d times, %(time)s in total"
+msgstr[0] "Сторінку тесту залишено %(count)d раз, разом %(time)s"
+msgstr[1] "Сторінку тесту залишено %(count)d рази, разом %(time)s"
+msgstr[2] "Сторінку тесту залишено %(count)d разів, разом %(time)s"
+
+msgid "Left the page"
+msgstr "Виходи зі сторінки"
+
+msgid "“Left the page” is reported by the student's browser: switching to another app or tab, locking the phone or opening a notification all count."
+msgstr "«Виходи зі сторінки» повідомляє браузер учня: рахується перехід до іншого застосунку чи вкладки, блокування телефона або відкрите сповіщення."
+
+msgid "Left the test page"
+msgstr "Виходи зі сторінки тесту"
+
+msgid "never"
+msgstr "жодного разу"
+
+msgid "%(count)d time (%(time)s)"
+msgid_plural "%(count)d times (%(time)s)"
+msgstr[0] "%(count)d раз (%(time)s)"
+msgstr[1] "%(count)d рази (%(time)s)"
+msgstr[2] "%(count)d разів (%(time)s)"
+
+msgid "Left the page (times)"
+msgstr "Виходи зі сторінки (разів)"
+
+msgid "Away (seconds)"
+msgstr "Поза сторінкою (секунд)"
+
+# F-05: "handed in" notes on the share screen
+
+msgid "Work handed in"
+msgstr "Роботу здано"
+
+msgid "Handed in automatically"
+msgstr "Здано автоматично"
+
+# F-09: previous / next on the attempt sheet
+
+msgid "Step through the results"
+msgstr "Перехід між результатами"
+
+msgid "Points or comments on this sheet are not saved yet. Leave the sheet anyway?"
+msgstr "Бали чи коментарі на цьому аркуші ще не збережено. Усе одно перейти?"
+
+msgid "Previous result"
+msgstr "Попередній результат"
+
+msgid "Next result"
+msgstr "Наступний результат"
+
+msgid "%(n)s of %(total)s"
+msgstr "%(n)s з %(total)s"

@@ -398,6 +398,39 @@ def apply_links(attempts, choices: dict[int, int | None], pool: dict[int, object
 # --- teacher live stats ------------------------------------------------------------------------
 
 
+def away_duration(seconds: int) -> str:
+    """Time spent away from the test page in words: "45 s", "1 min 20 s", "1 h 5 min"."""
+    seconds = max(0, int(seconds or 0))
+    hours, rest = divmod(seconds, 3600)
+    minutes, secs = divmod(rest, 60)
+    if hours:
+        return gettext("%(h)d h %(m)d min") % {"h": hours, "m": minutes}
+    if minutes:
+        return gettext("%(m)d min %(s)d s") % {"m": minutes, "s": secs}
+    return gettext("%(s)d s") % {"s": secs}
+
+
+def away_clock(seconds: int) -> str:
+    """The same time as a short clock for badges: "0:45", "1:20", "1:05:20"."""
+    seconds = max(0, int(seconds or 0))
+    hours, rest = divmod(seconds, 3600)
+    minutes, secs = divmod(rest, 60)
+    return f"{hours}:{minutes:02d}:{secs:02d}" if hours else f"{minutes}:{secs:02d}"
+
+
+def away_text(count: int, seconds: int) -> str:
+    """One sentence for a teacher, empty when the taker never left the test page."""
+    from django.utils.translation import ngettext
+
+    if not count:
+        return ""
+    return ngettext(
+        "Left the test page %(count)d time, %(time)s in total",
+        "Left the test page %(count)d times, %(time)s in total",
+        count,
+    ) % {"count": count, "time": away_duration(seconds)}
+
+
 def session_stats(sitting: Sitting) -> dict:
     from django.db.models import Count, Q
 
@@ -419,6 +452,7 @@ def session_stats(sitting: Sitting) -> dict:
             submitted += 1
         takers.append(
             {
+                "id": attempt.pk,
                 "name": taker_display(attempt, fields),
                 "status": attempt.status,
                 "status_label": str(attempt.get_status_display()),
@@ -430,6 +464,14 @@ def session_stats(sitting: Sitting) -> dict:
                 "group": attempt.student.group.name
                 if attempt.student_id and attempt.student.group_id
                 else "",
+                "submitted_at": attempt.submitted_at.isoformat() if attempt.submitted_at else None,
+                # leaving the test page (reported by the student's browser)
+                "away_count": attempt.away_count,
+                "away_seconds": attempt.away_seconds,
+                "away_short": f"{attempt.away_count} · {away_clock(attempt.away_seconds)}"
+                if attempt.away_count
+                else "",
+                "away_text": away_text(attempt.away_count, attempt.away_seconds),
             }
         )
         linked += 1 if attempt.student_id else 0

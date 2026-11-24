@@ -258,3 +258,50 @@
 .table th a [aria-hidden="true"] {
   margin-inline-start: 0.25em;
 }
+
+/* Attempt sheet: back to the results, then previous / position / next (static/js/sheetnav.js) */
+.sheet-nav {
+  gap: var(--space-2) var(--space-4);
+}
+.sheet-steps {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sheet-steps .btn {
+  min-width: 44px;
+  padding-inline: var(--space-3);
+  font-size: var(--fs-lg);
+}
+.sheet-pos {
+  min-width: 4.5rem;
+  text-align: center;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 639px) {
+  /* first line: "All results" on the left, the steps on the right */
+  .sheet-top > .sheet-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Leaving the test page (same badge as on the share screen, sessions.css) */
+.away-badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 639px) {
+  .results-table td.away-none {
+    display: none;
+  }
+}

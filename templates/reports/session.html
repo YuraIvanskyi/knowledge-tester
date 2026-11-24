@@ -30,7 +30,7 @@
     {% if summary.pending_answers and first_pending %}
       <p class="alert alert-warn">{% blocktrans count n=summary.pending_answers %}{{ n }} answer waits for review{% plural %}{{ n }} answers wait for review{% endblocktrans %}
         ({% blocktrans count n=summary.pending_attempts %}{{ n }} attempt{% plural %}{{ n }} attempts{% endblocktrans %}).
-        <a class="link-tap" href="{% url 'reports:attempt' first_pending.pk %}">{% trans "Start reviewing" %}</a></p>
+        <a class="link-tap" href="{% url 'reports:attempt' first_pending.pk %}{{ sheet_qs }}">{% trans "Start reviewing" %}</a></p>
     {% endif %}
     {% if not grading_enabled %}<p class="muted">{% trans "Grading is disabled for this test: answers are collected but not scored." %}</p>{% endif %}
   </section>
@@ -71,6 +71,7 @@
           <th scope="col"{% if columns.time.aria %} aria-sort="{{ columns.time.aria }}"{% endif %}><a href="?sort={{ columns.time.next }}&amp;status={{ status }}">{% trans "Started" %}{% if columns.time.arrow %} <span aria-hidden="true">{{ columns.time.arrow }}</span>{% endif %}</a></th>
           {% if has_variants %}<th scope="col">{% trans "Variant" %}</th>{% endif %}
           <th scope="col">{% trans "Status" %}</th>
+          {% if any_away %}<th scope="col">{% trans "Left the page" %}</th>{% endif %}
           {% if grading_enabled %}
           <th scope="col" class="num"{% if columns.score.aria %} aria-sort="{{ columns.score.aria }}"{% endif %}><a href="?sort={{ columns.score.next }}&amp;status={{ status }}">{% trans "Score" %}{% if columns.score.arrow %} <span aria-hidden="true">{{ columns.score.arrow }}</span>{% endif %}</a></th>
           <th scope="col">{% trans "Grade" %}</th>
@@ -81,15 +82,16 @@
       <tbody>
         {% for r in rows %}
         <tr>
-          <td class="cell-title" data-label="{% trans 'Name' %}"><a class="row-link" href="{% url 'reports:attempt' r.attempt.pk %}">{{ r.name }}</a></td>
+          <td class="cell-title" data-label="{% trans 'Name' %}"><a class="row-link" href="{% url 'reports:attempt' r.attempt.pk %}{{ sheet_qs }}">{{ r.name }}</a></td>
           <td data-label="{% trans 'Started' %}">{{ r.attempt.started_at|date:"d.m.Y H:i" }}</td>
           {% if has_variants %}<td data-label="{% trans 'Variant' %}">{{ r.attempt.variant_label|default:"&ndash;" }}</td>{% endif %}
           <td data-label="{% trans 'Status' %}">{{ r.attempt.get_status_display }}{% if r.attempt.pending_reviews and r.attempt.status != "voided" %} <span class="status-warn">({% trans "needs review" %})</span>{% endif %}</td>
+          {% if any_away %}<td data-label="{% trans 'Left the page' %}" class="away-cell{% if not r.away_short %} away-none{% endif %}">{% if r.away_short %}<span class="away-badge" title="{{ r.away_text }}"><span aria-hidden="true">&#8599; {{ r.away_short }}</span><span class="visually-hidden">{{ r.away_text }}</span></span>{% else %}<span class="muted">&ndash;</span>{% endif %}</td>{% endif %}
           {% if grading_enabled %}
           <td class="num" data-label="{% trans 'Score' %}">{% if r.attempt.score is not None %}{{ r.attempt.score|numd }} / {{ r.attempt.max_score|numd }}{% if r.attempt.percent is not None %} ({{ r.attempt.percent }} %){% endif %}{% if r.attempt.pending_reviews and r.attempt.status != "voided" %}<span class="status-warn" aria-hidden="true"> *</span><span class="visually-hidden"> {% trans "provisional" %}</span>{% endif %}{% else %}&ndash;{% endif %}</td>
           <td data-label="{% trans 'Grade' %}">{% if r.attempt.grade %}{{ r.attempt.grade|grade_text }}{% else %}&ndash;{% endif %}</td>
           {% endif %}
-          <td class="cell-actions"><a class="link-tap" href="{% url 'reports:attempt' r.attempt.pk %}">{% trans "Open" context "action" %}</a></td>
+          <td class="cell-actions"><a class="link-tap" href="{% url 'reports:attempt' r.attempt.pk %}{{ sheet_qs }}">{% trans "Open" context "action" %}</a></td>
         </tr>
         {% endfor %}
       </tbody>

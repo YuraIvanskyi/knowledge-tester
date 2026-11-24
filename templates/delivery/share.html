@@ -4,7 +4,7 @@
 {% block nav %}{% if not present %}{{ block.super }}{% endif %}{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}"><link rel="stylesheet" href="{% static 'css/sessions.css' %}">{% endblock %}
 {% block content %}
-<div class="share stack{% if present %} share-present{% endif %}" id="share" data-stats-url="{% url 'delivery:stats' sitting.pk %}">
+<div class="share stack{% if present %} share-present{% endif %}" id="share" data-stats-url="{% url 'delivery:stats' sitting.pk %}" data-finished="{{ finished_ids }}" data-poll="{% if present %}3000{% else %}5000{% endif %}">
   <div class="page-head">
     <h1>{{ sitting.title|default:sitting.code }}</h1>
     <span id="session-status" class="{% if is_open %}status-ok{% else %}muted{% endif %}">{% if is_open %}{% trans "Open" %}{% else %}{% trans "Closed" %}{% endif %}</span>
@@ -69,6 +69,7 @@
           <th scope="col">{% trans "Name" %}</th>
           <th scope="col">{% trans "Status" %}</th>
           <th scope="col" class="num">{% trans "Answered" %}</th>
+          <th scope="col">{% trans "Left the page" %}</th>
         </tr>
       </thead>
       <tbody id="takers-body" data-total="{{ stats.total_questions }}" data-of="{% trans 'of' %}">
@@ -77,10 +78,12 @@
             <td class="cell-title"><span>{{ t.name }}{% if t.group %}<span class="muted"> ({{ t.group }})</span>{% endif %}{% if t.variant %}<span class="muted"> &middot; {{ t.variant }}</span>{% endif %}</span></td>
             <td data-label="{% trans 'Status' %}">{% if t.status != "in_progress" %}<span class="status-ok">{{ t.status_label }}</span>{% else %}{{ t.status_label }}{% endif %}</td>
             <td data-label="{% trans 'Answered' %}" class="num">{{ t.answered }} {% trans "of" %} {{ t.total }}</td>
+            <td data-label="{% trans 'Left the page' %}" class="away-cell{% if not t.away_count %} away-none{% endif %}">{% if t.away_count %}<span class="away-badge" title="{{ t.away_text }}"><span aria-hidden="true">&#8599; {{ t.away_short }}</span><span class="visually-hidden">{{ t.away_text }}</span></span>{% else %}<span class="muted">&ndash;</span>{% endif %}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    <p id="away-note" class="muted away-note"{% if not any_away %} hidden{% endif %}>{% trans "“Left the page” is reported by the student's browser: switching to another app or tab, locking the phone or opening a notification all count." %}</p>
   </section>
 
   {% if is_open and extend_choices %}
@@ -110,6 +113,8 @@
     <a class="btn btn-danger row-end" href="{% url 'delivery:delete' sitting.pk %}">{% trans "Delete" %}</a>
   </div>
   {% endif %}
+  <div id="toasts" class="toasts" role="status" aria-live="polite" aria-atomic="false"
+       data-caption="{% trans 'Work handed in' %}" data-caption-auto="{% trans 'Handed in automatically' %}"></div>
 </div>
 {% endblock %}
 {% block scripts %}<script src="{% static 'js/share.js' %}" defer></script>{% endblock %}

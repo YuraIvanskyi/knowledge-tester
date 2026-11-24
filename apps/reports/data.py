@@ -183,7 +183,11 @@ def filter_and_sort(attempts: list[Attempt], status: str, sort: str) -> list[Att
         attempts = [a for a in attempts if a.status == Attempt.Status.VOIDED]
     elif status == "needs_review":
         attempts = [a for a in attempts if a.pending_reviews > 0]
+    return sort_attempts(attempts, sort)
 
+
+def sort_attempts(attempts: list[Attempt], sort: str) -> list[Attempt]:
+    """The order of the results table (`sort` is one of SORTS)."""
     descending = sort.startswith("-")
     key = sort.lstrip("-")
     if key == "name":
@@ -194,6 +198,53 @@ def filter_and_sort(attempts: list[Attempt], status: str, sort: str) -> list[Att
         scored.sort(key=lambda a: (a.score, a.pk), reverse=descending)
         return scored + unscored
     return sorted(attempts, key=lambda a: (a.started_at, a.pk), reverse=descending)
+
+
+def results_query(status: str, sort: str) -> str:
+    """The results table's filter and sort as a query string ("" for the defaults), so a sheet
+    opened from the table can go back and step through the same list."""
+    parts = []
+    if status != "all":
+        parts.append(f"status={status}")
+    if sort != "time":
+        parts.append(f"sort={sort}")
+    return "?" + "&".join(parts) if parts else ""
+
+
+def parse_results_query(query) -> tuple[str, str]:
+    """(status, sort) from a GET QueryDict, unknown values replaced by the defaults."""
+    status = query.get("status", "all")
+    sort = query.get("sort", "time")
+    return (
+        status if status in STATUS_FILTERS else "all",
+        sort if sort in SORTS else "time",
+    )
+
+
+@dataclass
+class Neighbours:
+    previous: Attempt | None
+    next: Attempt | None
+    position: int  # 1-based place of the attempt in the list
+    total: int
+
+
+def neighbours(attempt: Attempt, attempts: list[Attempt], status: str, sort: str) -> Neighbours:
+    """The attempts before and after `attempt` in the results table with this filter and sort.
+
+    An attempt the filter leaves out (reviewed a moment ago under "needs review", a cancelled
+    one under "all") is placed where the sort would put it, so stepping on from it still
+    follows the list the teacher came from."""
+    shown = filter_and_sort(attempts, status, sort)
+    if all(a.pk != attempt.pk for a in shown):
+        shown = sort_attempts([*shown, attempt], sort)
+    index = next(i for i, a in enumerate(shown) if a.pk == attempt.pk)
+    return Neighbours(
+        previous=shown[index - 1] if index > 0 else None,
+        next=shown[index + 1] if index + 1 < len(shown) else None,
+        position=index + 1,
+        total=len(shown),
+    )
 
 
 @dataclass

@@ -170,6 +170,11 @@ def session_share(request, pk: int):
         "is_open": sitting.status == Sitting.Status.OPEN,
         "group_info": roster.group_summary(sitting) if sitting.group_id else None,
         "present": request.GET.get("present") == "1",
+        # Attempts finished before this page was drawn: share.js never announces those.
+        "finished_ids": ",".join(
+            str(t["id"]) for t in stats["takers"] if t["status"] != Attempt.Status.IN_PROGRESS
+        ),
+        "any_away": any(t["away_count"] for t in stats["takers"]),
         "extend_choices": services.EXTEND_CHOICES if stats["timed"] else (),
         # picks the font size class that keeps the URL on one line (see sessions.css)
         "url_size": next((n for n in (30, 34, 38, 42, 48, 56, 64, 80) if len(url) <= n), 96),
