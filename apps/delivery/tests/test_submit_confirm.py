@@ -62,7 +62,8 @@ def test_partial_submit_counts_and_links_the_unanswered_questions(client, sittin
     r = post_submit(client, sitting, {"form_sent": "1", "q_q1": "a", "q_q4": "x"})
     html = r.content.decode()
     assert "You have answered 2 of 5 questions." in html
-    links = re.findall(r'href="#q-(\w+)"', html)
+    panel = re.search(r'id="unanswered".*?</div>', html, re.S).group(0)
+    links = re.findall(r'href="#q-(\w+)"', panel)
     assert sorted(links) == ["q2", "q3", "q5"]
     assert the_attempt(sitting).status == Attempt.Status.IN_PROGRESS
     # the answers that were posted are kept on the page and saved

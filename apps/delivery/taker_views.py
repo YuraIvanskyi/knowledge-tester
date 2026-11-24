@@ -94,8 +94,11 @@ def _answer_values(attempt: Attempt) -> dict[str, object]:
     return {a.question_key: a.value for a in attempt.answers.all() if a.value is not None}
 
 
-def _build_questions(attempt: Attempt, test: dict, values: dict[str, object]) -> list[dict]:
-    """Whitelist what the page may see: no correct flags, accepted answers or rubrics."""
+def _build_questions(
+    attempt: Attempt, test: dict, values: dict[str, object], missing_ids=frozenset()
+) -> list[dict]:
+    """Whitelist what the page may see: no correct flags, accepted answers or rubrics.
+    `missing_ids`: required questions the last submit found empty (the navigator marks them)."""
     by_id = services.question_map(test)
     result = []
     for number, qid in enumerate((q for q in attempt.question_order if q in by_id), start=1):
@@ -109,6 +112,8 @@ def _build_questions(attempt: Attempt, test: dict, values: dict[str, object]) ->
             "required": bool(q.get("required")),
             "n": q.get("n"),
             "value": values.get(qid),
+            "answered": values.get(qid) is not None,
+            "missing": qid in missing_ids,
             "is_choice": q["type"] in services.CHOICE_TYPES,
             "multi": q["type"] in ("multiple_choice", "choose_n"),
         }
@@ -124,19 +129,39 @@ def _build_questions(attempt: Attempt, test: dict, values: dict[str, object]) ->
     return result
 
 
+def _one_per_page(test: dict) -> bool:
+    return bool((test.get("settings") or {}).get("one_question_per_page"))
+
+
+def _who(attempt: Attempt, test: dict) -> str:
+    """Who is answering, shown at the top once the attempt exists: the name, plus the class
+    when one was given (so the typed name never seems to have vanished)."""
+    taker = attempt.taker or {}
+    name = services.taker_display(attempt, services.taker_fields(test))
+    klass = next(
+        (str(taker[k]) for k in taker if str(k).casefold() in GROUP_FIELD_KEYS and taker[k]), ""
+    )
+    return f"{name} · {klass}" if klass and klass != name else name
+
+
 def _render_take(request, sitting, attempt, missing=None, unanswered=None):
     test = attempt.test
-    questions = _build_questions(attempt, test, _answer_values(attempt))
+    missing = missing or []
+    questions = _build_questions(
+        attempt, test, _answer_values(attempt), missing_ids={q["id"] for q in missing}
+    )
     context = {
         "sitting": sitting,
         "test": test,
         "attempt": attempt,
+        "who": _who(attempt, test),
         "questions": questions,
         "total": len(questions),
         "answered": sum(1 for q in questions if q["value"] is not None),
         "seconds_left": _seconds_left(attempt),
         "variant_label": attempt.variant_label,
-        "missing": missing or [],
+        "one_per_page": _one_per_page(test),
+        "missing": missing,
         "unanswered": unanswered or [],
     }
     return render(request, "delivery/take.html", context)
@@ -217,6 +242,7 @@ def _render_unstarted(
         "seconds_left": None,
         "time_limit": services.time_limit_minutes(test),  # clock starts with the attempt
         "variant_label": test_variants.label(full_test, variant_id),
+        "one_per_page": _one_per_page(test),
         "missing": [],
         "unanswered": [],
         "preview": preview,
@@ -575,5 +601,20 @@ def done(request, code: str):
         "show_score": show in ("score", "full") and attempt.score is not None and not voided,
         "review": _full_review(attempt, test) if show == "full" and not voided else [],
         "can_retry": (voided or _max_attempts(test) > 1) and sitting.status == Sitting.Status.OPEN,
+        "session_open": sitting.status == Sitting.Status.OPEN,
     }
     return render(request, "delivery/done.html", context)
+
+
+@require_POST
+def another(request, code: str):
+    """ "Another student on this device": forget this browser's finished attempt, so the next
+    student gets the test page and types (or picks) their own name. The attempt limits per name
+    and per student still apply. An attempt still in progress is never dropped this way."""
+    sitting = _get_sitting(code)
+    attempt = _get_attempt(request, sitting)
+    if attempt is not None and not services.enforce_deadline(attempt):
+        return redirect("taker:take", code=sitting.code)
+    response = redirect("taker:session", code=sitting.code)
+    response.delete_cookie(_cookie_name(sitting), path="/s/", samesite="Lax")
+    return response

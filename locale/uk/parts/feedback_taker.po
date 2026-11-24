@@ -1,0 +1,27 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Answering as"
+msgstr "Ви відповідаєте як"
+
+msgid "Leaving this page (for another tab or app) is recorded, and your teacher sees it."
+msgstr "Вихід із цієї сторінки (в іншу вкладку чи застосунок) фіксується, і вчитель це бачить."
+
+msgid "answered"
+msgstr "є відповідь"
+
+msgctxt "question"
+msgid "Previous"
+msgstr "Попереднє"
+
+msgctxt "question"
+msgid "Next"
+msgstr "Наступне"
+
+msgid "Another student on this device"
+msgstr "Інший учень на цьому пристрої"
+
+msgid "Pass the device on: the next student starts the test with their own name."
+msgstr "Передайте пристрій далі: наступний учень почне тест зі своїм іменем."

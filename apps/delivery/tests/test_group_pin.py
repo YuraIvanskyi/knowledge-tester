@@ -65,7 +65,8 @@ def test_a_student_without_a_pin_is_flagged_and_not_selectable(client, pin_sitti
 
 def test_a_session_without_pins_does_not_flag_anyone(client, group_sitting, pupils):
     html = client.get(f"/s/{group_sitting.code}/").content.decode()
-    assert "no PIN yet" not in html and "disabled" not in html
+    class_list = re.search(r"<select.*?</select>", html, re.S).group(0)
+    assert "no PIN yet" not in html and "disabled" not in class_list
 
 
 @pytest.mark.parametrize("path", ["form", "autosave", "submit"])

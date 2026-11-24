@@ -13,9 +13,11 @@
   {% endif %}
   <h1>{{ sitting.title|default:test.title }}</h1>
   {% if variant_label %}<p class="variant-tag">{{ variant_label }}</p>{% endif %}
+  {% if who %}<p class="who">{% trans "Answering as" %} <strong>{{ who }}</strong></p>{% endif %}
   {% if unstarted and test.description %}<p>{{ test.description }}</p>{% endif %}
   {% if unstarted %}<p class="muted">{% blocktrans count n=total %}{{ n }} question{% plural %}{{ n }} questions{% endblocktrans %}</p>{% endif %}
   {% if unstarted and time_limit %}<p class="muted">{% blocktrans %}Time limit: {{ time_limit }} min. The clock starts when you begin answering.{% endblocktrans %}</p>{% endif %}
+  <p class="muted away-note">{% trans "Leaving this page (for another tab or app) is recorded, and your teacher sees it." %}</p>
   {% if errors %}
     <div class="alert alert-bad" role="alert">
       <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -24,23 +26,11 @@
   {% if cancelled %}
     <p class="alert alert-warn" role="status">{% trans "Your teacher cancelled your previous attempt. You can start again below." %}</p>
   {% endif %}
-  {% if missing %}
-    <div class="alert alert-bad" role="alert" id="missing">
-      <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
-      <ul>{% for q in missing %}<li><a href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
-    </div>
-  {% elif unanswered %}
-    <div class="alert alert-warn confirm-panel" role="alert" id="unanswered" tabindex="-1" autofocus>
-      <p><strong>{% blocktrans with done=answered %}You have answered {{ done }} of {{ total }} questions.{% endblocktrans %}</strong></p>
-      <p>{% trans "These questions have no answer yet:" %}</p>
-      <ul class="unanswered-list">{% for q in unanswered %}<li><a class="link-tap" href="#q-{{ q.id }}">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</a></li>{% endfor %}</ul>
-      <p class="muted">{% trans "Keep answering, or submit now. Questions left empty score no points." %}</p>
-      <button type="submit" form="take-form" name="confirm_unanswered" value="1" class="btn btn-primary">{% trans "Submit anyway" %}</button>
-    </div>
-  {% endif %}
-  <form method="post" id="take-form" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}
-        {% if preview %}action="{{ preview.url }}" data-preview="1"{% else %}action="{% url 'taker:submit' sitting.code %}" data-save-url="{% url 'taker:save' sitting.code %}"{% endif %}>
+  <form method="post" id="take-form" data-total="{{ total }}"{% if unstarted %} data-unstarted="1"{% endif %}{% if one_per_page %} data-one-per-page="1"{% endif %}
+        {% if preview %}action="{{ preview.url }}" data-preview="1"{% else %}action="{% url 'taker:submit' sitting.code %}" data-save-url="{% url 'taker:save' sitting.code %}" data-away-url="{% url 'taker:away' sitting.code %}"{% endif %}>
     {% csrf_token %}
+    {% comment %} First submit button of the form, disabled: Enter in a text field (the phone's "Go" key) never submits the test. {% endcomment %}
+    <button type="submit" class="enter-guard" hidden disabled aria-hidden="true" tabindex="-1"></button>
     <input type="hidden" name="form_sent" value="1">
     {% if unstarted %}
       <input type="hidden" name="unstarted" value="1">
@@ -50,10 +40,13 @@
         {% include "delivery/_identity.html" %}
       </div>
     {% endif %}
+    <nav class="qnav{% if not one_per_page %} qnav-all{% endif %}" id="qnav" aria-label="{% trans 'Questions' %}" data-answered="{% trans 'answered' %}"{% if total < 2 %} hidden{% endif %}>
+      {% for q in questions %}<a class="qnav-btn{% if q.answered %} is-done{% elif q.missing %} is-missing{% endif %}" href="#q-{{ q.id }}" data-qid="{{ q.id }}" data-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}" aria-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}{% if q.answered %}, {% trans 'answered' %}{% endif %}">{{ q.number }}</a>{% endfor %}
+    </nav>
     <div class="questions">
       {% for q in questions %}
-        <fieldset class="question" id="q-{{ q.id }}">
-          <legend><span class="qnum">{{ q.number }}.</span> {{ q.text }}{% if q.required %} <span class="req">({% trans "required" %})</span>{% endif %}</legend>
+        <fieldset class="question" id="q-{{ q.id }}" data-qid="{{ q.id }}"{% if q.required %} data-required="1"{% endif %}>
+          <legend tabindex="-1"><span class="qnum">{{ q.number }}.</span> {{ q.text }}{% if q.required %} <span class="req">({% trans "required" %})</span>{% endif %}</legend>
           <div class="q-body">
           {% if q.hint %}<p class="muted hint">{{ q.hint }}</p>{% endif %}
           {% if q.type == "choose_n" %}<p class="muted hint">{% blocktrans with n=q.n %}Choose exactly {{ n }}.{% endblocktrans %}</p>{% elif q.type == "multiple_choice" %}<p class="muted hint">{% trans "Select all that apply." %}</p>{% endif %}
@@ -75,16 +68,50 @@
         </fieldset>
       {% endfor %}
     </div>
+    {% if one_per_page %}
+    <div class="pager" id="pager" hidden>
+      <button type="button" class="btn pager-prev" data-step="-1"><span aria-hidden="true">&larr;</span> {% trans "Previous" context "question" %}</button>
+      <button type="button" class="btn btn-primary pager-next" data-step="1">{% trans "Next" context "question" %} <span aria-hidden="true">&rarr;</span></button>
+    </div>
+    {% endif %}
+    <div class="submit-area" id="submit-area">
+      {% if missing %}
+        <div class="alert alert-bad confirm-panel" role="alert" id="missing" tabindex="-1" autofocus>
+          <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
+          <div class="qnav qnav-list">{% for q in missing %}<a class="qnav-btn is-missing" href="#q-{{ q.id }}" data-qid="{{ q.id }}" data-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}" aria-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}">{{ q.number }}</a>{% endfor %}</div>
+        </div>
+      {% elif unanswered %}
+        <div class="alert alert-warn confirm-panel" role="alert" id="unanswered" tabindex="-1" autofocus>
+          <p><strong>{% blocktrans with done=answered %}You have answered {{ done }} of {{ total }} questions.{% endblocktrans %}</strong></p>
+          <p>{% trans "These questions have no answer yet:" %}</p>
+          <div class="qnav qnav-list">{% for q in unanswered %}<a class="qnav-btn" href="#q-{{ q.id }}" data-qid="{{ q.id }}" data-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}" aria-label="{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}">{{ q.number }}</a>{% endfor %}</div>
+          <p class="muted">{% trans "Keep answering, or submit now. Questions left empty score no points." %}</p>
+          <button type="submit" name="confirm_unanswered" value="1" class="btn btn-primary btn-block">{% trans "Submit anyway" %}</button>
+        </div>
+      {% endif %}
+      {% comment %} The same two panels, filled in by questions.js when Submit is pressed (no reload). {% endcomment %}
+      <div class="alert alert-bad confirm-panel" role="alert" id="missing-js" tabindex="-1" hidden>
+        <p><strong>{% trans "Please answer these required questions before you submit:" %}</strong></p>
+        <div class="qnav qnav-list" data-list></div>
+      </div>
+      <div class="alert alert-warn confirm-panel" role="alert" id="unanswered-js" tabindex="-1" hidden>
+        <p><strong data-count>{% blocktrans with done="__DONE__" %}You have answered {{ done }} of {{ total }} questions.{% endblocktrans %}</strong></p>
+        <p>{% trans "These questions have no answer yet:" %}</p>
+        <div class="qnav qnav-list" data-list></div>
+        <p class="muted">{% trans "Keep answering, or submit now. Questions left empty score no points." %}</p>
+        <button type="submit" name="confirm_unanswered" value="1" class="btn btn-primary btn-block">{% trans "Submit anyway" %}</button>
+      </div>
+      <button type="submit" class="btn{% if not unanswered %} btn-primary{% endif %} btn-block submit-main" id="submit-main">{% trans "Submit" %}</button>
+    </div>
     <div class="sticky-bar">
       <span class="progress"><span class="bar-label">{% trans "Answered" %} </span><span id="answered-count">{{ answered }}</span> / {{ total }}</span>
+      <span id="save-status" class="save-status" role="status" aria-live="polite"
+            data-saved="{% trans 'Saved' %}" data-offline="{% trans 'No connection. Your answers will be sent when it is back.' %}"></span>
       {% if unstarted and time_limit %}
         <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono">{{ time_limit }}:00</span></span>
       {% elif seconds_left is not None %}
         <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
       {% endif %}
-      <span id="save-status" class="save-status" role="status" aria-live="polite"
-            data-saved="{% trans 'Saved' %}" data-offline="{% trans 'No connection. Your answers will be sent when it is back.' %}"></span>
-      <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
       <span id="timer-live" class="visually-hidden" role="status" aria-live="polite"></span>
       <span id="timer-note" class="timer-note" aria-hidden="true" hidden></span>
     </div>
@@ -93,6 +120,8 @@
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/autosave.js' %}" defer></script>
+<script src="{% static 'js/questions.js' %}" defer></script>
+{% if not preview %}<script src="{% static 'js/away.js' %}" defer></script>{% endif %}
 {% if group_mode and unstarted %}<script src="{% static 'js/namepicker.js' %}" defer></script>{% endif %}
 {% if seconds_left is not None or time_limit %}<script src="{% static 'js/timer.js' %}" defer></script>{% endif %}
 {% endblock %}

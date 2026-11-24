@@ -120,6 +120,10 @@
               if (!(k in pending)) pending[k] = batch[k];
             });
           } else if (d.started) {
+            if (unstarted && window.CustomEvent) {
+              // The attempt exists from now on (away.js sends what it kept back).
+              document.dispatchEvent(new CustomEvent("kt:started"));
+            }
             unstarted = false;
             rejected = null;
             showNote(null);

@@ -50,52 +50,126 @@
   overflow-wrap: anywhere;
 }
 
-/* "Some questions are empty" panel */
+/* Who is answering (once the attempt exists) and the note that leaving the page is recorded */
+.who {
+  margin: 0 0 var(--space-2);
+  overflow-wrap: anywhere;
+}
+.away-note {
+  font-size: var(--fs-sm);
+}
+
+/* Question navigator: one small numbered button per question. Filled = answered, red = a
+   required question that is still empty, ring = the question on screen (one per page). */
+.qnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+.qnav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+.qnav-btn:hover {
+  border-color: var(--text);
+}
+.qnav-btn.is-done {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+.qnav-btn.is-missing {
+  border: 2px solid var(--bad);
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+.qnav-btn[aria-current] {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.confirm-panel .qnav {
+  margin-bottom: var(--space-3);
+}
+
+/* One question per page (questions.js): Previous / Next under the question */
+.pager {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+}
+.pager .btn {
+  gap: var(--space-2); /* the arrow and the word (whitespace collapses in a flex button) */
+}
+.pager-next {
+  margin-left: auto;
+  min-width: 8rem;
+}
+.is-paged .questions {
+  padding-bottom: 0;
+}
+.question legend:focus {
+  outline: none;
+}
+.question legend:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Submit sits after the questions; the "some questions are empty" panels appear right above it */
+.submit-area {
+  margin: 0 0 var(--space-4);
+}
+.submit-area .confirm-panel {
+  margin-bottom: var(--space-3);
+}
 .confirm-panel:focus {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
-.unanswered-list {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-4);
-  margin: 0 0 var(--space-3);
-  padding: 0;
+.confirm-panel > :last-child {
+  margin-bottom: 0;
 }
 
 #take-form .questions {
-  padding-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
 }
 
-/* Bottom bar: ONE row (counter, timer, Submit); the save status is a small line under the
-   counter and timer. The note that announces the last minute floats above the bar so the bar
-   never grows. */
+/* Bottom bar: ONE row (counter, save status, timer). The note that announces the last minute
+   and the "no connection" strip float above the bar so the bar never grows. */
 .taker .sticky-bar {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: var(--space-3);
-  row-gap: 0;
+  min-height: 3.25rem;
   margin: 0 calc(-1 * var(--space-4));
   padding: var(--space-2) var(--space-4);
 }
 .taker .sticky-bar .progress {
   grid-column: 1;
-  grid-row: 1;
-}
-.taker .sticky-bar .timer {
-  grid-column: 2;
-  grid-row: 1;
 }
 .taker .sticky-bar .save-status {
-  grid-column: 1 / 3;
-  grid-row: 2;
+  grid-column: 2;
+  text-align: center;
 }
-.taker .sticky-bar .btn {
+.taker .sticky-bar .timer {
   grid-column: 3;
-  grid-row: 1 / 3;
-  min-width: 6.5rem;
+}
+/* Focused fields and anchored questions stay clear of the bottom bar */
+html:has(.taker .sticky-bar) {
+  scroll-padding-bottom: 4.5rem;
 }
 .timer,
 .progress {
@@ -110,8 +184,6 @@
 }
 /* The long "no connection" text is a strip above the bar, so the bar stays one row tall. */
 .taker .sticky-bar .save-status.save-offline {
-  grid-column: auto;
-  grid-row: auto;
   position: absolute;
   left: 0;
   right: 0;
@@ -154,10 +226,6 @@
     clip: rect(0 0 0 0);
     white-space: nowrap;
   }
-  .taker .sticky-bar .btn {
-    min-width: 5.5rem;
-    padding-inline: var(--space-3);
-  }
 }
 
 .score .big-code {
@@ -175,6 +243,12 @@
 .review-item p {
   margin-bottom: var(--space-2);
   overflow-wrap: anywhere;
+}
+.another {
+  margin-top: var(--space-5);
+}
+.another .help {
+  font-size: var(--fs-sm);
 }
 
 /* Class sessions: pick your name */

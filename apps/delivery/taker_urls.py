@@ -1,7 +1,5 @@
 from django.urls import path
 
-from apps.core.stubs import not_implemented
-
 from . import taker_views as views
 
 app_name = "taker"
@@ -15,5 +13,5 @@ urlpatterns = [
     path("<str:code>/done/", views.done, name="done"),
     path("<str:code>/away/", views.away, name="away"),
     # POST: forget this browser's attempt so the next student can start on the same device.
-    path("<str:code>/another/", not_implemented, name="another"),
+    path("<str:code>/another/", views.another, name="another"),
 ]
