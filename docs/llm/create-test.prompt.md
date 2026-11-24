@@ -17,7 +17,7 @@ Shape of the file (this is the whole format):
     "description": "Optional, one sentence.",
     "language": "en",
     "settings": {
-      "time_limit_minutes": 15,
+      "time_limit_minutes": 30,
       "shuffle_options": true,
       "show_result": "score",
       "max_attempts": 1

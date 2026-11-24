@@ -68,6 +68,10 @@ class Attempt(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     deadline_at = models.DateTimeField(null=True, blank=True)
     submitted_at = models.DateTimeField(null=True, blank=True)
+    # How often and how long the taker left the test page (another tab or app), as reported by
+    # the page (static/js/away.js). Only ever written by services.record_away.
+    away_count = models.PositiveIntegerField(default=0)
+    away_seconds = models.PositiveIntegerField(default=0)
 
     # Denormalized totals: only ever written by apps.grading.service
     score = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)

@@ -404,6 +404,40 @@ def save(request, code: str):
     return _set_cookie(response, sitting, attempt) if created else response
 
 
+def _as_int(raw) -> int:
+    try:
+        return int(raw)
+    except (TypeError, ValueError, OverflowError):
+        return 0
+
+
+@require_POST
+def away(request, code: str):
+    """The page reports that the taker left it (another tab or app) and came back.
+
+    JSON {"attempt_token": "...", "count": n, "seconds": s}: deltas since the last report.
+    Replies {"recorded": true} once added to the attempt. {"recorded": false} means there is no
+    attempt yet (the landing page before the first save) or it is finished: the page keeps an
+    unrecorded report and sends it again after the attempt has started. Never sets a cookie and
+    never starts an attempt."""
+    sitting = _get_sitting(code)
+    try:
+        payload = json.loads(request.body or b"{}")
+        if not isinstance(payload, dict):
+            raise ValueError
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "bad request"}, status=400)
+    attempt, _from_page = _attempt_of_page(
+        request, sitting, _parse_token(payload.get("attempt_token"))
+    )
+    if attempt is None or attempt.is_finished:
+        return JsonResponse({"recorded": False})
+    recorded = services.record_away(
+        attempt, _as_int(payload.get("count")), _as_int(payload.get("seconds"))
+    )
+    return JsonResponse({"recorded": recorded})
+
+
 def _posted_values(request, test: dict) -> dict[str, object]:
     values = {}
     for q in test.get("questions", []):

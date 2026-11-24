@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import editor_views, views
+from . import editor_views, paper_views, views
 
 app_name = "assessments"
 
@@ -13,6 +13,8 @@ urlpatterns = [
     path("<int:pk>/delete/", editor_views.delete, name="delete"),
     path("<int:pk>/preview/", editor_views.preview, name="preview"),
     path("<int:pk>/export/", views.export, name="export"),
+    # GET: the test as a printable PDF for a written (paper) test, optional answer key.
+    path("<int:pk>/paper/", paper_views.paper_pdf, name="paper_pdf"),
     path("<int:pk>/settings/", editor_views.test_settings, name="settings"),
     path("<int:pk>/variants/add/", editor_views.variant_add, name="variant_add"),
     path(

@@ -225,6 +225,34 @@ def answered_ids(attempt: Attempt) -> set[str]:
     return set(attempt.answers.exclude(value__isnull=True).values_list("question_key", flat=True))
 
 
+# --- leaving the test page ---------------------------------------------------------------------
+
+# One report never adds more than this: a page reports each return separately (or a few queued
+# ones at once), so anything larger is a broken or tampered client.
+AWAY_MAX_COUNT = 20
+AWAY_MAX_SECONDS = 4 * 60 * 60
+
+
+def record_away(attempt: Attempt, count: int, seconds: int) -> bool:
+    """Add `count` departures and `seconds` spent away to an in-progress attempt.
+
+    The page reports deltas (static/js/away.js); values are clamped, and a finished attempt is
+    never changed (a report that arrives after the submit is dropped). Atomic (F expressions),
+    so reports racing an autosave lose nothing. Returns True when something was added."""
+    from django.db.models import F
+
+    count = max(0, min(int(count), AWAY_MAX_COUNT))
+    seconds = max(0, min(int(seconds), AWAY_MAX_SECONDS))
+    if not count and not seconds:
+        return False
+    changed = Attempt.objects.filter(pk=attempt.pk, status=Attempt.Status.IN_PROGRESS).update(
+        away_count=F("away_count") + count, away_seconds=F("away_seconds") + seconds
+    )
+    if changed:
+        attempt.refresh_from_db(fields=["away_count", "away_seconds"])
+    return bool(changed)
+
+
 # --- finalising --------------------------------------------------------------------------------
 
 

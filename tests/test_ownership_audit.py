@@ -70,6 +70,7 @@ ARGS: dict[str, dict[str, str]] = {
     "assessments:delete": {"pk": "assessment"},
     "assessments:preview": {"pk": "assessment"},
     "assessments:export": {"pk": "assessment"},
+    "assessments:paper_pdf": {"pk": "assessment"},
     "assessments:settings": {"pk": "assessment"},
     "assessments:variant_add": {"pk": "assessment"},
     "assessments:variant_delete": {"pk": "assessment", "variant_id": "text:v1"},

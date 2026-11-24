@@ -25,6 +25,7 @@ GRADE_SCALES = ("percent", "points", "pass_fail", "ua_12", "five_point")
 SHOW_RESULTS = ("none", "score", "full")
 SCORING_MODES = ("partial", "all_or_nothing", "per_option")
 ANSWER_MODES = ("text", "numeric")
+NEW_TEST_TIME_LIMIT = 30  # minutes: a test created in the browser starts with this limit
 
 
 # ---------------------------------------------------------------------------------------------
@@ -33,11 +34,20 @@ ANSWER_MODES = ("text", "numeric")
 
 
 def blank_document(title: str, language: str) -> dict:
-    """A new test with no questions yet (it cannot be published until one is added)."""
+    """A new test with no questions yet (it cannot be published until one is added).
+
+    It starts with the usual lesson time limit (NEW_TEST_TIME_LIMIT); the teacher can change or
+    clear it in the test settings. Imported tests keep whatever their JSON says."""
     return {
         "format": FORMAT_NAME,
         "version": FORMAT_VERSION,
-        "test": {"title": title, "description": "", "language": language, "questions": []},
+        "test": {
+            "title": title,
+            "description": "",
+            "language": language,
+            "settings": {"time_limit_minutes": NEW_TEST_TIME_LIMIT},
+            "questions": [],
+        },
     }
 
 

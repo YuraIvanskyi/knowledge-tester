@@ -114,6 +114,21 @@ def test_create_blank_test(client_t, teacher):
     assert page.context["valid"] is False  # cannot publish an empty test
 
 
+def test_new_test_starts_with_a_30_minute_limit(client_t, teacher):
+    client_t.post(reverse("assessments:create"), {"title": "Timed"})
+    test = Assessment.objects.get(title="Timed")
+    assert test.document["test"]["settings"]["time_limit_minutes"] == 30
+    page = client_t.get(reverse("assessments:settings", args=[test.pk]))
+    assert page.context["form"]["time_limit_minutes"] == "30"
+    # the teacher can clear it: no limit
+    post = {**page.context["form"], "time_limit_minutes": ""}
+    post = {k: v for k, v in post.items() if k != "taker_fields" and v is not False}
+    post.update({"tf_label": ["Full name"], "tf_key": ["name"], "tf_required": ["0"]})
+    client_t.post(reverse("assessments:settings", args=[test.pk]), post)
+    test.refresh_from_db()
+    assert test.document["test"]["settings"]["time_limit_minutes"] is None
+
+
 def test_create_requires_title_and_can_start_a_project(client_t, teacher):
     response = client_t.post(reverse("assessments:create"), {"title": "  "})
     assert response.status_code == 200 and not Assessment.objects.exists()
