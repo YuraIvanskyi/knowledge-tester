@@ -298,6 +298,25 @@ def is_past_deadline(attempt: Attempt, grace: timedelta = timedelta(0)) -> bool:
     return bool(attempt.deadline_at and timezone.now() > attempt.deadline_at + grace)
 
 
+# The page's timer counts on the phone's clock and submits when it shows 0, so its submit can
+# reach the server a moment before the deadline. Within this window it is still the automatic
+# submit (finished as AUTO_SUBMITTED, without the "unanswered questions" step).
+TIMER_EARLY = timedelta(seconds=10)
+
+
+def timer_ran_out(attempt: Attempt) -> bool:
+    """True when the attempt's time is up, or will be within TIMER_EARLY."""
+    return bool(attempt.deadline_at and timezone.now() >= attempt.deadline_at - TIMER_EARLY)
+
+
+def clock(seconds: int | None) -> str:
+    """Seconds left as the timer shows them: "14:05", "0:09", "1:02:00"."""
+    seconds = max(0, int(seconds or 0))
+    hours, rest = divmod(seconds, 3600)
+    minutes, secs = divmod(rest, 60)
+    return f"{hours}:{minutes:02d}:{secs:02d}" if hours else f"{minutes}:{secs:02d}"
+
+
 def enforce_deadline(attempt: Attempt) -> bool:
     """Auto-submit an overdue attempt. Returns True when the attempt is finished."""
     if attempt.status == Attempt.Status.IN_PROGRESS and is_past_deadline(attempt):

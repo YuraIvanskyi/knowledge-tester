@@ -50,13 +50,19 @@
     return n < 10 ? "0" + n : String(n);
   }
 
-  function autoSubmit() {
-    // Time is up: finish without the "unanswered questions" question.
+  function hidden(name) {
     var flag = document.createElement("input");
     flag.type = "hidden";
-    flag.name = "confirm_unanswered";
+    flag.name = name;
     flag.value = "1";
     form.appendChild(flag);
+  }
+
+  function autoSubmit() {
+    // Time is up: finish without the "unanswered questions" question. timer_expired tells the
+    // server this is the automatic submit even if it arrives a moment before the deadline.
+    hidden("confirm_unanswered");
+    hidden("timer_expired");
     form.submit();
   }
 

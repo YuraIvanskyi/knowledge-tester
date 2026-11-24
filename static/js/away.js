@@ -17,7 +17,24 @@
   var counted = false; // this departure was counted already
   var blurTimer = null;
   var queue = { count: 0, seconds: 0 };
+  var inflight = { count: 0, seconds: 0 };
   var sending = false;
+  // Not recorded yet (queued or on the way) = the two hidden fields: a submit that starts the
+  // attempt (the student never answered before pressing Submit) counts them on the server.
+  var fields = {};
+  ["away_count", "away_seconds"].forEach(function (name) {
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = "0";
+    form.appendChild(input);
+    fields[name] = input;
+  });
+
+  function mirror() {
+    fields.away_count.value = String(queue.count + inflight.count);
+    fields.away_seconds.value = String(queue.seconds + inflight.seconds);
+  }
 
   function away() {
     return document.hidden || (document.hasFocus ? !document.hasFocus() : false);
@@ -27,12 +44,17 @@
     if (sending || (!queue.count && !queue.seconds)) return;
     var batch = queue;
     queue = { count: 0, seconds: 0 };
+    inflight = batch;
     sending = true;
     var body = { count: batch.count, seconds: batch.seconds };
     if (pageToken) body.attempt_token = pageToken.value;
     function keep() {
       queue.count += batch.count;
       queue.seconds += batch.seconds;
+    }
+    function settled() {
+      sending = false;
+      inflight = { count: 0, seconds: 0 };
     }
     fetch(url, {
       method: "POST",
@@ -45,13 +67,15 @@
         return r.ok ? r.json() : { recorded: false };
       })
       .then(function (d) {
-        sending = false;
+        settled();
         if (!d || !d.recorded) keep(); // no attempt yet: send again once it exists
-        else send(); // anything that came in while this one was on its way
+        mirror();
+        if (d && d.recorded) send(); // anything that came in while this one was on its way
       })
       .catch(function () {
-        sending = false;
+        settled();
         keep();
+        mirror();
       });
   }
 
@@ -59,6 +83,7 @@
     if (since === null || counted) return;
     counted = true;
     queue.count += 1;
+    mirror();
     send();
   }
 
@@ -89,6 +114,7 @@
     counted = false;
     if (!wasCounted) return; // a blink shorter than BLUR_MS
     queue.seconds += seconds;
+    mirror();
     send();
   }
 

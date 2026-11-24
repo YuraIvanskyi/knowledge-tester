@@ -159,6 +159,7 @@ def _render_take(request, sitting, attempt, missing=None, unanswered=None):
         "total": len(questions),
         "answered": sum(1 for q in questions if q["value"] is not None),
         "seconds_left": _seconds_left(attempt),
+        "clock": services.clock(_seconds_left(attempt)),  # what the timer shows without JS
         "variant_label": attempt.variant_label,
         "one_per_page": _one_per_page(test),
         "missing": missing,
@@ -500,6 +501,10 @@ def submit(request, code: str):
             )
         attempt = services.start_attempt(sitting, taker, token=token, student=student)
         created = True
+        # Departures the page saw before the attempt existed could not be reported yet
+        # (static/js/away.js keeps them in two hidden fields): count them now.
+        away_count = _as_int(request.POST.get("away_count"))
+        services.record_away(attempt, away_count, _as_int(request.POST.get("away_seconds")))
 
     def reply(response):
         return _set_cookie(response, sitting, attempt) if created else response
@@ -513,7 +518,10 @@ def submit(request, code: str):
     if request.POST.get("form_sent") and within_grace:
         services.save_answers(attempt, test, _posted_values(request, test))
 
-    if services.is_past_deadline(attempt):
+    # The timer's own submit at 0 (timer.js posts timer_expired=1) can arrive a moment early:
+    # it is still the automatic one, so it neither asks nor counts as a normal submit.
+    timer_done = request.POST.get("timer_expired") == "1" and services.timer_ran_out(attempt)
+    if services.is_past_deadline(attempt) or timer_done:
         services.finalize(attempt, Attempt.Status.AUTO_SUBMITTED)
         return reply(redirect("taker:done", code=sitting.code))
 

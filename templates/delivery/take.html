@@ -110,7 +110,7 @@
       {% if unstarted and time_limit %}
         <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono">{{ time_limit }}:00</span></span>
       {% elif seconds_left is not None %}
-        <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ seconds_left }}</span></span>
+        <span class="timer" role="timer" data-warn="{% trans '1 minute left' %}"><span class="bar-label">{% trans "Time left" %} </span><span id="timer" class="mono" data-seconds-left="{{ seconds_left }}">{{ clock }}</span></span>
       {% endif %}
       <span id="timer-live" class="visually-hidden" role="status" aria-live="polite"></span>
       <span id="timer-note" class="timer-note" aria-hidden="true" hidden></span>
