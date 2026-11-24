@@ -16,6 +16,7 @@ from apps.core.text import csv_safe
 from apps.delivery import services
 from apps.delivery.models import Answer, Attempt, Sitting
 from apps.exchange import variants as test_variants
+from apps.grading.scales import fmt_number
 from apps.grading.service import grade_attempt
 
 from . import data, pdf
@@ -125,6 +126,62 @@ def _parse_points(raw: str, max_points: Decimal) -> Decimal | None:
     return points.quantize(Decimal("0.01"))
 
 
+BONUS_NOTE_MAX = 500
+
+
+def _bonus_editable(attempt: Attempt, test: dict) -> bool:
+    """Extra points can be given to a finished, graded work (not a cancelled one)."""
+    return (
+        attempt.status in data.FINISHED
+        and (test.get("grading") or {}).get("enabled", True)
+        and bool(attempt.max_score)
+    )
+
+
+def _parse_bonus(raw: str, limit: Decimal) -> Decimal | None:
+    """Extra points: empty is 0; a whole or half number from -limit to +limit."""
+    raw = (raw or "").strip().replace(",", ".").replace("−", "-")  # a typed minus sign
+    if not raw:
+        return Decimal("0.00")
+    try:
+        points = Decimal(raw)
+    except InvalidOperation:
+        return None
+    if not points.is_finite() or abs(points) > limit or points % HALF != 0:
+        return None
+    return points.quantize(Decimal("0.01"))
+
+
+def _save_bonus(request, attempt: Attempt) -> tuple[bool, tuple[str, str, str] | None]:
+    """Store the extra points and their reason from the posted sheet, then regrade.
+
+    Returns (changed, error). The error is (message, typed points, typed note): the sheet shows
+    it and keeps what the teacher typed. A reason is required for any non-zero points."""
+    if "bonus_points" not in request.POST:
+        return False, None  # an older page without the fields
+    raw = request.POST.get("bonus_points", "")
+    note = " ".join(request.POST.get("bonus_note", "").split())[:BONUS_NOTE_MAX]
+    limit = attempt.max_score or Decimal(0)
+    points = _parse_bonus(raw, limit)
+    if points is None:
+        message = _("Enter extra points from %(min)s to %(max)s in steps of 0.5.") % {
+            "min": f"-{fmt_number(limit)}",
+            "max": fmt_number(limit),
+        }
+        return False, (message, raw, note)
+    if points and not note:
+        return False, (_("Write what the extra points are for."), raw, note)
+    if not points:
+        note = ""
+    if points == attempt.bonus_points and note == attempt.bonus_note:
+        return False, None
+    with transaction.atomic():
+        attempt.bonus_points, attempt.bonus_note = points, note
+        attempt.save(update_fields=["bonus_points", "bonus_note"])
+        grade_attempt(attempt)
+    return True, None
+
+
 def _attempt_or_404(user, pk: int) -> Attempt:
     attempt = get_object_or_404(
         Attempt.objects.select_related("sitting__revision__assessment"), pk=pk
@@ -179,6 +236,8 @@ def attempt_sheet(request, pk: int):
     sitting = attempt.sitting
     test = attempt.test  # the attempt's variant
     errors: dict[str, tuple[str, str, str]] = {}
+    bonus_error: tuple[str, str, str] | None = None
+    bonus_editable = _bonus_editable(attempt, test)
     # The results table the teacher came from (filter and sort): back, previous and next follow it.
     status, sort = data.parse_results_query(request.GET)
     results_qs = data.results_query(status, sort)
@@ -186,6 +245,16 @@ def attempt_sheet(request, pk: int):
     if request.method == "POST":
         rows = data.build_sheet(attempt, test, list(attempt.answers.all()))
         saved, errors = _save_review(request, attempt, rows)
+        bonus_saved = False
+        if bonus_editable:
+            bonus_saved, bonus_error = _save_bonus(request, attempt)
+        if bonus_error:
+            reason = bonus_error[0]
+            messages.error(
+                request, _("The extra points were not saved. %(reason)s") % {"reason": reason}
+            )
+        if bonus_saved:
+            messages.success(request, _("Extra points saved."))
         for row in rows:
             failed = errors.get(str(row.question["id"]))
             if failed:
@@ -199,7 +268,7 @@ def attempt_sheet(request, pk: int):
                 request,
                 ngettext("%(n)s answer saved.", "%(n)s answers saved.", saved) % {"n": saved},
             )
-        if not errors:
+        if not errors and not bonus_error:
             if request.POST.get("action") == "next":
                 following = data.next_unreviewed_attempt(attempt)
                 if following is not None:
@@ -209,7 +278,7 @@ def attempt_sheet(request, pk: int):
                 else:
                     messages.success(request, _("Everything in this session is reviewed."))
                 return redirect(reverse("reports:session", args=[sitting.pk]) + results_qs)
-            if not saved:
+            if not saved and not bonus_saved:
                 messages.info(request, _("Nothing to save: no points were entered."))
             return redirect(request.path + results_qs)
 
@@ -241,8 +310,29 @@ def attempt_sheet(request, pk: int):
             "results_qs": results_qs,
             "away_fact": _away_fact(attempt),
             "away_text": services.away_text(attempt.away_count, attempt.away_seconds),
+            "bonus_editable": bonus_editable,
+            "bonus_form": {
+                "points": bonus_error[1] if bonus_error else _bonus_value(attempt.bonus_points),
+                "note": bonus_error[2] if bonus_error else attempt.bonus_note,
+                "error": bonus_error[0] if bonus_error else "",
+                "limit": attempt.max_score,
+            },
+            "bonus_capped": _bonus_capped(attempt, rows),
         },
     )
+
+
+def _bonus_value(points: Decimal) -> str:
+    """The stored extra points as the number field's value: "" for none, "2", "-1.5"."""
+    return "" if not points else fmt_number(points)
+
+
+def _bonus_capped(attempt: Attempt, rows) -> bool:
+    """True when the extra points would take the total past 0 or the maximum (it stays inside)."""
+    if not attempt.bonus_points or attempt.max_score is None:
+        return False
+    total = sum((row.points or Decimal(0) for row in rows), Decimal(0)) + attempt.bonus_points
+    return total < 0 or total > attempt.max_score
 
 
 @login_required
@@ -356,6 +446,8 @@ def session_csv(request, sitting_pk: int):
             _("Percent"),
             _("Grade"),
             _("Pending reviews"),
+            _("Extra points"),
+            _("What for"),
             _("Left the page (times)"),
             _("Away (seconds)"),
         ]
@@ -374,6 +466,8 @@ def session_csv(request, sitting_pk: int):
                 "" if a.percent is None else a.percent,
                 csv_safe(a.grade),
                 a.pending_reviews,
+                a.bonus_points if a.bonus_points else "",
+                csv_safe(a.bonus_note),
                 a.away_count,
                 a.away_seconds,
             ]

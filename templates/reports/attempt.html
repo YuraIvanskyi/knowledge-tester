@@ -45,6 +45,9 @@
         {% if attempt.grade %}<span><strong>{% trans "Grade" %}:</strong> {{ attempt.grade|grade_text }}</span>{% endif %}
         {% if provisional and not voided %}<span class="status-warn">{% trans "Provisional" %}: {% blocktrans count n=attempt.pending_reviews %}{{ n }} answer still needs review{% plural %}{{ n }} answers still need review{% endblocktrans %}</span>{% endif %}
       </p>
+      {% if attempt.bonus_points %}
+      <p class="bonus-line"><strong>{% trans "Extra points" %}:</strong> {{ attempt.bonus_points|signed }}{% if attempt.bonus_note %} &middot; {{ attempt.bonus_note }}{% endif %}{% if bonus_capped %} <span class="muted">({% blocktrans with max=attempt.max_score|numd %}included in the score, which stays within 0 to {{ max }}{% endblocktrans %})</span>{% else %} <span class="muted">({% trans "included in the score" %})</span>{% endif %}</p>
+      {% endif %}
       {% else %}
       <p class="muted">{% trans "Not graded yet." %}</p>
       {% endif %}
@@ -107,7 +110,25 @@
     {% endfor %}
   </ol>
 
-  {% if has_review %}
+  {% if bonus_editable %}
+  <section class="bonus no-print stack-sm" aria-labelledby="bonus-h">
+    <h2 id="bonus-h">{% trans "Extra points" %}</h2>
+    <p class="muted">{% trans "For the whole work: an extra task, an oral answer, neatness. A negative number takes points off. The score never goes below 0 or above the maximum." %}</p>
+    <div class="row review-fields">
+      <div class="field">
+        <label for="bonus-points">{% blocktrans with max=bonus_form.limit|numd %}Points, from −{{ max }} to +{{ max }}{% endblocktrans %}</label>
+        {% localize off %}<input id="bonus-points" form="review-form" type="number" name="bonus_points" inputmode="decimal" min="-{{ bonus_form.limit|num }}" max="{{ bonus_form.limit|num }}" step="0.5"{% if bonus_form.error %} aria-invalid="true" aria-describedby="bonus-error"{% endif %} value="{{ bonus_form.points }}">{% endlocalize %}
+      </div>
+      <div class="field grow">
+        <label for="bonus-note">{% trans "What for" %}</label>
+        <input id="bonus-note" form="review-form" type="text" name="bonus_note" maxlength="500" value="{{ bonus_form.note }}" placeholder="{% trans 'For example: the extra task done' %}">
+      </div>
+    </div>
+    {% if bonus_form.error %}<p class="review-error status-bad" id="bonus-error">{{ bonus_form.error }}</p>{% endif %}
+  </section>
+  {% endif %}
+
+  {% if has_review or bonus_editable %}
   <div class="row review-actions no-print">
     <button class="btn btn-primary" type="submit" form="review-form" name="action" value="save">{% trans "Save" %}</button>
     {% if next_attempt %}

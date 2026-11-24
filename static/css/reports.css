@@ -305,3 +305,20 @@
     display: none;
   }
 }
+
+/* Extra points for the whole work: the line under the score and the form above Save */
+.bonus-line {
+  margin: var(--space-2) 0 0;
+  overflow-wrap: anywhere;
+}
+.bonus {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.bonus h2 {
+  font-size: var(--fs-lg);
+  margin: 0;
+}
+.bonus p {
+  margin: 0;
+}

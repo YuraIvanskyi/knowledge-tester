@@ -33,3 +33,13 @@ def grade_text(value):
     if value == "Fail":
         return _("Fail")
     return value
+
+
+@register.filter
+def signed(value):
+    """Extra points with their sign for display: +2, +1,5, −1 (a real minus sign)."""
+    if value is None or value == "":
+        return ""
+    number = Decimal(str(value))
+    text = numd(abs(number))
+    return f"+{text}" if number >= 0 else f"\u2212{text}"

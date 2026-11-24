@@ -73,7 +73,8 @@ Not counted in the phase totals above.
 - [x] F-09 Arrows (and arrow keys) between results · 2026-11-24
 - [x] F-10 "Another student on this device" after handing in · 2026-11-24
 - [ ] Check on real phones: away count (app switch, lock screen, iOS Safari), paging, hand-in notes on a projector
-- [ ] Left over: away count on the attempt PDF; departures before the first save are lost when the student submits without answering; timer submit at 0 stored as "submitted" when it arrives a moment early (older)
+- [x] Left-overs fixed: away count on the attempt PDF; departures before the first save counted by the submit that starts the attempt; the timer's submit at 0 that arrives a moment early is automatic; the no-JS timer shows minutes and seconds · 2026-11-24
+- [x] Extra points for the whole work with a note on what for (sheet, results, CSV, PDF, student result page) · 2026-11-24
 
 ### UX review wave (plan and contracts: [specs/ux-review-contracts.md](specs/ux-review-contracts.md))
 

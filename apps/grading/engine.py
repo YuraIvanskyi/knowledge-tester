@@ -188,8 +188,13 @@ def grade_test(
     test: dict,
     answers: dict[str, object],
     manual_scores: dict[str, Decimal] | None = None,
+    bonus: Decimal | int | str = ZERO,
 ) -> TestResult:
-    """Grade a whole attempt. `answers` maps question id -> value."""
+    """Grade a whole attempt. `answers` maps question id -> value.
+
+    `bonus` is the teacher's extra points for the whole work (negative = a deduction). It is
+    added to the sum of the questions and the total is kept within 0 .. max_score, so the
+    percentage and the grade never go past the scale."""
     manual_scores = manual_scores or {}
     grading = test.get("grading") or {}
     enabled = grading.get("enabled", True)
@@ -209,8 +214,9 @@ def grade_test(
     if not enabled:
         return TestResult(None, None, None, "", 0, per_question)
 
-    score = max(sum((r.points for r in per_question.values()), ZERO), ZERO)
     max_score = sum((r.max_points for r in per_question.values()), ZERO)
+    score = sum((r.points for r in per_question.values()), ZERO) + Decimal(str(bonus or 0))
+    score = min(max(score, ZERO), max(max_score, ZERO))
     pending = sum(1 for r in per_question.values() if r.status == NEEDS_REVIEW)
     percent = None
     if max_score > 0:

@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Extra points"
+msgstr "Додаткові бали"
+
+msgid "What for"
+msgstr "За що"
+
+msgid "Extra points saved."
+msgstr "Додаткові бали збережено."
+
+msgid "The extra points were not saved. %(reason)s"
+msgstr "Додаткові бали не збережено. %(reason)s"
+
+msgid "Enter extra points from %(min)s to %(max)s in steps of 0.5."
+msgstr "Введіть додаткові бали від %(min)s до %(max)s з кроком 0,5."
+
+msgid "Write what the extra points are for."
+msgstr "Напишіть, за що ці бали."
+
+msgid "For the whole work: an extra task, an oral answer, neatness. A negative number takes points off. The score never goes below 0 or above the maximum."
+msgstr "За всю роботу: додаткове завдання, усна відповідь, охайність. Від'ємне число знімає бали. Сума не буває меншою за 0 і більшою за максимум."
+
+msgid "Points, from −%(max)s to +%(max)s"
+msgstr "Бали, від −%(max)s до +%(max)s"
+
+msgid "For example: the extra task done"
+msgstr "Наприклад: виконано додаткове завдання"
+
+msgid "included in the score, which stays within 0 to %(max)s"
+msgstr "враховано в сумі, яка лишається в межах від 0 до %(max)s"
+
+msgid "included in the score"
+msgstr "враховано в сумі"
+
+msgid "Extra points from your teacher"
+msgstr "Додаткові бали від учителя"

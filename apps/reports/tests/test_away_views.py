@@ -38,8 +38,9 @@ def test_csv_has_the_away_columns_before_the_questions(login, sitting):  # noqa:
     rows = list(csv.reader(io.StringIO(body)))
     header = rows[0]
     at = header.index("Pending reviews")
-    assert header[at + 1 : at + 3] == ["Left the page (times)", "Away (seconds)"]
-    assert header[at + 3] == "1. q1"
+    # after the extra points and their reason
+    assert header[at + 3 : at + 5] == ["Left the page (times)", "Away (seconds)"]
+    assert header[at + 5] == "1. q1"
     by_name = {r[0]: dict(zip(header, r, strict=True)) for r in rows[1:]}
     assert (by_name["Ann"]["Left the page (times)"], by_name["Ann"]["Away (seconds)"]) == (
         "2",

@@ -72,6 +72,10 @@ class Attempt(models.Model):
     # the page (static/js/away.js). Only ever written by services.record_away.
     away_count = models.PositiveIntegerField(default=0)
     away_seconds = models.PositiveIntegerField(default=0)
+    # Extra points the teacher gives the whole work (negative = a deduction), with the reason.
+    # Counted by apps.grading.service.grade_attempt; the total never leaves 0..max_score.
+    bonus_points = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    bonus_note = models.CharField(max_length=500, blank=True)
 
     # Denormalized totals: only ever written by apps.grading.service
     score = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)

@@ -4,6 +4,14 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 
 ---
 
+## 2026-11-24 (later): Extra points, and the old timer details fixed
+
+- **Extra points** (asked for after the wave): `Attempt.bonus_points` and `bonus_note` (migration 0005). The teacher fills "Extra points" and "What for" at the bottom of a finished attempt's sheet (one Save with the review; a reason is required for any non-zero value; steps of 0.5; negative = a deduction; not for cancelled, unfinished or ungraded work). `grade_test(..., bonus=)` adds them and keeps the total within 0 and the maximum, so percent and grade stay on the scale and the gradebook and profile need no change. Shown on the sheet (with "included in the score" or the cap explained), as "(+2)" in the results table, in two CSV columns, on the PDF sheet and on the student's result page when the test shows the score.
+- **Timer at 0:** the page counts on the phone's clock, so its submit could reach the server up to a couple of seconds before the deadline: it was stored as "submitted", and with an empty required question the page came back with the "required" panel until the next tick. The timer now posts `timer_expired=1`; within 10 s of the deadline that is the automatic submit (`services.timer_ran_out`). Further from the deadline the flag is ignored.
+- **No-JS clock:** the server writes "9:05" (`services.clock`) instead of raw seconds.
+- **Departures before the first save:** `away.js` mirrors what is not recorded yet into two hidden fields; a submit that starts the attempt counts them (a submit of an existing attempt ignores them, so nothing is counted twice). The PDF sheet now names the time away too.
+- Checked live in Ukrainian at 390 and 1280 px, light and dark: missing reason refused with the input kept, saved, score and grade recomputed (0 -> 2 of 16, grade 2), results marker. 30 new tests.
+
 ## 2026-11-24: Feedback wave from classroom testing (F-01 to F-10)
 
 - **Input:** ten items found while testing; plan and contracts in [specs/feedback-wave-contracts.md](specs/feedback-wave-contracts.md). Method as before: skeleton (98b04fc: `Attempt.away_count` / `away_seconds`, migration 0004, `services.record_away`, `taker:away`, reserved `taker:another` and `assessments:paper_pdf`, 30-minute default), then three workstreams with disjoint files, each checked on its own live server and headless Edge; commits 0aa6b45 (paper PDF), da467c8 (teacher screens), c0d58de (student page).
@@ -14,7 +22,7 @@ Newest entry first. Keep each entry short: what changed, what was learned, what 
 - **New tests** start with 30 minutes; the prompts default to 30. Imports keep their own value.
 - 1723 tests pass (one flaky check fixed: the preview test looked for "a1" in a page that carries a random UUID); 43 new Ukrainian strings, catalog 887 entries.
 - **Learned:** headless Edge does not hide a page when another browser context comes to the front, so leaving was checked by faking `visibilitychange`; a real phone is still the real test.
-- **Open:** real phones (app switch, lock screen, iOS Safari) for the away count and the paging; departures before the first save are lost if the student submits without ever answering; on a computer, clicking the address bar for over 1 s counts as leaving; the attempt PDF does not show the away count; a long open question on the paper PDF moves whole to the next page and can leave white space; seen along the way, older: a timer submit at 0 that arrives a moment early is stored as "submitted", not "auto-submitted", and without JavaScript the timer shows raw seconds.
+- **Open:** real phones (app switch, lock screen, iOS Safari) for the away count and the paging; departures before the first save are lost if the student submits without ever answering; on a computer, clicking the address bar for over 1 s counts as leaving; the attempt PDF does not show the away count; a long open question on the paper PDF moves whole to the next page and can leave white space; seen along the way, older: a timer submit at 0 that arrives a moment early is stored as "submitted", not "auto-submitted", and without JavaScript the timer shows raw seconds (both fixed later that day, see above).
 
 ## 2026-11-16: Variants of a test, and a Help page with the prompt
 

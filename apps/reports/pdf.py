@@ -15,13 +15,14 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from fpdf import FPDF
 from fpdf.enums import MethodReturnValue
 
 from apps.exchange.document import CHOICE_TYPES
 
 from . import data
-from .templatetags.report_extras import grade_text, numd
+from .templatetags.report_extras import grade_text, numd, signed
 
 FONT_DIR = settings.BASE_DIR / "assets" / "fonts"
 FONT = "DejaVu"
@@ -112,7 +113,17 @@ def _taker_pairs(test: dict, attempt) -> list[tuple[str, str]]:
     pairs += [(k, str(v)) for k, v in taker.items() if k not in seen]
     if attempt.variant_label:
         pairs.append((_("Variant"), attempt.variant_label))
+    if attempt.away_count:
+        pairs.append((_("Left the test page"), _away_words(attempt)))
     return pairs
+
+
+def _away_words(attempt) -> str:
+    from apps.delivery.services import away_duration
+
+    return ngettext(
+        "%(count)d time (%(time)s)", "%(count)d times (%(time)s)", attempt.away_count
+    ) % {"count": attempt.away_count, "time": away_duration(attempt.away_seconds)}
 
 
 def _local(moment) -> str:
@@ -174,6 +185,12 @@ def _header(pdf: SheetPdf, attempt, test: dict, grading_enabled: bool) -> None:
             text += f"    {_('Grade')}: {clean(grade_text(attempt.grade))}"
         pdf.set_font(FONT, "B", 11)
         pdf.multi_cell(width, 5.6, text, new_x="LMARGIN", new_y="NEXT")
+        if attempt.bonus_points:
+            bonus = f"{_('Extra points')}: {signed(attempt.bonus_points)}"
+            if attempt.bonus_note:
+                bonus += f" · {clean(attempt.bonus_note)}"
+            pdf.set_font(FONT, "", 10)
+            pdf.multi_cell(width, LINE, bonus, new_x="LMARGIN", new_y="NEXT")
         if attempt.pending_reviews:
             pdf.set_font(FONT, "", 9)
             pdf.set_text_color(*COLORS["pending"])

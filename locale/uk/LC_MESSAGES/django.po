@@ -436,15 +436,15 @@ msgstr "Для особистого PIN-коду потрібен клас. Об
 msgid "Auto-submitted"
 msgstr "Надіслано автоматично"
 
-#: apps/delivery/models.py:108
+#: apps/delivery/models.py:112
 msgid "Unanswered"
 msgstr "Без відповіді"
 
-#: apps/delivery/models.py:109
+#: apps/delivery/models.py:113
 msgid "Graded"
 msgstr "Оцінено"
 
-#: apps/delivery/models.py:111
+#: apps/delivery/models.py:115
 msgid "Reviewed"
 msgstr "Перевірено"
 
@@ -464,11 +464,11 @@ msgstr "Будь ласка, введіть свій PIN-код."
 msgid "The PIN is not correct."
 msgstr "PIN-код неправильний."
 
-#: apps/delivery/roster.py:158 apps/delivery/taker_views.py:316
+#: apps/delivery/roster.py:158 apps/delivery/taker_views.py:317
 msgid "Please choose your name from the list."
 msgstr "Будь ласка, оберіть своє ім’я зі списку."
 
-#: apps/delivery/roster.py:164 apps/delivery/taker_views.py:322
+#: apps/delivery/roster.py:164 apps/delivery/taker_views.py:323
 msgid "You have already taken this test."
 msgstr "Ви вже проходили цей тест."
 
@@ -477,46 +477,46 @@ msgstr "Ви вже проходили цей тест."
 msgid "Full name"
 msgstr "Прізвище та ім’я"
 
-#: apps/delivery/services.py:407
+#: apps/delivery/services.py:426
 msgid "%(h)d h %(m)d min"
 msgstr "%(h)d год %(m)d хв"
 
-#: apps/delivery/services.py:409
+#: apps/delivery/services.py:428
 msgid "%(m)d min %(s)d s"
 msgstr "%(m)d хв %(s)d с"
 
-#: apps/delivery/services.py:410
+#: apps/delivery/services.py:429
 msgid "%(s)d s"
 msgstr "%(s)d с"
 
-#: apps/delivery/services.py:427
+#: apps/delivery/services.py:446
 msgid "Left the test page %(count)d time, %(time)s in total"
 msgid_plural "Left the test page %(count)d times, %(time)s in total"
 msgstr[0] "Сторінку тесту залишено %(count)d раз, разом %(time)s"
 msgstr[1] "Сторінку тесту залишено %(count)d рази, разом %(time)s"
 msgstr[2] "Сторінку тесту залишено %(count)d разів, разом %(time)s"
 
-#: apps/delivery/taker_views.py:299
+#: apps/delivery/taker_views.py:300
 msgid "The access code is not correct."
 msgstr "Код доступу неправильний."
 
-#: apps/delivery/taker_views.py:308
+#: apps/delivery/taker_views.py:309
 msgid "Please fill in: %(field)s."
 msgstr "Будь ласка, заповніть поле: %(field)s."
 
-#: apps/delivery/taker_views.py:542
+#: apps/delivery/taker_views.py:551
 msgid "Not answered"
 msgstr "Без відповіді"
 
-#: apps/delivery/taker_views.py:545
+#: apps/delivery/taker_views.py:554
 msgid "Awaiting review"
 msgstr "Очікує перевірки"
 
-#: apps/delivery/taker_views.py:549
+#: apps/delivery/taker_views.py:558
 msgid "Incorrect"
 msgstr "Неправильно"
 
-#: apps/delivery/taker_views.py:550 apps/reports/data.py:96
+#: apps/delivery/taker_views.py:559 apps/reports/data.py:96
 msgid "Partly correct"
 msgstr "Частково правильно"
 
@@ -831,11 +831,11 @@ msgstr[2] "Учня «%(name)s» видалено. %(n)s спроб залиша
 msgid "Student “%(name)s” deleted."
 msgstr "Учня «%(name)s» видалено."
 
-#: apps/people/views_profile.py:177 apps/reports/views.py:355
+#: apps/people/views_profile.py:177 apps/reports/views.py:444
 msgid "Max score"
 msgstr "Макс. бали"
 
-#: apps/people/views_profile.py:180 apps/reports/views.py:358
+#: apps/people/views_profile.py:180 apps/reports/views.py:447
 msgid "Pending reviews"
 msgstr "Очікують перевірки"
 
@@ -952,7 +952,7 @@ msgstr "(без імені)"
 msgid "Wrong"
 msgstr "Неправильно"
 
-#: apps/reports/paper_pdf.py:97 apps/reports/pdf.py:84
+#: apps/reports/paper_pdf.py:97 apps/reports/pdf.py:85
 msgid "page"
 msgstr "стор."
 
@@ -1000,6 +1000,13 @@ msgstr "Для вчителя. Учням не роздавати."
 msgid "written test"
 msgstr "письмова робота"
 
+#: apps/reports/pdf.py:124 apps/reports/views.py:114
+msgid "%(count)d time (%(time)s)"
+msgid_plural "%(count)d times (%(time)s)"
+msgstr[0] "%(count)d раз (%(time)s)"
+msgstr[1] "%(count)d рази (%(time)s)"
+msgstr[2] "%(count)d разів (%(time)s)"
+
 #: apps/reports/student_pdf.py:75
 msgid "Student results"
 msgstr "Результати учня"
@@ -1023,61 +1030,70 @@ msgstr "Зараховано"
 msgid "Fail"
 msgstr "Не зараховано"
 
-#: apps/reports/views.py:112
+#: apps/reports/views.py:113
 msgid "never"
 msgstr "жодного разу"
 
-#: apps/reports/views.py:113
-msgid "%(count)d time (%(time)s)"
-msgid_plural "%(count)d times (%(time)s)"
-msgstr[0] "%(count)d раз (%(time)s)"
-msgstr[1] "%(count)d рази (%(time)s)"
-msgstr[2] "%(count)d разів (%(time)s)"
+#: apps/reports/views.py:167
+msgid "Enter extra points from %(min)s to %(max)s in steps of 0.5."
+msgstr "Введіть додаткові бали від %(min)s до %(max)s з кроком 0,5."
 
-#: apps/reports/views.py:157
+#: apps/reports/views.py:173
+msgid "Write what the extra points are for."
+msgstr "Напишіть, за що ці бали."
+
+#: apps/reports/views.py:214
 msgid "Enter points to save the comment."
 msgstr "Введіть бали, щоб зберегти коментар."
 
-#: apps/reports/views.py:161
+#: apps/reports/views.py:218
 msgid "Enter points from 0 to %(max)s in steps of 0.5."
 msgstr "Введіть бали від 0 до %(max)s з кроком 0,5."
 
-#: apps/reports/views.py:194
+#: apps/reports/views.py:253
+msgid "The extra points were not saved. %(reason)s"
+msgstr "Додаткові бали не збережено. %(reason)s"
+
+#: apps/reports/views.py:256
+msgid "Extra points saved."
+msgstr "Додаткові бали збережено."
+
+#: apps/reports/views.py:262
 msgid "Question %(n)s was not saved. %(reason)s"
 msgstr "Запитання %(n)s не збережено. %(reason)s"
 
-#: apps/reports/views.py:200
+#: apps/reports/views.py:268
 msgid "%(n)s answer saved."
 msgid_plural "%(n)s answers saved."
 msgstr[0] "Збережено %(n)s відповідь."
 msgstr[1] "Збережено %(n)s відповіді."
 msgstr[2] "Збережено %(n)s відповідей."
 
-#: apps/reports/views.py:208
+#: apps/reports/views.py:276
 msgid "No other attempt waits for review."
 msgstr "Інших спроб, що чекають на перевірку, немає."
 
-#: apps/reports/views.py:210
+#: apps/reports/views.py:278
 msgid "Everything in this session is reviewed."
 msgstr "Усе в цій сесії перевірено."
 
-#: apps/reports/views.py:213
+#: apps/reports/views.py:281
 msgid "Nothing to save: no points were entered."
 msgstr "Нічого зберігати: бали не введено."
 
-#: apps/reports/views.py:256
+#: apps/reports/views.py:345
 msgid "This attempt is already cancelled."
 msgstr "Цю спробу вже скасовано."
 
-#: apps/reports/views.py:261
+#: apps/reports/views.py:350
 msgid "Attempt of %(name)s cancelled. It no longer counts."
 msgstr "Спробу учня %(name)s скасовано. Вона більше не враховується."
 
-#: apps/reports/views.py:359
+#: apps/reports/views.py:450
 msgid "Left the page (times)"
 msgstr "Виходи зі сторінки (разів)"
 
-#: apps/reports/views.py:360
+#: apps/reports/views.py:451
 msgid "Away (seconds)"
 msgstr "Поза сторінкою (секунд)"
 
@@ -1233,7 +1249,7 @@ msgstr "Тип"
 
 #: templates/assessments/detail.html:75 templates/assessments/detail.html:84
 #: templates/assessments/editor/question.html:83 templates/assessments/editor/settings.html:67
-#: templates/reports/attempt.html:94
+#: templates/reports/attempt.html:97
 msgid "Points"
 msgstr "Бали"
 
@@ -1507,8 +1523,8 @@ msgstr "Текст варіанта %(n)s"
 msgid "Add an option"
 msgstr "Додати варіант"
 
-#: apps/reports/paper_pdf.py:406 apps/reports/pdf.py:221
-#: templates/assessments/editor/question.html:54 templates/reports/attempt.html:76
+#: apps/reports/paper_pdf.py:406 apps/reports/pdf.py:238
+#: templates/assessments/editor/question.html:54 templates/reports/attempt.html:79
 msgid "Accepted answers"
 msgstr "Допустимі відповіді"
 
@@ -1662,7 +1678,7 @@ msgstr "Виставляти оцінку"
 msgid "Grade scale"
 msgstr "Шкала оцінок"
 
-#: apps/people/views_profile.py:178 apps/reports/student_pdf.py:177 apps/reports/views.py:356
+#: apps/people/views_profile.py:178 apps/reports/student_pdf.py:177 apps/reports/views.py:445
 #: templates/assessments/editor/settings.html:67 templates/people/profile/student.html:94
 #: templates/people/profile/student.html:105
 msgid "Percent"
@@ -1804,7 +1820,7 @@ msgstr "Тести"
 msgid "Test"
 msgstr "Тест"
 
-#: apps/people/views_profile.py:175 apps/reports/views.py:351 templates/assessments/list.html:23
+#: apps/people/views_profile.py:175 apps/reports/views.py:440 templates/assessments/list.html:23
 #: templates/assessments/list.html:33 templates/core/dashboard.html:63
 #: templates/core/dashboard.html:68 templates/delivery/link.html:34 templates/delivery/link.html:45
 #: templates/delivery/list.html:17 templates/delivery/list.html:28 templates/delivery/share.html:70
@@ -2169,7 +2185,7 @@ msgstr "Сесія ще відкрита: учні, які зараз прохо
 msgid "The test itself is not affected. Download the results first if you need them."
 msgstr "Сам тест не зміниться. Якщо потрібні результати, спершу завантажте їх."
 
-#: apps/reports/pdf.py:137 templates/delivery/create.html:8 templates/delivery/pick.html:23
+#: apps/reports/pdf.py:148 templates/delivery/create.html:8 templates/delivery/pick.html:23
 #: templates/reports/attempt.html:31 templates/reports/session.html:11
 msgid "revision"
 msgstr "версія"
@@ -2199,7 +2215,7 @@ msgstr "У вас ще немає класів."
 msgid "Add a class on the People page"
 msgstr "Додайте клас на сторінці «Люди»"
 
-#: apps/delivery/models.py:51 apps/reports/pdf.py:154 apps/reports/views.py:353
+#: apps/delivery/models.py:51 apps/reports/pdf.py:165 apps/reports/views.py:442
 #: templates/delivery/done.html:3 templates/delivery/done.html:13 templates/delivery/share.html:51
 #: templates/reports/attempt.html:37
 msgid "Submitted"
@@ -2213,7 +2229,7 @@ msgstr "Спробу скасовано"
 msgid "Your teacher cancelled this attempt."
 msgstr "Вчитель скасував цю спробу."
 
-#: templates/delivery/done.html:11 templates/delivery/done.html:44
+#: templates/delivery/done.html:11 templates/delivery/done.html:45
 msgid "Take the test again"
 msgstr "Пройти тест ще раз"
 
@@ -2229,8 +2245,8 @@ msgstr "Ваші відповіді надіслано. Дякуємо!"
 msgid "Your result"
 msgstr "Ваш результат"
 
-#: apps/people/views_profile.py:179 apps/reports/pdf.py:174 apps/reports/student_pdf.py:177
-#: apps/reports/views.py:357 templates/delivery/done.html:23
+#: apps/people/views_profile.py:179 apps/reports/pdf.py:185 apps/reports/student_pdf.py:177
+#: apps/reports/views.py:446 templates/delivery/done.html:23
 #: templates/people/profile/student.html:95 templates/people/profile/student.html:106
 #: templates/reports/attempt.html:45 templates/reports/session.html:77
 #: templates/reports/session.html:92
@@ -2244,39 +2260,43 @@ msgstr "Оцінка"
 msgid "provisional"
 msgstr "попередньо"
 
-#: templates/delivery/done.html:25
+#: templates/delivery/done.html:24
+msgid "Extra points from your teacher"
+msgstr "Додаткові бали від учителя"
+
+#: templates/delivery/done.html:26
 msgid "%(n)s answer is waiting for your teacher to review, so this result is provisional."
 msgid_plural "%(n)s answers are waiting for your teacher to review, so this result is provisional."
 msgstr[0] "%(n)s відповідь очікує перевірки вчителем, тому цей результат попередній."
 msgstr[1] "%(n)s відповіді очікують перевірки вчителем, тому цей результат попередній."
 msgstr[2] "%(n)s відповідей очікують перевірки вчителем, тому цей результат попередній."
 
-#: templates/delivery/done.html:31
+#: templates/delivery/done.html:32
 msgid "Answers"
 msgstr "Відповіді"
 
-#: templates/delivery/done.html:36 templates/delivery/take.html:62 templates/delivery/take.html:65
+#: templates/delivery/done.html:37 templates/delivery/take.html:62 templates/delivery/take.html:65
 msgid "Your answer"
 msgstr "Ваша відповідь"
 
-#: templates/delivery/done.html:37 templates/people/roster/group.html:45
+#: templates/delivery/done.html:38 templates/people/roster/group.html:45
 #: templates/people/roster/import_preview.html:55 templates/people/roster/students.html:51
 msgid "none"
 msgstr "немає"
 
-#: templates/delivery/done.html:38 templates/reports/attempt.html:76
+#: templates/delivery/done.html:39 templates/reports/attempt.html:79
 msgid "Correct answer"
 msgstr "Правильна відповідь"
 
-#: templates/delivery/done.html:39
+#: templates/delivery/done.html:40
 msgid "Reviewed by your teacher."
 msgstr "Перевірено вчителем."
 
-#: templates/delivery/done.html:49
+#: templates/delivery/done.html:50
 msgid "Another student on this device"
 msgstr "Інший учень на цьому пристрої"
 
-#: templates/delivery/done.html:50
+#: templates/delivery/done.html:51
 msgid "Pass the device on: the next student starts the test with their own name."
 msgstr "Передайте пристрій далі: наступний учень почне тест зі своїм іменем."
 
@@ -2324,8 +2344,8 @@ msgstr "Прив’язано до учня: %(linked)s із %(total)s спро�
 msgid "Typed name"
 msgstr "Введене ім’я"
 
-#: apps/people/views_profile.py:176 apps/reports/pdf.py:172 apps/reports/student_pdf.py:177
-#: apps/reports/views.py:354 templates/delivery/link.html:35 templates/delivery/link.html:46
+#: apps/people/views_profile.py:176 apps/reports/pdf.py:183 apps/reports/student_pdf.py:177
+#: apps/reports/views.py:443 templates/delivery/link.html:35 templates/delivery/link.html:46
 #: templates/people/profile/student.html:93 templates/people/profile/student.html:104
 #: templates/reports/attempt.html:44 templates/reports/attempt_void.html:11
 #: templates/reports/session.html:76 templates/reports/session.html:91
@@ -2507,7 +2527,7 @@ msgstr "Лічильники в реальному часі"
 msgid "Joined"
 msgstr "Приєдналися"
 
-#: apps/delivery/models.py:50 apps/reports/views.py:93 templates/delivery/share.html:50
+#: apps/delivery/models.py:50 apps/reports/views.py:94 templates/delivery/share.html:50
 #: templates/people/profile/student.html:134
 msgid "In progress"
 msgstr "Виконується"
@@ -2532,7 +2552,7 @@ msgstr "Назад до сторінки сесії"
 msgid "Nobody has joined yet."
 msgstr "Ще ніхто не приєднався."
 
-#: apps/people/models.py:16 apps/reports/views.py:307 apps/reports/views.py:309
+#: apps/people/models.py:16 apps/reports/views.py:396 apps/reports/views.py:398
 #: templates/delivery/share.html:69 templates/manage/teachers.html:26
 #: templates/manage/teachers.html:39 templates/reports/session.html:70
 #: templates/reports/session.html:85
@@ -2860,7 +2880,7 @@ msgstr "Сторінка реєстрації:"
 
 #: templates/manage/settings.html:20 templates/manage/teacher_edit.html:24
 #: templates/people/roster/group_form.html:17 templates/people/roster/student_form.html:37
-#: templates/reports/attempt.html:112
+#: templates/reports/attempt.html:133
 msgid "Save"
 msgstr "Зберегти"
 
@@ -3269,7 +3289,7 @@ msgstr "Враховані спроби"
 msgid "Waiting for review"
 msgstr "Очікують перевірки"
 
-#: apps/reports/pdf.py:183 apps/reports/student_pdf.py:194 templates/people/profile/student.html:51
+#: apps/reports/pdf.py:200 apps/reports/student_pdf.py:194 templates/people/profile/student.html:51
 msgid "Provisional: some answers still need review."
 msgstr "Попередній результат: деякі відповіді ще потребують перевірки."
 
@@ -3320,7 +3340,7 @@ msgid "Open a session for the group, or use “Link to students” on a session�
 msgstr ""
 "Відкрийте сесію для групи або скористайтеся «Прив’язати до учнів» на сторінці результатів сесії."
 
-#: apps/delivery/models.py:53 apps/reports/views.py:95 templates/people/profile/student.html:134
+#: apps/delivery/models.py:53 apps/reports/views.py:96 templates/people/profile/student.html:134
 msgid "Voided"
 msgstr "Скасовано"
 
@@ -3962,16 +3982,16 @@ msgstr "Завантажити все як PDF"
 msgid "Which sheets"
 msgstr "Які аркуші"
 
-#: apps/reports/views.py:92 templates/reports/_pdf_form.html:10
+#: apps/reports/views.py:93 templates/reports/_pdf_form.html:10
 msgid "Finished"
 msgstr "Завершені"
 
-#: apps/delivery/models.py:110 apps/reports/data.py:98 apps/reports/views.py:94
+#: apps/delivery/models.py:114 apps/reports/data.py:98 apps/reports/views.py:95
 #: templates/reports/_pdf_form.html:11
 msgid "Needs review"
 msgstr "Потребує перевірки"
 
-#: apps/reports/views.py:91 templates/reports/_pdf_form.html:12
+#: apps/reports/views.py:92 templates/reports/_pdf_form.html:12
 msgid "All"
 msgstr "Усі"
 
@@ -4040,11 +4060,11 @@ msgstr "Наступна неперевірена спроба"
 msgid "Cancel attempt"
 msgstr "Скасувати спробу"
 
-#: apps/reports/pdf.py:138 templates/reports/attempt.html:31 templates/reports/attempt_void.html:9
+#: apps/reports/pdf.py:149 templates/reports/attempt.html:31 templates/reports/attempt_void.html:9
 msgid "session"
 msgstr "сесія"
 
-#: apps/reports/pdf.py:296 templates/reports/attempt.html:31
+#: apps/reports/pdf.py:313 templates/reports/attempt.html:31
 msgid "Attempt"
 msgstr "Спроба"
 
@@ -4052,7 +4072,7 @@ msgstr "Спроба"
 msgid "This attempt was cancelled. It does not count in the results and cannot be reviewed."
 msgstr "Цю спробу скасовано. Вона не враховується в результатах і не перевіряється."
 
-#: templates/reports/attempt.html:38
+#: apps/reports/pdf.py:117 templates/reports/attempt.html:38
 msgid "Left the test page"
 msgstr "Виходи зі сторінки тесту"
 
@@ -4063,37 +4083,70 @@ msgstr[0] "ще %(n)s відповідь потребує перевірки"
 msgstr[1] "ще %(n)s відповіді потребують перевірки"
 msgstr[2] "ще %(n)s відповідей потребують перевірки"
 
-#: apps/reports/pdf.py:166 templates/reports/attempt.html:49
+#: apps/reports/pdf.py:189 apps/reports/views.py:448 templates/reports/attempt.html:49
+#: templates/reports/attempt.html:115 templates/reports/session.html:91
+msgid "Extra points"
+msgstr "Додаткові бали"
+
+#: templates/reports/attempt.html:49
+msgid "included in the score, which stays within 0 to %(max)s"
+msgstr "враховано в сумі, яка лишається в межах від 0 до %(max)s"
+
+#: templates/reports/attempt.html:49
+msgid "included in the score"
+msgstr "враховано в сумі"
+
+#: apps/reports/pdf.py:177 templates/reports/attempt.html:52
 msgid "Not graded yet."
 msgstr "Ще не оцінено."
 
-#: apps/reports/pdf.py:162 templates/reports/attempt.html:52
+#: apps/reports/pdf.py:173 templates/reports/attempt.html:55
 msgid "Grading is disabled for this test."
 msgstr "Для цього тесту оцінювання вимкнено."
 
-#: apps/reports/paper_pdf.py:369 apps/reports/pdf.py:215 apps/reports/pdf.py:217
-#: templates/reports/attempt.html:66
+#: apps/reports/paper_pdf.py:369 apps/reports/pdf.py:232 apps/reports/pdf.py:234
+#: templates/reports/attempt.html:69
 msgid "Answer"
 msgstr "Відповідь"
 
-#: apps/reports/data.py:99 apps/reports/pdf.py:212 apps/reports/pdf.py:219
-#: templates/reports/attempt.html:72
+#: apps/reports/data.py:99 apps/reports/pdf.py:229 apps/reports/pdf.py:236
+#: templates/reports/attempt.html:75
 msgid "No answer"
 msgstr "Немає відповіді"
 
-#: apps/reports/paper_pdf.py:409 templates/reports/attempt.html:79
+#: apps/reports/paper_pdf.py:409 templates/reports/attempt.html:82
 msgid "Rubric"
 msgstr "Критерії оцінювання"
 
-#: apps/reports/pdf.py:226 templates/reports/attempt.html:85 templates/reports/attempt.html:98
+#: apps/reports/pdf.py:243 templates/reports/attempt.html:88 templates/reports/attempt.html:101
 msgid "Comment"
 msgstr "Коментар"
 
-#: templates/reports/attempt.html:114
+#: templates/reports/attempt.html:116
+msgid ""
+"For the whole work: an extra task, an oral answer, neatness. A negative number takes points off. "
+"The score never goes below 0 or above the maximum."
+msgstr ""
+"За всю роботу: додаткове завдання, усна відповідь, охайність. Від'ємне число знімає бали. Сума не "
+"буває меншою за 0 і більшою за максимум."
+
+#: templates/reports/attempt.html:119
+msgid "Points, from −%(max)s to +%(max)s"
+msgstr "Бали, від −%(max)s до +%(max)s"
+
+#: apps/reports/views.py:449 templates/reports/attempt.html:123
+msgid "What for"
+msgstr "За що"
+
+#: templates/reports/attempt.html:124
+msgid "For example: the extra task done"
+msgstr "Наприклад: виконано додаткове завдання"
+
+#: templates/reports/attempt.html:135
 msgid "Save and go to the next unreviewed attempt"
 msgstr "Зберегти й перейти до наступної неперевіреної спроби"
 
-#: templates/reports/attempt.html:116
+#: templates/reports/attempt.html:137
 msgid "Save and return to the results"
 msgstr "Зберегти й повернутися до результатів"
 
@@ -4159,11 +4212,11 @@ msgstr "Розподіл балів"
 msgid "Show"
 msgstr "Показати"
 
-#: apps/reports/views.py:352 templates/reports/session.html:71 templates/reports/session.html:86
+#: apps/reports/views.py:441 templates/reports/session.html:71 templates/reports/session.html:86
 msgid "Started"
 msgstr "Розпочато"
 
-#: apps/reports/pdf.py:114 apps/reports/views.py:283 apps/reports/views.py:349
+#: apps/reports/pdf.py:115 apps/reports/views.py:372 apps/reports/views.py:438
 #: templates/reports/session.html:72 templates/reports/session.html:87
 msgid "Variant"
 msgstr "Варіант"
@@ -4181,7 +4234,7 @@ msgstr "потребує перевірки"
 msgid "* Provisional: some answers still wait for review, so the number may change."
 msgstr "* Попередньо: деякі відповіді ще чекають на перевірку, тому число може змінитися."
 
-#: apps/reports/pdf.py:320 templates/reports/session.html:101
+#: apps/reports/pdf.py:337 templates/reports/session.html:101
 msgid "No attempts yet."
 msgstr "Спроб ще немає."
 
@@ -4192,7 +4245,7 @@ msgstr[0] "%(n)s завершена спроба"
 msgstr[1] "%(n)s завершені спроби"
 msgstr[2] "%(n)s завершених спроб"
 
-#: apps/delivery/taker_views.py:547 apps/reports/data.py:95 apps/reports/pdf.py:221
+#: apps/delivery/taker_views.py:556 apps/reports/data.py:95 apps/reports/pdf.py:238
 #: templates/reports/session.html:114 templates/reports/session.html:122
 msgid "Correct"
 msgstr "Правильно"

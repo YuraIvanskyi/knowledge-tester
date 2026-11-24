@@ -14,7 +14,7 @@ def grade_attempt(attempt) -> None:
     """(Re)grade an attempt and write the results to its Answer rows and its own totals.
 
     Idempotent. Creates missing Answer rows for unanswered questions. A set `manual_score`
-    always wins over the automatic score.
+    always wins over the automatic score. The teacher's `bonus_points` are added to the total.
     """
     test = attempt.test  # the attempt's variant
     grading_enabled = (test.get("grading") or {}).get("enabled", True)
@@ -36,7 +36,7 @@ def grade_attempt(attempt) -> None:
         for qid in questions
         if existing[qid].manual_score is not None
     }
-    result = grade_test(test, values, manual)
+    result = grade_test(test, values, manual, bonus=attempt.bonus_points)
 
     changed = []
     for qid in questions:
